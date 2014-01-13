@@ -73,8 +73,12 @@ proc open_file {filename} {
 # Load text from file (at current insert mark, keeping other text?):
 proc load {filename} {
 	set ::status "Loading…"
+	if {[catch {.editor.text insert insert [slurp $filename]} message]} {
+		set ::status $message
+		unset message
+		return
+	}
 	log_file_operation $filename LOAD
-	.editor.text insert insert [slurp $filename]
 	set ::status "File loaded"
 }
 
