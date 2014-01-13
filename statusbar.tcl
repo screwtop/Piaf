@@ -7,6 +7,14 @@
 
 pack [frame .statusbar] -fill x -expand 0
 
+
+# Some of the displays will have to be refreshed periodically rather than event-driven, so this will come in handy:
+proc every {ms body} {
+	if 1 $body
+	after $ms [list after idle [info level 0]]
+}
+
+
 # menubutton or tk_optionMenu for these?  It'd be nice to show the current state on the menu button itself...
 tk_optionMenu .statusbar.wrapping ::wrap_mode "No Wrap" "Char Wrap" "Word Wrap"
 # Tricky args here because of how traces are called:
@@ -36,11 +44,28 @@ label .statusbar.position -textvariable ::insert_position -relief sunken
 pack .statusbar.position -side right
 # TODO: figure out how to bind an event handler to changes to the insert mark.  You can do it with tags (.editor.text tag bind ...).
 # Might be nice to format the line-column value for ease of interpretation, e.g. L12:C23 (for Line and Column).
-set ::insert_position "L[join [split [.editor.text index insert] .] {:C}]"
+# In the meantime, we'll use a scheduled approach:
+every 50 {set ::insert_position "L[join [split [.editor.text index insert] .] {:C}]"}
 
 
 # Status/last operation/action performed:
 pack [label .statusbar.status -textvariable ::status -relief sunken] -side right
+
+
+# Character/Word/Line count:
+
+pack [label .statusbar.stats -textvariable ::size_status -relief sunken] -side right
+
+proc update_size_status {} {
+	set text [get_all]
+	set chars [string length $text]
+	set lines [llength [split $text "\n"]]
+	set words [llength [lsearch -all -not [split $text " \t\n,.!?"] {}]]
+	set ::size_status "${chars}C,${words}W,${lines}L"
+}
+
+every 1000 update_size_status
+
 
 
 # Selection details:
@@ -70,6 +95,8 @@ bind .editor.text <<Selection>> {
 
 
 # TODO: live counts of characters, lines and maybe words
+
+
 
 
 
