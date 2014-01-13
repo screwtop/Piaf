@@ -176,6 +176,10 @@ proc search_web_for_selection {} {
 }
 
 # TODO: searches for selection in dictionary, Wikipedia, etc.
+proc search_wikipedia_for_selection {} {
+	set ::status "Opening browser___"
+	exec firefox "http://en.wikipedia.org/wiki/[get_selection]" 2> /dev/null &
+}
 
 
 # For simple text filters that require no additional arguments:

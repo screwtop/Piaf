@@ -87,6 +87,15 @@ menu .menubar.language
 #	.menubar.language add command -label "" -command {}
 .menubar add cascade -label "Language" -menu .menubar.language -underline 0
 
+
+# Reference menu, with Web searches and such
+menu .menubar.reference
+	.menubar.reference add command -label "Search Wikipedia" -command search_wikipedia_for_selection
+	.menubar.reference add command -label "Search Google" -command search_web_for_selection
+	.menubar.reference add command -label "Open URL in browser" -command open_selection_in_browser
+.menubar add cascade -label "Reference" -menu .menubar.reference -underline 0
+
+
 # Window/Files/Buffer menu
 menu .menubar.window
 .menubar add cascade -label "Window" -menu .menubar.window -underline 0
