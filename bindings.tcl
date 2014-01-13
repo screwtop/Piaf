@@ -21,5 +21,6 @@ bind . <Control-f> find
 bind . <Control-o> prompt_open_file
 bind . <Control-s> save
 
-bind . <Control-w> close
+bind . <Control-w> close_file
+bind . <Control-q> quit
 

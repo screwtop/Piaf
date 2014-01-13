@@ -10,3 +10,5 @@ set ::font "LetterGothic12Pitch 10"
 
 set ::browser firefox
 
+
+

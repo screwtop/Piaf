@@ -132,7 +132,7 @@ proc save_to {filename} {
 	# file stat /tmp/test.txt file_stats
 	# file copy SOURCE TARGET
 	set file [open $filename w]
-	puts -nonewline $file [get_all]
+	puts -nonewline $file [get_all]	;# Hmm, even with -nonewline we're ending up with extra creeping newlines appearing each time we save (or open?).  TODO: fix.
 	close $file
 	set ::status "File saved"
 }
@@ -230,14 +230,13 @@ proc insert {text} {.editor.text insert insert $text}
 proc insert_ascii {} {insert [::piaf::generate::ascii]}
 
 
-proc quit_edita {} {
+proc quit {} {
 	set ::status "Exiting…"
 	# TODO: Check for unsaved changes (and/or auto-save recovery files)
 	# Maybe prompt for user certainty regardless
 	# Log QUIT operation as well?
 	::piaf::database close
+	exit
 }
-
-
 
 
