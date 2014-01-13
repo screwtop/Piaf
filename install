@@ -1,16 +1,38 @@
 #!/bin/sh
 
 # Check for dependencies (SQLite3 and library for Tcl)
+
+echo "Checking for/installing dependencies..."
+
 sudo apt-get install tcl tk libsqlite3-tcl
 
 # Create database (in user's home?)
 echo -n "Setting up user's database..."
 mkdir -p ~/.piaf
-rm -f ~/.piaf/data.db
-echo .exit | sqlite3 -batch -bail -init schema.sql ~/.piaf/data.db
+#rm -f ~/.piaf/data.db
+#echo .exit | sqlite3 -batch -bail -init schema.sql ~/.piaf/data.db
 echo "done."
 
+
 # Copy program scripts to somewhere sensible:
+# Clunkiness here because of my test/dev environment: root user cannot read the development files, but dev user cannot write the destination files!
+
+echo -n "Copying files..."
+
+STAGE=/tmp/piaf
+DEST=/usr/local/piaf
+
+mkdir -p $STAGE/bin
+cp piaf *.tcl $STAGE/bin
+
+sudo mkdir -p $DEST/bin
+sudo cp $STAGE/bin/piaf $STAGE/bin/*.tcl $DEST/bin
+sudo rm -f /usr/local/bin/piaf
+sudo ln -s $STAGE/bin/piaf /usr/local/bin/piaf
+
+
 # sudo mkdir -p /usr/local/piaf/bin
 # sudo cp piaf *.tcl /usr/local/piaf/bin
 # sudo ln -s /usr/local/piaf/bin/piaf /usr/local/bin/piaf
+
+echo "done."

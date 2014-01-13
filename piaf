@@ -5,6 +5,9 @@
 
 wm title . Piaf
 
+#puts stderr $env(PWD)
+#puts stderr [info script]
+cd /usr/local/piaf/bin
 
 # TODO: handle command-line arguments (open files, perhaps additional options for e.g. batch running of scripts)
 

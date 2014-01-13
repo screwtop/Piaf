@@ -35,6 +35,15 @@ proc log_file_operation {filename operation} {
 
 
 
+# A "file-slurp" function (read the entire contents of a file into a variable) abstraction:
+proc slurp {filename} {
+	set file_handle [open $filename r]
+	set file_data [read $file_handle]
+	close $file_handle
+	return $file_data
+}
+
+
 # Or just plain "new"?
 proc new {} {
 	# TODO: check for unsaved changes?
