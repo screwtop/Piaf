@@ -1,0 +1,129 @@
+Hmm, I might just write myself a text editor in Tk...
+
+Nice features in TextWrangler to "borrow":
+ - Filebrowser
+ - Project mode (set of opened files belonging together)
+ - Navigation of document based on language elements (e.g. function
+ - Spell checking
+ - Lexical colouring
+ - Split views
+ - Synchronised split views
+ - File diff
+ - Autoreplace?  I generally find this annoying, TBH...
+ - Folding
+ - Special margin features: line numbering, fold marks, breakpoints, etc.
+
+Other features that'd be nice to have:
+ - Unicode character browser (perhaps use an SQLite database and have characters arranged by category for easy browsing) - might actually be a useful standalone component for a system/DeskNerd component.
+ - A nice file browser component would be good.  Again, keeping a shared history of recent files and folders for system-wide sharing would be good.
+
+Questions:
+ - UTF-8 support?
+ - background asynchronous writes so we never lose data
+ - file versioning?
+ - Tabs. Tk text has builtin stuff for this.
+ - Fixed-width font
+ - Undo and redo built in :)
+
+
+Wrapping:
+.t configure -wrap none|char|word
+
+
+Index examples:
+LINE.CHAR
+end
+MARK
+TAG.first
+TAG.last
+
+
+
+Special tags/marks:
+	insert (mark)
+	current (mark) - nearest the mouse cursor
+	sel (tag)
+		Also <<Selection>> event
+
+Marks and Tags:
+Tags are named references to regions of the text.  Can be a single char, a range, or multiple ranges(!).  They can be used to control the visual style of tagged text.  They can be used to control event binding for tagged text.  Lastly, they are used for managing the Selection.
+Marks are similar, but are associated with a point in the text (i.e. between characters).  Mars have a gravity, which determines which way the mark moved when text is inserted at the mark.  The "insert" mark is mark is associated with the current insertion point/cursor.
+
+
+To insert some text at the current insertion mark:
+.t insert insert Hello!
+
+# To retrieve the text of the selection:
+.t get sel.first sel.last
+
+# To copy it to the system clipboard:
+clipboard append [.t get sel.first sel.last]
+
+# To paste the clipboard at the current insert mark:
+.t insert insert [clipboard get]
+
+
+# To find the current insert mark:
+.t index insert
+
+# To find out the ranges of the selection tag:
+.t tag ranges sel
+
+# To figure out the number of lines and characters in the selection tag range:
+[.t tag ranges sel]
+
+# .t tag configure sel ...
+
+# To set the selection range (e.g. for Select All):
+.t tag add sel 0.0 end
+
+# You can have multiple ranges selected(!).
+.t tag add sel 2.0 2.5
+.t tag add sel 3.0 3.2
+# This could be extremely powerful, e.g. do tabular operations, or apply changes to multiple independent ranges at once.  A "swap text" operation could be handy, too, applicable when there are two ranges selected.
+
+# Could we support multiple selection regions somehow?  That would be cool (e.g. for swap operations, apply change (e.g. change case) to multiple ranges).
+
+
+Commands available in the text widget:
+
+bbox cget compare configure count debug delete dlineinfo dump edit get image index insert mark peer replace scan search see tag window xview yview
+
+.t insert insert newtext
+# Note that this doesn't replace any existing selection. :)
+
+Find and highlight text would be a good start:
+
+.t search TEXTOFINTEREST insert
+
+.t see INDEX
+
+
+Tabs:
+
+
+
+Margins:
+-lmargin1, -lmargin2
+-rmargin
+
+Relevant for line-wrapping maybe...
+Maybe colour alternate lines?  Or change the line spacing for wrapped lines?
+-spacing1|2|3 (vertical spacing before first, between lines, after last)
+
+
+Auto-save and avoiding data loss:
+
+The "text" widget has a "modified" flag, as well as a <<Modified>> virtual event.  We could synchronously write modifications to disk (probably OK on a system with an aggressive write cache like Linux), or have a background task that periodically writes changes to disk if there are any.  (We might have to do similarly with the line/column number display, if we can't find an event associated with moving the "insert" mark.
+
+.editor.text edit modified	;# Get
+.editor.text edit modified false	;# Set
+
+
+Undo/Redo:
+
+The "text" widget has undo/redo functionality built in.  However, text transformation operations might require special handling for undo/redo to work properly. :(  Or could we use ".editor.text edit separator" somehow?
+
+Can we query the length of the undo history and display it in the status bar?
+
+

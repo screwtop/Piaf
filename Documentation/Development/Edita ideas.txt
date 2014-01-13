@@ -1,0 +1,91 @@
+
+http://www.netfunny.com/rhf/jokes/90q3/mred.html
+
+
+
+So, how would a transactional text editor work?  Would it support nested transactions?  Would an undo/redo history model be better? (Note: history would be stored persistently, like a log, not as a volatile in-memory copy).  Would it need to incorporate a version control model?
+For the Web, persistence might have to be done asynchronously...maybe you could lose at most 5 seconds of work...perhaps the client should monitor how long the updates take and adapt accordingly, perhaps displaying the current refresh interval on the UI, and warning if it goes above some threshold.
+
+Undo/redo in units of characters, words, sentences, paragraphs.  I guess the model should really have the notion of a command, e.g. a paste operation is a single command, not equivalent to typing in the pasted text as a series of characters.
+
+Locking?  It would be useful to allow multiple users to edit different parts of a document in parallel.  What granularity of locking?  Hmm, this could get tricky: how would a "move" operation be treated internally: which parts of the document would be affected by a move?
+
+Goals:
+ - Create and modify text
+ - Naming, filing and annotating the document should be optional; the system should fall back to content-based document search/retrieval
+ - The system should not lose user data; save operations should only be necessary for:
+	- Establishing version checkpoints (and forking?)
+	- User comfort/reassurance
+ - The system should keep track of what the user entered previously, in case it needs to be restored or recovered
+ - Import and export documents in other formats?
+
+Considerations:
+ - Store entire history in a database?  What sort of model?
+ - Document model and capabilities?  Plain text?  Unicode?  HTML?  DOM?  Something extensible or independent of the underlying representation?
+
+
+
+
+
+Entity/Attribute branestawming:
+Document
+Command
+Keystroke
+Version
+Fork
+Branch
+Section
+Chapter
+Paragraph
+
+OK, the main table will probably look something like:
+	Document	Version/Revision?	Command_Type	Sequence	Timestamp	Data
+						insert-character	1				'H'
+						insert-character	2				'e'
+						insert-character	2				'l'
+						insert-character	2				'l'
+						insert-character	2				'o'
+						insert-character	2				','
+						insert-character	2				' '
+						paste
+
+Loading the document would therefore be a replay of the relevant history, not a loading of a snapshot of the document state.  This could be slow.  Still, it worked for The Sorcerer's Apprentice...
+
+Yeah, delete-word-previous for example would need to look backwards in the history for the last word boundary.  That mightn't be too bad with appropriate indexing, and of course the client could maybe cache or do things locally as well for better performance.
+
+Undo operations: would this require the whole document to be replayed from the start?  Could an optimised partial replay be determined by the system?
+
+
+Command types:
+insert-character or keystroke
+paste/insert-data/insert-string
+move-character-previous	# Don't use "left" and "right" because of bi-di stuff
+move-word-next
+	# Absolute movement commands as well as relative?  Certainly, in case of mouse-click.
+delete-character-previous
+delete-paragraph-next
+replace-...	# Substitute, find/change, search/replace; parameterised, e.g. replace all, case sensitive?
+
+In fact, the command names are kind of parameterised anyway.  Maybe we can follow Tcl's example, having the first keyword the command and then a list of parameter-y tokens following
+	insert character "x"
+	insert string "blah"
+		# Hmm, in fact, maybe we only need
+	insert "string or character, it matters not"
+		# So whether it was a keystroke, paste operation, macro or whatever that generated the text, we don't care.  It only matters that it was entered in a single command.
+	# In fact, something like this could form the basis of the client/server protocol.  Perhaps the updates (commands) from client to server could be formatted in this way, and the server could just serve up the state of the document at the present time.  The client would then need to make location-based requests to the server to grab the basis for the current display, I guess.  You'd want immediate feedback for entering text, though; maybe the display of the current line or paragraph or screen should always be managed by the client for quick response.
+
+Actually, I think storing both the commands and the current document state would be appropriate.  It's a bit redundant, but should be fairly easy to ensure consistency.  The client could periodically compare its in-memory document with the servers and take some action if they don't match any more.
+
+--
+
+Alternatively (and this would be a better design to start with or a prototype!), go for a completely simple model that is only concerned with the current document state and keeps no history of commands, does not have any version control, and assumes a single user/session per document.  This might be quite doable.  Updates/commands would still need to be sent to the server constantly, but only the resulting document state needs to be persistent.  Would the document simply be stored as a BLOB, then, and rewritten each time a change is recorded?  I guess so.  Obviously it would make sense to batch the operations for efficiency - either as a function of time, or number of commands, or number of characters edited.
+
+What to implement it in?
+	ECMAScript for the client-side code?  Should be widely supported by Web browsers.  Python would be quite a bit less so, I'd think.
+	Erlang for the server implementation?  Should be a good fit, and a good case example for learning a bit of Erlang.  Database access?
+	HTTP for the transport?  Sockets would be a lot nicer: stateful, for a start.  Might be good to have notions like "the current document" or "the current user".
+
+
+http://jerith.za.net/writings/erlangsockettut.html
+
+
