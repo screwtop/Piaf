@@ -204,7 +204,7 @@ proc search_wiktionary_for_selection {} {
 
 
 # For simple text filters that require no additional arguments:
-proc transform {function text} {$function $text}
+proc transform {function text} {::piaf::transform::$function $text}
 # TODO: could maybe generalise to support extra args?  What was the Tcl convention for that again?  "args"?
 
 # Apply a text transformation function to the selected text, replacing it in the editor.
@@ -250,6 +250,7 @@ proc quit {} {
 		# TODO: prompt or whatever
 	}
 }
+
 
 
 
