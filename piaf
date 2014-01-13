@@ -20,6 +20,9 @@ namespace eval ::piaf {}
 
 set ::status "Starting up…"
 
+source "$::binary_path/settings.tcl"	;# Load system-wide settings first...
+catch {source ~/.piaf/settings.tcl}		;# ...then any user-defined settings.
+
 # We use an SQLite database to keep track of recently modified files, collections of files making up projects, etc.
 package require sqlite3
 sqlite3 ::piaf::database ~/.piaf/data.db
