@@ -2,17 +2,17 @@
 
 # Check for dependencies (SQLite3 and library for Tcl)
 
-echo "Checking for/installing dependencies..."
-echo
-sudo apt-get install tcl tk libsqlite3-tcl
-echo
+#echo "Checking for/installing dependencies..."
+#echo
+#sudo apt-get install tcl tk libsqlite3-tcl
+#echo
 
 # Create database (in user's home?)
-echo -n "Setting up user's database..."
-mkdir -p ~/.piaf
+#echo -n "Setting up user's database..."
+#mkdir -p ~/.piaf
 #rm -f ~/.piaf/data.db
 #echo .exit | sqlite3 -batch -bail -init schema.sql ~/.piaf/data.db
-echo "done."
+#echo "done."
 
 
 # Copy program scripts to somewhere sensible:
