@@ -13,7 +13,7 @@ proc ::piaf::transform::reverse {s} {join [lreverse [split $s {}]] {}}
 # Sort characters in alphabetical order (Unicode-aware?!):
 proc ::piaf::transform::sort {s} {join [lsort [split $s {}]] {}}
 
-#sort_lines
+proc ::piaf::transform::sort_lines {text} {join [lsort [split $text "\n"]] "\n"}
 
 
 # Randomly permute characters in a selection

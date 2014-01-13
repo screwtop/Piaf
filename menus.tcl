@@ -74,7 +74,8 @@ menu .menubar.transform
 	.menubar.transform add command -label "Linebreaks > LF" -command {transform_selection ::piaf::transform::lflinebreaks}
 	.menubar.transform add command -label "Linebreaks > CRLF" -command {transform_selection ::piaf::transform::crlflinebreaks}
 	.menubar.transform add command -label "Rot-13" -command {transform_selection ::piaf::transform::rot13}
-	.menubar.transform add command -label "Sort" -command {transform_selection ::piaf::transform::sort}
+	.menubar.transform add command -label "Sort Characters" -command {transform_selection ::piaf::transform::sort}
+	.menubar.transform add command -label "Sort Lines" -command {transform_selection ::piaf::transform::sort_lines}
 	.menubar.transform add command -label "Reverse" -command {transform_selection ::piaf::transform::reverse}
 	.menubar.transform add command -label "Unwrap" -command {transform_selection ::piaf::transform::unwrap}
 	.menubar.transform add command -label "Whitespace: Remove Trailing" -command {transform_selection ::piaf::transform::removetrailingwhitespace}

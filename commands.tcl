@@ -166,19 +166,19 @@ proc jump_to_line {line_number} {
 # Take selected text and open as URL in browser:
 proc open_selection_in_browser {} {
 	set ::status "Opening browser…"
-	exec ::browser [string trim [get_selection]] 2> /dev/null &
+	exec $::browser [string trim [get_selection]] 2> /dev/null &
 }
 
 proc search_web_for_selection {} {
 	# TODO: encode search terms for URL:
 	set ::status "Opening browser…"
-	exec ::browser "https://www.google.co.nz/search?q=[get_selection]" 2> /dev/null &
+	exec $::browser "https://www.google.co.nz/search?q=[get_selection]" 2> /dev/null &
 }
 
 # TODO: searches for selection in dictionary, Wikipedia, etc.
 proc search_wikipedia_for_selection {} {
 	set ::status "Opening browser___"
-	exec ::browser "http://en.wikipedia.org/wiki/[get_selection]" 2> /dev/null &
+	exec $::browser "http://en.wikipedia.org/wiki/[get_selection]" 2> /dev/null &
 }
 
 
