@@ -47,7 +47,7 @@ pack .editor.text -side right -expand true -fill both
 pack .editor.scrollbar -side left -fill y
 
 
-# My font preference:
+# Apply font preference:
 .editor.text configure -font $::font
 
 # Apply a colour scheme:
@@ -74,6 +74,7 @@ set ::status "Ready"
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
+
 
 
 
