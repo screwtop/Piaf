@@ -1,10 +1,11 @@
 # Main menu bar:
 menu .menubar -type menubar
 .menubar configure -borderwidth 0 -activeborderwidth 0
-pack .menubar -side top -fill x 
+pack .menubar -side top -fill x
 
 # File menu:
 menu .menubar.file
+	.menubar.file add command -label "New" -command new
 	.menubar.file add command -label "Open…" -command prompt_open_file
 	.menubar.file add command -label "Insert" -command {}	;# "load $filename"
 	.menubar.file add command -label "Save as…" -command prompt_save_as
