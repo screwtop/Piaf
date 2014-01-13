@@ -1,0 +1,7 @@
+#!/usr/bin/wish
+
+# My simple Tcl/Tk text editor/idioter.
+
+
+# Basic one-line text editor to start with (Tcl/Tk, you rule!):
+pack [text .editor -wrap word] -fill both -expand 1
