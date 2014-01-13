@@ -91,6 +91,7 @@ menu .menubar.language
 
 # Reference menu, with Web searches and such
 menu .menubar.reference
+	.menubar.reference add command -label "Search Wiktionary" -command search_wiktionary_for_selection
 	.menubar.reference add command -label "Search Wikipedia" -command search_wikipedia_for_selection
 	.menubar.reference add command -label "Search Google" -command search_web_for_selection
 	.menubar.reference add command -label "Open URL in browser" -command open_selection_in_browser
@@ -122,6 +123,7 @@ menu .popup_menu
 
 
 # TODO: Transform submenu for uppercase, lowercase, init caps, reverse, sort
+
 
 
 

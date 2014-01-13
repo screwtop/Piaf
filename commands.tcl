@@ -66,14 +66,17 @@ proc open_file {filename} {
 	if {$filename != ""} {
 		# Remember filename globally
 		set ::filename $filename
+		# Set the window title as well (perhaps just the file's basename or the abbreviated filename?):
+		wm title . "Piaf: [file tail $::filename]"
 		clear
 		load $filename
+		.editor.text mark set insert 0.0
 	} else {
 		set ::status "Cancelled/No file specified"
 	}
 }
 
-# Load text from file (at current insert mark, keeping other text?):
+# Load text from file (at current insert mark, keeping other text? I do plan to have an "Insert file into current buffer" command as well.):
 proc load {filename} {
 	set ::status "Loading…"
 	if {[catch {.editor.text insert insert [slurp $filename]} message]} {
@@ -167,19 +170,30 @@ proc jump_to_line {line_number} {
 proc open_selection_in_browser {} {
 	set ::status "Opening browser…"
 	exec $::browser [string trim [get_selection]] 2> /dev/null &
+	set ::status "Ready"
 }
 
 proc search_web_for_selection {} {
 	# TODO: encode search terms for URL:
 	set ::status "Opening browser…"
 	exec $::browser "https://www.google.co.nz/search?q=[get_selection]" 2> /dev/null &
+	set ::status "Ready"
 }
 
-# TODO: searches for selection in dictionary, Wikipedia, etc.
+# Wikipedia lookup:
 proc search_wikipedia_for_selection {} {
 	set ::status "Opening browser___"
 	exec $::browser "http://en.wikipedia.org/wiki/[get_selection]" 2> /dev/null &
+	set ::status "Ready"
 }
+
+# Wiktionary lookup:
+proc search_wiktionary_for_selection {} {
+	set ::status "Opening browser___"
+	exec $::browser "http://en.wiktionary.org/wiki/[get_selection]" 2> /dev/null &
+	set ::status "Ready"
+}
+
 
 
 # For simple text filters that require no additional arguments:
@@ -223,4 +237,7 @@ proc quit_edita {} {
 	# Log QUIT operation as well?
 	::piaf::database close
 }
+
+
+
 

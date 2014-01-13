@@ -48,10 +48,10 @@ pack .editor.scrollbar -side left -fill y
 
 
 # My font preference:
-.editor.text configure -font "LetterGothic12Pitch 10"
+.editor.text configure -font $::font
 
 # Apply a colour scheme:
-.editor.text configure -background #202020 -foreground white -selectbackground #FFFF80 -insertbackground green
+.editor.text configure -background $::background_colour -foreground $::text_colour -selectbackground $::selectbackground_colour -insertbackground $::insertbackground_colour
 
 
 # Bring in various support functionality:
@@ -65,6 +65,7 @@ source "$::binary_path/bindings.tcl"	;# Key event bindings
 # Check if a filename was specified on the command line:
 if {[llength $argv] > 0} {open_file [lindex $argv 0]}
 
+.editor.text mark set insert 0.0
 focus .editor.text
 
 set ::status "Ready"
@@ -72,4 +73,5 @@ set ::status "Ready"
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...nd perhaps also a remote-control FIFO.
+
 
