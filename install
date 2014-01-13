@@ -3,8 +3,9 @@
 # Check for dependencies (SQLite3 and library for Tcl)
 
 echo "Checking for/installing dependencies..."
-
+echo
 sudo apt-get install tcl tk libsqlite3-tcl
+echo
 
 # Create database (in user's home?)
 echo -n "Setting up user's database..."

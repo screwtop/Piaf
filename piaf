@@ -5,9 +5,13 @@
 
 wm title . Piaf
 
+#puts stderr $argv
+
 #puts stderr $env(PWD)
 #puts stderr [info script]
-cd /usr/local/piaf/bin
+#cd /usr/local/piaf/bin	;# Hmm, better not to [cd], in case a relative filename was given on the command line.
+set ::binary_path /usr/local/piaf/bin	;# Or is it better to do something with auto_path?
+# lappend auto_path $::binary_path
 
 # TODO: handle command-line arguments (open files, perhaps additional options for e.g. batch running of scripts)
 
@@ -22,7 +26,7 @@ sqlite3 ::piaf::database ~/.piaf/data.db
 # TODO: create database if necessary?
 puts stderr "SQLite database opened, version [::piaf::database version]"
 
-source menus.tcl
+source "$::binary_path/menus.tcl"
 # TODO: toolbar?  Separate file.
 
 frame .editor
@@ -47,15 +51,17 @@ pack .editor.scrollbar -side left -fill y
 .editor.text configure -background #202020 -foreground white -selectbackground #FFFF80 -insertbackground green
 
 
-source functions.tcl	;# Text filters
-source commands.tcl	;# Editor command set
+source "$::binary_path/functions.tcl"	;# Text filters
+source "$::binary_path/commands.tcl"	;# Editor command set
 
 
 
 # Statusbar things:
-source statusbar.tcl
+source "$::binary_path/statusbar.tcl"
 
-source bindings.tcl
+source "$::binary_path/bindings.tcl"
+
+if {[llength $argv] > 0} {open_file [lindex $argv 0]}
 
 set ::status "Ready"
 # And from here we just enter the Tcl event loop.
