@@ -17,6 +17,8 @@ proc every {ms body} {
 
 # menubutton or tk_optionMenu for these?  It'd be nice to show the current state on the menu button itself...
 tk_optionMenu .statusbar.wrapping ::wrap_mode "No Wrap" "Char Wrap" "Word Wrap"
+.statusbar.wrapping configure -font $::fixed_gui_font -width 10
+
 # Tricky args here because of how traces are called:
 # TODO: deuglify: should just be a map call or something.
 proc set_wrap_mode {name1 name2 op} {
@@ -35,12 +37,12 @@ pack .statusbar.wrapping -side left
 
 
 # Filename display:
-pack [label .statusbar.filename -textvariable ::filename] -side left
+pack [label .statusbar.filename -textvariable ::filename -font $::fixed_gui_font] -side left
 
 
 
 # Live line-column display ("insert" mark) (including number of lines and characters in selection!)
-label .statusbar.position -textvariable ::insert_position -relief sunken
+label .statusbar.position -textvariable ::insert_position -relief sunken -font $::fixed_gui_font -width 12
 pack .statusbar.position -side right
 # TODO: figure out how to bind an event handler to changes to the insert mark.  You can do it with tags (.editor.text tag bind ...).
 # Might be nice to format the line-column value for ease of interpretation, e.g. L12:C23 (for Line and Column).
@@ -49,12 +51,12 @@ every 50 {set ::insert_position "L[join [split [.editor.text index insert] .] {:
 
 
 # Status/last operation/action performed:
-pack [label .statusbar.status -textvariable ::status -relief sunken] -side right
+pack [label .statusbar.status -textvariable ::status -relief sunken -font $::fixed_gui_font -width 15] -side right
 
 
 # Character/Word/Line count:
 
-pack [label .statusbar.stats -textvariable ::size_status -relief sunken] -side right
+pack [label .statusbar.stats -textvariable ::size_status -relief sunken -font $::fixed_gui_font -width 20] -side right
 
 proc update_size_status {} {
 	set text [get_all]
@@ -70,7 +72,7 @@ every 1000 update_size_status
 
 # Selection details:
 
-pack [label .statusbar.selection -textvariable ::selection_status -relief sunken] -side right
+pack [label .statusbar.selection -textvariable ::selection_status -relief sunken -font $::fixed_gui_font -width 18] -side right
 set ::selection_status "sel:none"
 
 bind .editor.text <<Selection>> {
@@ -95,6 +97,7 @@ bind .editor.text <<Selection>> {
 
 
 # TODO: live counts of characters, lines and maybe words
+
 
 
 

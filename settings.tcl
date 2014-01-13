@@ -7,8 +7,6 @@ set ::selectbackground_colour #FFFF80
 set ::insertbackground_colour green
 
 set ::font "LetterGothic12Pitch 10"
+set ::fixed_gui_font "LetterGothic12Pitch 8"
 
 set ::browser firefox
-
-
-
