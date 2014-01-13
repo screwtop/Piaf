@@ -11,28 +11,36 @@
 
 -- Should the model assume a single user (perhaps put the database file in ~/.edita) or multiple users?  It would be easy enough to record <hostname, username> along with each record, so the data could be cloudified and shared universally.
 
+
+-- TODO: think about how to upgrade an existing user database.  Don't really want (and shouldn't really need) to blow it away.  Schema change management, bleah!
+
+
+-- For now, let's just assume the install script will just delete any existing database file!
+
 create table File_Log
 (
 	Hostname varchar,
 	Username varchar,
 	Filename varchar,
 --	PID?
-	Date_Performed date,
+	Date_Performed timestamp with time zone,
 	Operation varchar,
 
 	constraint File_Log_PK primary key (Hostname, Username, Filename, Date_Performed)
 );
 
+
 create table Project
 (
-	Username
-	Project_Name
-	Date_Created
+	Username	varchar,
+	Project_Name	varchar,
+	Date_Created	timestamp with time zone
 );
 
 -- Files associated with a particular project:
-create table Project_Files
-(
-);
+--create table Project_Files ();
 
 
+-- How come these have no effect?
+.exit
+.quit

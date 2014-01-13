@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Check for dependencies (SQLite3 and library for Tcl)
+sudo apt-get install tcl tk libsqlite3-tcl
+
+# Create database (in user's home?)
+echo -n "Setting up user's database..."
+mkdir -p ~/.piaf
+rm -f ~/.piaf/data.db
+echo .exit | sqlite3 -batch -bail -init schema.sql ~/.piaf/data.db
+echo "done."
+
+# Copy program scripts to somewhere sensible:
+# sudo mkdir -p /usr/local/piaf/bin
+# sudo cp piaf *.tcl /usr/local/piaf/bin
+# sudo ln -s /usr/local/piaf/bin/piaf /usr/local/bin/piaf

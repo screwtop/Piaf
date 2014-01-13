@@ -3,5 +3,59 @@
 # My simple Tcl/Tk text editor/idioter.
 
 
-# Basic one-line text editor to start with (Tcl/Tk, you rule!):
-pack [text .editor -wrap word] -fill both -expand 1
+wm title . Piaf
+
+
+# TODO: handle command-line arguments (open files, perhaps additional options for e.g. batch running of scripts)
+
+
+namespace eval ::piaf {}
+
+set ::status "Starting up…"
+
+# We use an SQLite database to keep track of recently modified files, collections of files making up projects, etc.
+package require sqlite3
+sqlite3 ::piaf::database ~/.piaf/data.db
+# TODO: create database if necessary?
+puts stderr "SQLite database opened, version [::piaf::database version]"
+
+source menus.tcl
+# TODO: toolbar?  Separate file.
+
+frame .editor
+pack .editor -side top -expand true -fill both
+
+# TODO: tidy up wrapping option setting.
+text .editor.text -wrap word -undo true
+set ::wrap_mode "Word Wrap"
+
+# Scrollbar for the main text (on the left, dammit!):
+scrollbar .editor.scrollbar -command [list .editor.text yview]
+.editor.text configure -yscrollcommand [list .editor.scrollbar set]
+
+pack .editor.text -side right -expand true -fill both
+pack .editor.scrollbar -side left -fill y
+
+
+# My font preference:
+.editor.text configure -font "LetterGothic12Pitch 10"
+
+# Apply a colour scheme:
+.editor.text configure -background #202020 -foreground white -selectbackground #FFFF80 -insertbackground green
+
+
+source functions.tcl	;# Text filters
+source commands.tcl	;# Editor command set
+
+
+
+# Statusbar things:
+source statusbar.tcl
+
+source bindings.tcl
+
+set ::status "Ready"
+# And from here we just enter the Tcl event loop.
+# It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
+# ...nd perhaps also a remote-control FIFO.
+

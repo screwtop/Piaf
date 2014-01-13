@@ -14,6 +14,10 @@ bind . <Control-a> select_all	;# TODO: remove built-in binding for text widget (
 #bind .editor.text <Control-x> cut
 #bind .editor.text <Control-c> copy
 #bind .editor.text <Control-v> paste
+
 bind . <Control-z> undo
 bind . <Control-f> find
+
+bind . <Control-o> prompt_open_file
+bind . <Control-s> save
 

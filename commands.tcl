@@ -20,13 +20,27 @@ proc cut {} {copy; delete}
 proc undo {} {.editor.text edit undo}
 proc redo {} {.editor.text edit redo}
 
+
 # File operations...
+
+# Record file operations in the database log:
+# How to determine hostname?  [info hostname] generally just returns the host name portion, not the domain name.  $env(??)?
+proc log_file_operation {filename operation} {
+	global env
+	set sql "insert into File_Log (Hostname, Username, Filename, Date_Performed, Operation) values ('[info hostname]', '$env(USER)', '$filename', current_timestamp, '$operation');"
+#	puts stderr $sql
+	::piaf::database eval $sql
+	# TODO: check for success?
+}
+
+
 
 # Or just plain "new"?
 proc new {} {
 	# TODO: check for unsaved changes?
 	set ::filename ""	;# OR unsert ::filename?
 	clear
+	set ::status "New"
 }
 
 # Create a new document and set the filename:
@@ -34,6 +48,7 @@ proc new_file {filename} {
 	# Should this actually create/touch the file, or just set the filename?
 	set ::filename $filename
 	clear
+	set ::status "New file"
 }
 
 # Open a file, replacing all current text:
@@ -48,17 +63,30 @@ proc open_file {filename} {
 
 # Load text from file (at current insert mark, keeping other text?):
 proc load {filename} {
+	set ::status "Loading…"
 	log_file_operation $filename LOAD
 	.editor.text insert insert [slurp $filename]
+	set ::status "File loaded"
 }
 
 # Reload/refresh from file:
 proc reload {} {
+	set ::status "Reloading…"
 	if {$::filename != ""} {
 		clear
 		load $::filename
 	}
+	set ::status "Reloaded"
 }
+
+
+# Prompt user for file to open:
+proc prompt_open_file {} {
+	# TODO: handle filename being empty?  Or do that in open_file itself?
+	open_file [tk_getOpenFile -title "Open text file for editing"]	;# -initialdir -initialfile -message "Select text file to open for editing"
+}
+
+
 
 # Save to already known filename
 proc save {} {
@@ -75,23 +103,35 @@ proc save_as {filename} {
 # TODO: some error handling?
 # Haha, my first test of this found a problem: attempting to write to an existing FIFO!  TODO: remedy.
 proc save_to {filename} {
+	set ::status "Saving…"
 	log_file_operation $filename SAVE
 	# Make backup/versioned copy always as well?
+	# file stat /tmp/test.txt file_stats
+	# file copy SOURCE TARGET
 	set file [open $filename w]
 	puts -nonewline $file [get_all]
 	close $file
+	set ::status "File saved"
 }
 
 
+# I think we need "Save As" and "Save To" prompted wrappers here too.
+# Prompt user for filename to save as:
+proc prompt_save_generic {} {
+	# TODO: handle filename being empty?  Or do that in 
+	tk_getSaveFile -title "Filename to save as" -confirmoverwrite true	;# -initialdir -initialfile
+}
 
-# Record file operations in the database log:
-# How to determine hostname?  [info hostname] generally just returns the host name portion, not the domain name.  $env(??)?
-proc log_file_operation {filename operation} {
-	global env
-	set sql "insert into File_Log (Hostname, Username, Filename, Date_Performed, Operation) values ('[info hostname]', '$env(USER)', '$filename', current_timestamp, '$operation');"
-#	puts stderr $sql
-	::edita::database eval $sql
-	# TODO: check for success?
+proc prompt_save_as {} {save_as [prompt_save_generic]}	;# Save here, and remember the filename
+
+proc prompt_save_to {} {save_to [prompt_save_generic]}	;# Save a copy here, but retain the current filename
+
+
+proc close_file {} {
+	# TODO: check for unsaved changes
+	set ::filename ""	;# or unset ::filename?
+	clear
+	set ::status "File closed"
 }
 
 
@@ -105,13 +145,18 @@ proc jump_to_line {line_number} {
 
 # Take selected text and open as URL in browser:
 proc open_selection_in_browser {} {
+	set ::status "Opening browser…"
 	exec firefox [string trim [get_selection]] 2> /dev/null &
 }
 
 proc search_web_for_selection {} {
 	# TODO: encode search terms for URL:
+	set ::status "Opening browser…"
 	exec firefox "https://www.google.co.nz/search?q=[get_selection]" 2> /dev/null &
 }
+
+# TODO: searches for selection in dictionary, Wikipedia, etc.
+
 
 # For simple text filters that require no additional arguments:
 proc transform {function text} {$function $text}
@@ -120,7 +165,9 @@ proc transform {function text} {$function $text}
 # Apply a text transformation function to the selected text, replacing it in the editor.
 # NOTE: currently does not handle the case of the "sel" mark having multiple ranges!
 # Also, somehow handle invoking this with no selection active.  Could maybe just do nothing if there's no selection...but this function might also be used for generators, in which case there might not be a selection.
+# TODO: currently this plays strangely with undo: the deletion counts as an extra operation.  Can we exempt that somehow?
 proc transform_selection {function} {
+	set ::status "Transforming…"
 	set initial_insert_mark [.editor.text index insert]	;# Remember initial insert point
 	set text [get_selection]	;# Copy original text
 	set transformed_text [$function $text]
@@ -132,22 +179,24 @@ proc transform_selection {function} {
 	.editor.text mark set insert $initial_insert_mark	;# Might be wrong? Esp. if sel changes size?
 	unset text
 	unset transformed_text
+	set ::status "Transformed"
 }
 
 # Might it make sense to have simple wrappers for transformation functions for use in scripts?
-proc rot13 {} {transform_selection ::edita::transform::rot13}
+proc rot13 {} {transform_selection ::piaf::transform::rot13}
 
 
 # For generator functions, it's much simpler:
 proc insert {text} {.editor.text insert insert $text}
 
-proc insert_ascii {} {insert [::edita::generate::ascii]}
+proc insert_ascii {} {insert [::piaf::generate::ascii]}
 
 
 proc quit_edita {} {
+	set ::status "Exiting…"
 	# TODO: Check for unsaved changes (and/or auto-save recovery files)
 	# Maybe prompt for user certainty regardless
 	# Log QUIT operation as well?
-	::edita::database close
+	::piaf::database close
 }
 

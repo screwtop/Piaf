@@ -1,17 +1,17 @@
 # Text processing functions for Edita
 
-namespace eval ::edita::transform {}
+namespace eval ::piaf::transform {}
 
 # Upper-/lower-case conversions:
-proc ::edita::transform::uppercase {s} {string toupper $s}
-proc ::edita::transform::lowercase {s} {string tolower $s}
-proc ::edita::transform::initcaps {s} {string totitle $s}
-proc ::edita::transform::randomcase {s} {
+proc ::piaf::transform::uppercase {s} {string toupper $s}
+proc ::piaf::transform::lowercase {s} {string tolower $s}
+proc ::piaf::transform::initcaps {s} {string totitle $s}
+proc ::piaf::transform::randomcase {s} {
 }
-proc ::edita::transform::reverse {s} {join [lreverse [split $s {}]] {}}
+proc ::piaf::transform::reverse {s} {join [lreverse [split $s {}]] {}}
 
 # Sort characters in alphabetical order (Unicode-aware?!):
-proc ::edita::transform::sort {s} {join [lsort [split $s {}]] {}}
+proc ::piaf::transform::sort {s} {join [lsort [split $s {}]] {}}
 
 #sort_lines
 
@@ -21,25 +21,29 @@ proc ::edita::transform::sort {s} {join [lsort [split $s {}]] {}}
 # Randomly permute lines in a selection
 
 # Tabs to spaces
-proc ::edita::transform::tabstospaces {s} {string map {"\t" "    "} $s}
+proc ::piaf::transform::tabstospaces {s} {string map {"\t" "    "} $s}
 
 # Spaces to tabs
-proc ::edita::transform::spacestotabs {s} {string map {"    " "\t"} $s}
+proc ::piaf::transform::spacestotabs {s} {string map {"    " "\t"} $s}
 
 # Remove trailing whitespace
-proc ::edita::transform::removetrailingwhitespace {s} {regsub -all {[\t ]+\n} $s "\n"}
+proc ::piaf::transform::removetrailingwhitespace {s} {regsub -all {[\t ]+\n} $s "\n"}
 
 # Normalise/collapse whitespace
 #string map {"\n" " " "\t" " "} 
 
-proc ::edita::transform::lflinebreaks {s} {regsub -all {[\r\n]+} $s "\n"}
-proc ::edita::transform::crlinebreaks {s} {regsub -all {[\r\n]+} $s "\r"}
-proc ::edita::transform::crlflinebreaks {s} {regsub -all {[\r\n]+} $s "\r\n"}
+proc ::piaf::transform::lflinebreaks {s} {regsub -all {[\r\n]+} $s "\n"}
+proc ::piaf::transform::crlinebreaks {s} {regsub -all {[\r\n]+} $s "\r"}
+proc ::piaf::transform::crlflinebreaks {s} {regsub -all {[\r\n]+} $s "\r\n"}
+
+# Unwrap lines.  Basically, remove single linebreaks (and remove double, triple, etc. linebreaks?).
+# Will this match the start/end of the entire document as well?  Dang corner cases...
+proc ::piaf::transform::unwrap {s} {regsub -all {([^\n])\n([^\n])} $s {\1\2}}
 
 # TODO: honour user preference for tabs/spaces for indenting?
 # TODO: also indent the first line if the selection starts at the start of a line
 # TODO: also don't add a new tab at end?  If the user selects a whole line, they probably don't want to indent the following line, even though technically they have selected the line break as well.
-proc ::edita::transform::indent {s} {
+proc ::piaf::transform::indent {s} {
 	if {[lindex [split [.editor.text index sel.first] {.}] 1] == 0} {
 		set s "\t$s"
 	}
@@ -56,15 +60,28 @@ proc ::edita::transform::indent {s} {
 # Zap gremlins"
 
 # rot-13, why not? :)
-proc ::edita::transform::rot13 {s} {
+proc ::piaf::transform::rot13 {s} {
 	string map [list A N B O C P D Q E R F S G T H U I V J W K X L Y M Z N A O B P C Q D R E S F T G U H V I W J X K Y L Z M a n b o c p d q e r f s g t h u i v j w k x l y m z n a o b p c q d r e s f t g u h v i w j x k y l z m] $s
 }
+
+
+# Function for shortening long filenames (primarily for use within the Piaf GUI itself, but maybe useful otherwise):
+# Kinda needs an argument for maximum acceptable result length, huh?
+proc abbreviate_filename {filename max_length} {
+	if {[string length $filename] < $max_length} {
+		return $filename
+	} else {
+		# TODO: something smarter!
+		return "..."
+	}
+}
+
 
 # Generate ASCII character table/set/list
 # Or should this be a command?  I think it's better as a function, even if it's not a transformation, and doesn't depend on the starting string.
 # Maybe have a namespace for generator functions
-namespace eval ::edita::generate {}
-proc ::edita::generate::ascii {} {
+namespace eval ::piaf::generate {}
+proc ::piaf::generate::ascii {} {
 	set result {}
 	# Start at 33 for only the printable characters
 	for {set i 33} {$i<127} {incr i} {
@@ -76,10 +93,10 @@ proc ::edita::generate::ascii {} {
 
 
 # Language-specific things can maybe go in separate files
-namespace eval ::edita::latex {}
+namespace eval ::piaf::latex {}
 # TODO: parameterise/prompt for details
 # Kinda need a file browser
-proc ::edita::latex::figure {} {insert {
+proc ::piaf::latex::figure {} {insert {
 \begin{figure}[htbp]
 	\begin{center}
 		\includegraphics[0.8\textwidth]{PATH}
