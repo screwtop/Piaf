@@ -65,6 +65,7 @@ source "$::binary_path/bindings.tcl"	;# Key event bindings
 # Check if a filename was specified on the command line:
 if {[llength $argv] > 0} {open_file [lindex $argv 0]}
 
+# Set things up ready for the user to edit the text:
 .editor.text mark set insert 0.0
 focus .editor.text
 
@@ -72,6 +73,7 @@ set ::status "Ready"
 
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
-# ...nd perhaps also a remote-control FIFO.
+# ...and perhaps also a remote-control FIFO.
+
 
 

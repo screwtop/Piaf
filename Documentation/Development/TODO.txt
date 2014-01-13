@@ -1,9 +1,15 @@
+
 TODO:
+
 
  - "Strip blank lines" transformation
  - "Remove duplicate characters/lines" transformations
  - Updating of line/column numbers in statusbar
  - Maybe have text transformations apply to the entire editor buffer if there is no selection active.
+ - Have install script accept a destination argument (and patch Piaf's script path accordingly?!)
+ - Have the file log normalise filenames for full path
+ - Record full hostname + domain name in file log
+ - Create appropriate database indexes
  - Handle multiple files?!?!
  - About, Help menus
  - Various menu items for commands
@@ -18,6 +24,9 @@ TODO:
 
 DONE:
 
+ - Factored out colour and font settings
+ - Window title now shows filename
+ - Set "insert" mark to 0.0 on startup/file load
  - Fixed browser variable references
  - "Sort lines" transformation and menu
  - Added separate settings file
@@ -39,4 +48,5 @@ DONE:
  - Made SQL DDL script at least syntactically valid
  - Added beginnings of an install script
  - Rearranged main menu order slightly
+
 
