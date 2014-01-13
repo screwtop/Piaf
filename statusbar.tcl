@@ -2,6 +2,8 @@
 
 # Want menubuttons for line endings, font fixed/proportional, wrap mode, insert/overstrike, font, font size, etc. would be nice.  Oh, display of the filename, perhaps...editing time, undo history length...
 
+# TODO: suitable padding for these
+
 
 pack [frame .statusbar] -fill x -expand 0
 
@@ -30,16 +32,45 @@ pack [label .statusbar.filename -textvariable ::filename] -side left
 
 
 # Live line-column display ("insert" mark) (including number of lines and characters in selection!)
-label .statusbar.position -textvariable ::insert_position
+label .statusbar.position -textvariable ::insert_position -relief sunken
 pack .statusbar.position -side right
 # TODO: figure out how to bind an event handler to changes to the insert mark.  You can do it with tags (.editor.text tag bind ...).
 # Might be nice to format the line-column value for ease of interpretation, e.g. L12:C23 (for Line and Column).
-set ::insert_position "R[join [split [.editor.text index insert] .] {:C}]"
+set ::insert_position "L[join [split [.editor.text index insert] .] {:C}]"
 
 
 # Status/last operation/action performed:
-pack [label .statusbar.status -textvariable ::status] -side right
+pack [label .statusbar.status -textvariable ::status -relief sunken] -side right
+
+
+# Selection details:
+
+pack [label .statusbar.selection -textvariable ::selection_status -relief sunken] -side right
+set ::selection_status "sel:none"
+
+bind .editor.text <<Selection>> {
+#	puts stderr <<Selection>>
+	# Selection might have changed to be no selection, so need to catch and perform a little extra logic here.
+	set selection ""
+	catch {set selection [get_selection]}
+	if {$selection != ""} {
+	#	puts stderr "<<$selection>>"
+		# TODO: a sensible way to count the lines here.  Number of linebreaks sometimes doesn't make sense, but a selection that starts partway through...
+		# Ah, the basic problem is that triple-clicking includes the linebreak in the selection.
+#		puts stderr "chars:[string length $selection], lines:[expr {[llength [split $selection \"\n\"]] - 1}]"
+		set ::selection_status "sel:[string length $selection]C,[llength [split $selection \"\n\"]]L"
+	} else {
+		set ::selection_status "sel:none"
+	}
+	unset selection
+}
+
+# Interestingly, the <<Selection>> event is triggered even if the actual selection range doesn't change - a pixel's mouse movement is enough.
+# Also, a strange thing happens when using shift+cursor keys to select no range: it reports a selection of 1 char, not 0!  I think it's a weirdness in how the Tk text widget built-in selection stuff works.
+
 
 # TODO: live counts of characters, lines and maybe words
+
+
 
 
