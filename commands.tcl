@@ -23,7 +23,7 @@ proc redo {} {.editor.text edit redo}
 
 # File operations...
 
-# Record file operations in the database log:
+# Because I'm a database fanatic, let's record file operations in a log:
 # How to determine hostname?  [info hostname] generally just returns the host name portion, not the domain name.  $env(??)?
 proc log_file_operation {filename operation} {
 	global env
@@ -32,7 +32,6 @@ proc log_file_operation {filename operation} {
 	::piaf::database eval $sql
 	# TODO: check for success?
 }
-
 
 
 # A "file-slurp" function (read the entire contents of a file into a variable) abstraction:
@@ -64,10 +63,14 @@ proc new_file {filename} {
 # Don't override built-in [open]!
 proc open_file {filename} {
 #	log_file_operation $filename OPEN	;# Don't bother - just log centrally in "load" proc.
-	# Remember filename globally
-	set ::filename $filename
-	clear
-	load $filename
+	if {$filename != ""} {
+		# Remember filename globally
+		set ::filename $filename
+		clear
+		load $filename
+	} else {
+		set ::status "Cancelled/No file specified"
+	}
 }
 
 # Load text from file (at current insert mark, keeping other text?):
@@ -116,6 +119,10 @@ proc save_as {filename} {
 # TODO: some error handling?
 # Haha, my first test of this found a problem: attempting to write to an existing FIFO!  TODO: remedy.
 proc save_to {filename} {
+	if {$filename == ""} {
+		set ::status "Cancelled/No file specified"
+		return
+	}
 	set ::status "Saving…"
 	log_file_operation $filename SAVE
 	# Make backup/versioned copy always as well?
