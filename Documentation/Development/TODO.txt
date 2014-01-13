@@ -1,0 +1,42 @@
+TODO:
+
+ - "Strip blank lines" transformation
+ - "Remove duplicate characters/lines" transformations
+ - Updating of line/column numbers in statusbar
+ - Maybe have text transformations apply to the entire editor buffer if there is no selection active.
+ - Handle multiple files?!?!
+ - About, Help menus
+ - Various menu items for commands
+ - Generic error dialog?
+ - Find/Search dialog/toolbar/popup thingy
+ - Lexical colouring/highlighting for various languages
+ - Language-specific Insert submenu(s)?
+	including a language-sensitive "strip comment lines" transformation
+ - Folding
+
+
+
+DONE:
+
+ - Fixed browser variable references
+ - "Sort lines" transformation and menu
+ - Added separate settings file
+ - Reference menu, with Wikipedia, Google, etc. searches
+ - Set focus to text widget on startup
+ - Menu item for New
+ - Handle file load/save dialogs returning no filename/empty string
+ - Handle nonexistent file passed on command line
+ - Don't CWD, just prepend the installation binary path
+ - Basic command-line argument handling
+ - Change directory at startup so support scripts can be sourced
+ - Fixed path errors in install script
+ - Added file slurp proc (I'd previously relied on the one in my ~/.tclshrc!)
+ - Implemented commands, menus and bindings for basic file operations
+ - Split out statusbar functions into new file
+ - Added filename to statusbar
+ - Added operation status to statusbar
+ - Basic command-line argument handling
+ - Made SQL DDL script at least syntactically valid
+ - Added beginnings of an install script
+ - Rearranged main menu order slightly
+
