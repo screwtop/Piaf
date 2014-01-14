@@ -166,12 +166,68 @@ proc close_file {} {
 
 
 
+# Navigation commands:
+
 # TODO: command: jump to line x.
 proc jump_to_line {line_number} {
 }
 
 
 # TODO: support for opening a file from a URL?  Maybe callout to wget/curl?
+
+
+
+# Search
+#  - from here or from start by default?
+#  - dialog child window or panel element?  Would prefer non-obscuring panel really..have it always there and just show/hide?  Top or bottom?  Or side, maybe (for those with widescreen displays)?
+# - interaction with folding?
+# - Elided text???
+
+# Whoops - misunderstood: -count returns number of chars, not number of occurrences found.
+
+proc find {search_term} {
+	set match_length 0
+
+	# Where should the search start?  Start of document or current "insert" mark?  If there's a selection (especially one from a previous search for the same search_term), we should probably search from the end of that.
+	set search_start [.editor.text index insert]
+	set selection_range [lindex [.editor.text tag ranges sel] end]	;# the "sel" range could consist of multiple ranges; grab the last one! (TODO: what if searching backwards?!)
+#	puts stderr "selection_range = $selection_range"
+	if {$selection_range != ""} {
+		# Hmm, the ranges will be coming in pairs.  I guess it's enough just to grab the last one, which will always be the end of the last selection.
+		set search_start $selection_range
+	#	set search_start [lindex $selection_range 1]
+	}
+#	puts stderr "search_start = $search_start"
+
+	set search_result [.editor.text search -count match_length $search_term $search_start end]
+#	puts stderr "match_length = $match_length"
+#	puts stderr "search_result = $search_result"
+
+	# Proceed only if something found:
+	if {$match_length > 0} {
+		set ::status "Found"
+		.editor.text tag add sel $search_result "$search_result + $match_length chars"
+#		.editor.text tag add sel $search_result "$search_result + [string length $search_term] chars"
+		.editor.text see $search_result
+		.editor.text mark set insert $search_result
+	} else {
+		puts stderr "\"$search_term\" not found."
+		set ::status "Not found"
+	}
+	unset match_length
+	unset selection_range
+	unset search_start
+}
+
+# Interestingly, each search continues adding ranges to the selection. :)  Could be good to make use of that...
+
+
+
+
+
+
+# Reference commands, including Web searches and the like:
+
 
 # Take selected text and open as URL in browser:
 proc open_selection_in_browser {} {
@@ -250,6 +306,7 @@ proc quit {} {
 		# TODO: prompt or whatever
 	}
 }
+
 
 
 

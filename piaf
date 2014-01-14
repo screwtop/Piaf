@@ -58,6 +58,7 @@ pack .editor.scrollbar -side left -fill y
 
 source "$::binary_path/functions.tcl"	;# Text filters
 source "$::binary_path/commands.tcl"	;# Editor command set
+source "$::binary_path/find_panel.tcl"	;# Togglable simple Find panel
 source "$::binary_path/statusbar.tcl"
 source "$::binary_path/bindings.tcl"	;# Key event bindings
 
@@ -74,6 +75,7 @@ set ::status "Ready"
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
+
 
 
 

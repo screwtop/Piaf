@@ -16,8 +16,9 @@ bind . <Control-a> select_all	;# TODO: remove built-in binding for text widget (
 #bind .editor.text <Control-v> paste
 
 bind . <Control-z> undo
-bind .editor.text <Control-f> break	;# Remove default text widget binding
-bind . <Control-f> find
+# Find bindings now in find_panel.tcl
+#bind .editor.text <Control-f> break	;# Remove default text widget binding
+#bind . <Control-f> find
 
 bind .editor.text <Control-o> break	;# Remove default text widget binding
 bind . <Control-o> {prompt_open_file}
