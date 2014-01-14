@@ -38,12 +38,14 @@ pack .statusbar.wrapping -side left
 
 # Filename display:
 pack [label .statusbar.filename -textvariable ::filename -font $::fixed_gui_font] -side left
+setTooltip .statusbar.filename "Current filename"
 
 
 
 # Live line-column display ("insert" mark) (including number of lines and characters in selection!)
 label .statusbar.position -textvariable ::insert_position -relief sunken -font $::fixed_gui_font -width 12
 pack .statusbar.position -side right
+setTooltip .statusbar.position "Cursor position (Line:Column)"
 # TODO: figure out how to bind an event handler to changes to the insert mark.  You can do it with tags (.editor.text tag bind ...).
 # Might be nice to format the line-column value for ease of interpretation, e.g. L12:C23 (for Line and Column).
 # In the meantime, we'll use a scheduled approach:
@@ -52,11 +54,12 @@ every 50 {set ::insert_position "L[join [split [.editor.text index insert] .] {:
 
 # Status/last operation/action performed:
 pack [label .statusbar.status -textvariable ::status -relief sunken -font $::fixed_gui_font -width 15] -side right
-
+setTooltip .statusbar.status "File status"
 
 # Character/Word/Line count:
 
 pack [label .statusbar.stats -textvariable ::size_status -relief sunken -font $::fixed_gui_font -width 20] -side right
+setTooltip .statusbar.stats "Character, word, line count"
 
 proc update_size_status {} {
 	set text [get_all]
@@ -73,6 +76,7 @@ every 1000 update_size_status
 # Selection details:
 
 pack [label .statusbar.selection -textvariable ::selection_status -relief sunken -font $::fixed_gui_font -width 18] -side right
+setTooltip .statusbar.selection "Selection range (chars, lines)"
 set ::selection_status "sel:none"
 
 bind .editor.text <<Selection>> {
@@ -97,10 +101,4 @@ bind .editor.text <<Selection>> {
 
 
 # TODO: live counts of characters, lines and maybe words
-
-
-
-
-
-
 

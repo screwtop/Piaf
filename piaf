@@ -29,6 +29,7 @@ sqlite3 ::piaf::database ~/.piaf/data.db
 # TODO: create database if necessary?
 puts stderr "SQLite database opened, version [::piaf::database version]"
 
+source "$::binary_path/tooltips.tcl"
 source "$::binary_path/menus.tcl"
 # TODO: toolbar?  Separate file.
 
