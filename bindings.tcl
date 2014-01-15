@@ -28,11 +28,12 @@ bind . <Control-s> save
 bind . <Control-w> close_file
 bind . <Control-q> quit
 
+# Bindings for .editor.text <<Modified>> now in text_modification_tracking.tcl
 #bind .editor.text <<Modified>> {puts stderr modified; set ::status Modified}
-bind .editor.text <<Modified>> {
-#	puts stderr modified
-	if {[.editor.text edit modified]} {set ::status Modified}
-}
+#bind .editor.text <<Modified>> {
+##	puts stderr modified
+#	if {[.editor.text edit modified]} {set ::status Modified}
+#}
 # TODO: Could possibly want to log the file modification event to the file log as well (the event is only triggered by the first modification).
 # Interestingly (and kind of annoyingly), the act of setting the "modified" flag to false also triggers the <<Modified>> event!
 

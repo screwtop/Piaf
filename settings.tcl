@@ -1,7 +1,8 @@
 # Various settings for Piaf text editor
 # Can be overridden by those in ~/.piaf/settings.tcl
 
-set ::background_colour #202020
+set ::void_colour black	;# The colour of no text
+set ::background_colour #202020	;# Background colour of the text extent
 set ::text_colour white
 set ::selectbackground_colour #FFFF80
 set ::insertbackground_colour green

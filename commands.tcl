@@ -48,20 +48,23 @@ proc slurp {filename} {
 
 # Or just plain "new"?
 proc new {} {
-	# TODO: check for unsaved changes?
+	check_for_unsaved_changes
 	set ::filename ""	;# OR unsert ::filename?
 	clear
-	.editor.text edit modified false
+	set ::unsaved false
+#	.editor.text edit modified false
 	set ::status "New"
 }
 
 # Create a new document and set the filename:
 # Maybe do away with new and just allow calling "new_file {}"?  They're otherwise just the same.  Or make the "filename" arg optional?
 proc new_file {filename} {
+	check_for_unsaved_changes
 	# Should this actually create/touch the file, or just set the filename?
 	set ::filename $filename
 	clear
-	.editor.text edit modified false
+	set ::unsaved false
+#	.editor.text edit modified false
 	set ::status "New file"
 }
 
@@ -90,7 +93,8 @@ proc load {filename} {
 		unset message
 		return
 	}
-	.editor.text edit modified false	;# Reset modification flag
+	set ::unsaved false
+#	.editor.text edit modified false	;# Reset modification flag
 	log_file_operation $filename LOAD
 	set ::status "File loaded"
 }
@@ -98,6 +102,7 @@ proc load {filename} {
 # Reload/refresh from file:
 proc reload {} {
 	set ::status "Reloading…"
+	check_for_unsaved_changes
 	if {$::filename != ""} {
 		clear
 		load $::filename
@@ -108,6 +113,7 @@ proc reload {} {
 
 # Prompt user for file to open:
 proc prompt_open_file {} {
+	check_for_unsaved_changes
 	# TODO: handle filename being empty?  Or do that in open_file itself?
 	open_file [tk_getOpenFile -title "Open text file for editing"]	;# -initialdir -initialfile -message "Select text file to open for editing"
 }
@@ -116,7 +122,11 @@ proc prompt_open_file {} {
 
 # Save to already known filename
 proc save {} {
-	save_to $::filename	;# Re-use save_to proc
+	if {$::filename == ""} {
+		prompt_save_as
+	} else {
+		save_to $::filename	;# Re-use save_to proc
+	}
 }
 
 # Save to specific filename and remember it:
@@ -141,7 +151,8 @@ proc save_to {filename} {
 	set file [open $filename w]
 	puts -nonewline $file [get_all]	;# Hmm, even with -nonewline we're ending up with extra creeping newlines appearing each time we save (or open?).  TODO: fix.
 	close $file
-	.editor.text edit modified false	;# Reset modification flag
+	set ::unsaved false
+#	.editor.text edit modified false	;# Reset modification flag
 	set ::status "File saved"
 }
 
@@ -150,7 +161,8 @@ proc save_to {filename} {
 # Prompt user for filename to save as:
 proc prompt_save_generic {} {
 	# TODO: handle filename being empty?  Or do that in 
-	tk_getSaveFile -title "Filename to save as" -confirmoverwrite true	;# -initialdir -initialfile
+	# NOTE: -confirmoverwrite not really widely available enough (not in Tk 8.5.8?!)
+	tk_getSaveFile -title "Filename to save as"	;# -initialdir -initialfile -confirmoverwrite true
 }
 
 proc prompt_save_as {} {save_as [prompt_save_generic]}	;# Save here, and remember the filename
@@ -160,10 +172,11 @@ proc prompt_save_to {} {save_to [prompt_save_generic]}	;# Save a copy here, but 
 
 # Isn't this basically the same as "new"?
 proc close_file {} {
-	# TODO: check for unsaved changes
+	check_for_unsaved_changes
 	set ::filename ""	;# or unset ::filename?
 	clear
-	.editor.text edit modified false
+	set ::unsaved false
+#	.editor.text edit modified false
 	set ::status "File closed"
 }
 
@@ -319,6 +332,7 @@ proc transform_selection {function} {
 	.editor.text mark set insert $initial_insert_mark	;# Might be wrong? Esp. if sel changes size?
 	unset text
 	unset transformed_text
+	event generate .editor.text <<Modified>>
 	set ::status "Transformed"
 }
 
@@ -334,19 +348,12 @@ proc insert_ascii {} {insert [::piaf::generate::ascii]}
 
 proc quit {} {
 	set ::status "Exiting…"
-	# TODO: Check for unsaved changes (and/or auto-save recovery files)
-	if {![.editor.text edit modified]} {
-		# Maybe prompt for user certainty regardless
-		# Log QUIT operation as well?
-		::piaf::database close
-		exit
-	} else {
-		set ::status "Unsaved changes!"
-		# TODO: prompt or whatever
-	}
+	# Check for unsaved changes (and/or auto-save recovery files)
+	check_for_unsaved_changes
+#	if {![.editor.text edit modified]} {}
+	# Maybe prompt for user certainty regardless?
+	# Log QUIT operation as well?
+	::piaf::database close
+	exit
 }
-
-
-
-
 

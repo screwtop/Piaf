@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 
-# My simple Tcl/Tk text editor/idioter.
+# My (increasingly less) simple Tcl/Tk text editor/idioter.
 
 
 wm title . Piaf
@@ -59,12 +59,33 @@ pack .editor.scrollbar -side left -fill y
 
 source "$::binary_path/functions.tcl"	;# Text filters
 source "$::binary_path/commands.tcl"	;# Editor command set
-source "$::binary_path/find_panel.tcl"	;# Togglable simple Find panel
+source "$::binary_path/find_panel.tcl"	;# Toggleable simple Find panel
+source "$::binary_path/unsaved_panel.tcl"	;# Toggleable panel for dealing with unsaved changes
 source "$::binary_path/statusbar.tcl"
+source "$::binary_path/current_line_highlighting.tcl"	;# Must go before text_modification_tracking!
+source "$::binary_path/text_modification_tracking.tcl"	;# Important for detecting unsaved changes, and also includes colouring the "void" beyond EOF differently from the editor text extent.
 source "$::binary_path/insert_mark_tracking.tcl"	;# Generating virtual events for motion of the "insert" mark (cursor position)
-source "$::binary_path/current_line_highlighting.tcl"
 source "$::binary_path/bindings.tcl"	;# Key event bindings
 catch {source ~/.piaf/bindings.tcl}	;# User can override and add their own too
+
+# Apply new grid layout:
+# (TODO: remove existing pack calls that are made redundant by this)
+
+set ::main_column 0	;# For when we add some sidebars
+# TODO: maybe a row counter variable as well?  IIRC that's how we managed it in TclJACK.
+grid columnconfigure . $::main_column -weight 1	;# Main column should fill the width of the window
+# "grid slaves ." to find children
+grid configure .menubar   -row 0 -column $::main_column -sticky ew
+grid configure .editor    -row 1 -column $::main_column -sticky nsew; grid rowconfigure . 1 -weight 1
+grid configure .unsaved   -row 2 -column $::main_column -sticky ew
+grid configure .search    -row 3 -column $::main_column -sticky ew
+grid configure .statusbar -row 4 -column $::main_column -sticky ew
+
+grid forget .unsaved
+grid forget .search
+# TODO: procs to restore those togglable frames.
+
+# That's it for the GUI layout.
 
 
 # Check if a filename was specified on the command line:
