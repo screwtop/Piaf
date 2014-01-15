@@ -24,6 +24,7 @@ every 10 detect_insert_mark_motion
 bind .editor.text <<Motion>> {update_current_line_highlighting; update_insert_mark_display %d}
 
 # Ping it once at startup to initialise the display:
-event generate .editor.text <<Motion>> -data 1.0
+#event generate .editor.text <<Motion>> -data 1.0
 # How come that doesn't work?
+#	Indeed, how comes it doesn't work but doesn't cause an error on Marvin, but fails at startup on Zaphod?  Race condition with opening GUI maybe?
 

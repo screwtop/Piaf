@@ -9,6 +9,7 @@
 
 # Create database (in user's home?)
 #echo -n "Setting up user's database..."
+install-db.sh
 #mkdir -p ~/.piaf
 #rm -f ~/.piaf/data.db
 #echo .exit | sqlite3 -batch -bail -init schema.sql ~/.piaf/data.db

@@ -29,8 +29,12 @@ proc ::piaf::transform::spaces_to_tabs {s} {string map {"    " "\t"} $s}
 # Remove trailing whitespace
 proc ::piaf::transform::remove_trailing_whitespace {s} {regsub -all {[\t ]+\n} $s "\n"}
 
+# Strip blank lines:
+proc ::piaf::transform::strip_blank_lines {s} {regsub -all {\n\n+} $s "\n"}
+# TODO: maybe treat lines containing only whitespace as blank?  User could just remove trailing whitespace first, then strip blank lines.
+
 # Normalise/collapse whitespace
-#string map {"\n" " " "\t" " "} 
+proc ::piaf::transform::collapse_whitespace {s} {regsub -all "\[\r\n\t \]+" $s " "}
 
 proc ::piaf::transform::lflinebreaks {s} {regsub -all {[\r\n]+} $s "\n"}
 proc ::piaf::transform::crlinebreaks {s} {regsub -all {[\r\n]+} $s "\r"}
@@ -53,7 +57,7 @@ proc ::piaf::transform::indent {s} {
 
 # Smarten quotes
 
-# Add quotes
+# Add quotes around selection
 
 # Remove punctuation
 
@@ -106,5 +110,6 @@ proc ::piaf::latex::figure {} {insert {
 \end{figure}
 }
 }
+
 
 

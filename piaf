@@ -1,6 +1,6 @@
-#!/usr/bin/wish
+#!/usr/bin/wish8.5
 
-# My simple Tcl/Tk text editor/idioter.
+# My (increasingly less) simple Tcl/Tk text editor/idioter.
 
 
 wm title . Piaf
@@ -24,10 +24,27 @@ source "$::binary_path/settings.tcl"	;# Load system-wide settings first...
 catch {source ~/.piaf/settings.tcl}		;# ...then any user-defined settings.
 
 # We use an SQLite database to keep track of recently modified files, collections of files making up projects, etc.
-package require sqlite3
-sqlite3 ::piaf::database ~/.piaf/data.db
-# TODO: create database if necessary?
-puts stderr "SQLite database opened, version [::piaf::database version]"
+if {[catch {package require sqlite3} message]} {
+	# No sqlite3
+	puts stderr $message
+	puts stderr "sqlite3 library for Tcl not found; please install it for greater functionality"
+	puts stderr "	e.g. sudo apt-get install libsqlite3-tcl"
+	set ::use_database false
+} else {
+	# We do have the sqlite3 library at least...
+	# Now see if we have a user database:
+	# TODO: fix: this doesn't work at present (sqlite3 will create the database implicitly if it doesn't exist!)
+	if {[catch {sqlite3 ::piaf::database ~/.piaf/data.db} message]} {
+		# Could not open.  Perhaps it doesn't exist.  If so, create it.  If something else, give up?  How do we tell?  We just get "unable to open database file" if it fails.  And SQLite's [errorcode] is only available for an open database.
+		# The install script should have created the database anyway.
+		puts stderr $message
+		puts stderr "Try running the install script to create the user database (~/.piaf/data.db)."
+	} else {
+		puts stderr "SQLite database opened, version [::piaf::database version]"
+		set ::use_database true
+	}
+}
+
 
 source "$::binary_path/tooltips.tcl"
 source "$::binary_path/menus.tcl"
@@ -37,6 +54,7 @@ frame .editor
 pack .editor -side top -expand true -fill both
 
 # TODO: tidy up wrapping option setting.
+# Most of the editor happens in this one line, thanks to Tk's great text widget:
 text .editor.text -wrap word -undo true -height 10 -width 80
 set ::wrap_mode "Word Wrap"
 
@@ -50,6 +68,8 @@ pack .editor.scrollbar -side left -fill y
 
 # Apply font preference:
 .editor.text configure -font $::font
+.editor.text configure -spacing1 $::line_padding -spacing3 $::line_padding
+# -spacing2 is for wrapped lines, and we kinda want to emphasise that they are just one line, so leave that at 0.
 
 # Apply a colour scheme:
 .editor.text configure -background $::background_colour -foreground $::text_colour -selectbackground $::selectbackground_colour -insertbackground $::insertbackground_colour
@@ -59,12 +79,33 @@ pack .editor.scrollbar -side left -fill y
 
 source "$::binary_path/functions.tcl"	;# Text filters
 source "$::binary_path/commands.tcl"	;# Editor command set
-source "$::binary_path/find_panel.tcl"	;# Togglable simple Find panel
+source "$::binary_path/find_panel.tcl"	;# Toggleable simple Find panel
+source "$::binary_path/unsaved_panel.tcl"	;# Toggleable panel for dealing with unsaved changes
 source "$::binary_path/statusbar.tcl"
+source "$::binary_path/current_line_highlighting.tcl"	;# Must go before text_modification_tracking!
+source "$::binary_path/text_modification_tracking.tcl"	;# Important for detecting unsaved changes, and also includes colouring the "void" beyond EOF differently from the editor text extent.
 source "$::binary_path/insert_mark_tracking.tcl"	;# Generating virtual events for motion of the "insert" mark (cursor position)
-source "$::binary_path/current_line_highlighting.tcl"
 source "$::binary_path/bindings.tcl"	;# Key event bindings
 catch {source ~/.piaf/bindings.tcl}	;# User can override and add their own too
+
+# Apply new grid layout:
+# (TODO: remove existing pack calls that are made redundant by this)
+
+set ::main_column 0	;# For when we add some sidebars
+# TODO: maybe a row counter variable as well?  IIRC that's how we managed it in TclJACK.
+grid columnconfigure . $::main_column -weight 1	;# Main column should fill the width of the window
+# "grid slaves ." to find children
+grid configure .menubar   -row 0 -column $::main_column -sticky ew
+grid configure .editor    -row 1 -column $::main_column -sticky nsew; grid rowconfigure . 1 -weight 1
+grid configure .unsaved   -row 2 -column $::main_column -sticky ew
+grid configure .search    -row 3 -column $::main_column -sticky ew
+grid configure .statusbar -row 4 -column $::main_column -sticky ew
+
+grid forget .unsaved
+grid forget .search
+# TODO: procs to restore those togglable frames.
+
+# That's it for the GUI layout.
 
 
 # Check if a filename was specified on the command line:
@@ -77,9 +118,15 @@ focus .editor.text
 # (Optionally?) start the Frink server:
 start_frinkserver
 
+wm protocol . WM_DELETE_WINDOW quit
+
 set ::status "Ready"
 
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
+
+
+
+
 
