@@ -89,7 +89,7 @@ bind .editor.text <<Selection>> {
 		# TODO: a sensible way to count the lines here.  Number of linebreaks sometimes doesn't make sense, but a selection that starts partway through...
 		# Ah, the basic problem is that triple-clicking includes the linebreak in the selection.
 #		puts stderr "chars:[string length $selection], lines:[expr {[llength [split $selection \"\n\"]] - 1}]"
-		set ::selection_status "sel:[string length $selection]C,[llength [split $selection \"\n\"]]L"
+		set ::selection_status "sel:[string length $selection]C,[llength [split $selection \n]]L"
 	} else {
 		set ::selection_status "sel:none"
 	}
