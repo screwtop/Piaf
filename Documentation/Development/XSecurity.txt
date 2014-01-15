@@ -1,0 +1,18 @@
+On Marvin, I could use Tk's [send] command with abandon.  But trying Piaf on Zaphod, I get:
+"X server insecure (must use xauth-style authorization); command ignored"
+
+This has more info:
+http://wiki.tcl.tk/1829
+
+http://wiki.tcl.tk/1831
+
+Ah, Tk doesn't like ANY kind of authentication enabled through xhost.
+To disable:
+
+#!/bin/sh
+for host in `xhost | sed 1d` ; do
+  echo removing $host from access control list
+  xhost -$host
+done
+echo removing general access from access control list
+xhost -
