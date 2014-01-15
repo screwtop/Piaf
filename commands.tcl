@@ -3,8 +3,11 @@
 # I could also imagine these being used in scripts, either for remotely controlling the application, or just for automating actions within it.
 
 proc select_all {} {.editor.text tag add sel 0.0 end}
+proc select_current_line {} {.editor.text tag add sel "insert linestart" "insert lineend"}
 proc get_selection {} {.editor.text get sel.first sel.last}	;# TODO: what if there are multiple selection ranges?  It can happen!
 proc get_all {} {.editor.text get 0.0 end}	;# TODO: does this add a trailing linebreak?!
+proc get_current_line {} {.editor.text get "insert linestart" "insert lineend"}
+proc get_line {line_number} {.editor.text get "$line_number.0 linestart" "$line_number.0 lineend"}
 
 proc copy {} {clipboard clear; clipboard append [.editor.text get sel.first sel.last]}
 proc paste {} {.editor.text insert insert [clipboard get]}	;# TODO: if a selection was active when pasting, should the newly pasted region become the selection range?
@@ -189,13 +192,12 @@ proc find {search_term} {
 	set match_length 0
 
 	# Where should the search start?  Start of document or current "insert" mark?  If there's a selection (especially one from a previous search for the same search_term), we should probably search from the end of that.
-	set search_start [.editor.text index insert]
-	set selection_range [lindex [.editor.text tag ranges sel] end]	;# the "sel" range could consist of multiple ranges; grab the last one! (TODO: what if searching backwards?!)
-#	puts stderr "selection_range = $selection_range"
-	if {$selection_range != ""} {
+	set search_start [.editor.text index insert]	;# Default starting position is the "insert" mark.
+	# Now we see if we can override that with the end of the current selection:
+	set selection_end [lindex [.editor.text tag ranges sel] end]	;# the "sel" range could consist of multiple ranges; grab the last one! (TODO: what if searching backwards?!)
+	if {$selection_end != ""} {
 		# Hmm, the ranges will be coming in pairs.  I guess it's enough just to grab the last one, which will always be the end of the last selection.
-		set search_start $selection_range
-	#	set search_start [lindex $selection_range 1]
+		set search_start $selection_end
 	}
 #	puts stderr "search_start = $search_start"
 
@@ -258,6 +260,42 @@ proc search_wiktionary_for_selection {} {
 }
 
 
+# Callouts to the awesome Frink calculator:
+
+proc start_frinkserver {} {
+	# We can share one frinkserver among multiple Piaf instances. Only launch frinkserver if it's not already running:
+	if {[catch {send frinkserver {puts stderr {Piaf instance connected}}}]} {
+		exec "$::binary_path/frinkserver.tcl" >& /dev/null &
+	}
+}
+
+proc stop_frinkserver {} {
+	catch {send frinkserver {quit}}
+}
+
+# Assuming background frinkserver.tcl is running:
+proc frink {expression} {send frinkserver [list frink $expression]}	;# Internal command for running Frink expressions
+
+# Higher-level command for evaluating editor text in Frink and inserting the result in the document
+# TODO: cater for multiple selection ranges?!  Perhaps iterate through them all, evaluating each one.
+proc frink_eval {} {
+	set expression ""
+	# Figure out what text to send to Frink for evaluation:
+	if {[.editor.text tag ranges sel] != ""} {
+		# Use selection if it exists
+		set expression [get_selection]
+		.editor.text mark set insert [lindex [.editor.text tag ranges sel] end]	;# Jump to end of current (or at least last!) selection
+	} else {
+		# Otherwise the current line
+		set expression [get_current_line]
+		.editor.text mark set insert "insert lineend"	;# Jump to end of current line
+	}
+	set result [frink $expression]
+	if {$result != ""} {insert "\n$result"}
+
+	unset result
+	unset expression
+}
 
 # For simple text filters that require no additional arguments:
 proc transform {function text} {::piaf::transform::$function $text}

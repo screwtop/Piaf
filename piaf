@@ -37,7 +37,7 @@ frame .editor
 pack .editor -side top -expand true -fill both
 
 # TODO: tidy up wrapping option setting.
-text .editor.text -wrap word -undo true
+text .editor.text -wrap word -undo true -height 10 -width 80
 set ::wrap_mode "Word Wrap"
 
 # Scrollbar for the main text (on the left, dammit!):
@@ -70,6 +70,13 @@ if {[llength $argv] > 0} {open_file [lindex $argv 0]}
 # Set things up ready for the user to edit the text:
 .editor.text mark set insert 0.0
 focus .editor.text
+
+# (Optionally?) start the Frink server:
+start_frinkserver
+# There only needs to be one running, which can be shared by all Piaf instances.  Check and start if necessary:
+#if {[catch {send frinkserver {puts stderr {Piaf instance connected}}}]} {
+#	exec "$::binary_path/frinkserver.tcl" 2> /dev/null &
+#}
 
 set ::status "Ready"
 

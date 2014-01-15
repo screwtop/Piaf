@@ -95,6 +95,9 @@ menu .menubar.reference
 	.menubar.reference add command -label "Search Wikipedia" -command search_wikipedia_for_selection
 	.menubar.reference add command -label "Search Google" -command search_web_for_selection
 	.menubar.reference add command -label "Open URL in browser" -command open_selection_in_browser
+	.menubar.reference add command -label "Evaluate in Frink" -command frink_eval
+	.menubar.reference add command -label "Start Frink server" -command start_frinkserver
+	.menubar.reference add command -label "Terminate Frink server" -command stop_frinkserver
 .menubar add cascade -label "Reference" -menu .menubar.reference -underline 0
 
 
