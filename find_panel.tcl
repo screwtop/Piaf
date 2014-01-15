@@ -7,7 +7,7 @@ pack [entry .search.entry -width 20 -textvariable ::search_term] -side left
 # TODO: clear field button, prev/next buttons, found/not found status, maybe count of matches
 # ...
 
-pack [button .search.next -text "Next \u2192" -command [list find $::search_term]] -side left
+pack [button .search.next -text "Next \u2192" -command {find $::search_term}] -side left
 
 bind .search.entry <Return> {find $::search_term}
 

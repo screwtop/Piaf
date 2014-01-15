@@ -217,7 +217,7 @@ proc find {search_term} {
 		set ::status "Not found"
 	}
 	unset match_length
-	unset selection_range
+	unset selection_end
 	unset search_start
 }
 
