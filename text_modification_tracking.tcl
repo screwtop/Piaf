@@ -15,6 +15,7 @@ proc check_for_unsaved_changes {} {
 		set ::status "Unsaved changes!"
 		puts stderr "Unsaved changes! Awaiting user choice..."
 		grid configure .unsaved   -row 2 -column $::main_column -sticky ew	;# Show "Unsaved Changes" panel
+		focus .unsaved.save
 		# Maybe this is one instance where a modal dialog would actually be appropriate...!  Need to pause here until the user has made their decision.
 	#	check_for_unsaved_changes	;# Ha, recurse!  After a delay?  TODO: what about recursion limit?
 		# Or how about vwait?!  Have the button commands on the Unsaved Changes panel set a "good to go" type variable, which we can detect here.  Or will that hang the GUI?
@@ -66,5 +67,6 @@ bind .editor.text <<Modified>> {
 # Interestingly (and kind of annoyingly), the act of setting the "modified" flag to false also triggers the <<Modified>> event!
 
 # TODO: fix very strange thing that happens if you go to the end of the text, Shift+RightArrow to select the rest of the line (which shouldn't really be anything because there's no linebreak there), and press Enter/Return.  <<Modified>> events for the text widget then don't happen (until you call close_file anyway).
+
 
 
