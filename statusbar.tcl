@@ -58,7 +58,7 @@ setTooltip .statusbar.status "File status"
 
 # Character/Word/Line count:
 
-pack [label .statusbar.stats -textvariable ::size_status -relief sunken -font $::fixed_gui_font -width 20] -side right
+pack [label .statusbar.stats -textvariable ::size_status -relief sunken -font $::fixed_gui_font -width 24] -side right
 setTooltip .statusbar.stats "Character, word, line count"
 
 proc update_size_status {} {
@@ -69,7 +69,7 @@ proc update_size_status {} {
 	set ::size_status "${chars}C,${words}W,${lines}L"
 }
 
-every 1000 update_size_status
+every 2000 update_size_status
 
 
 
@@ -101,4 +101,5 @@ bind .editor.text <<Selection>> {
 
 
 # TODO: live counts of characters, lines and maybe words
+
 
