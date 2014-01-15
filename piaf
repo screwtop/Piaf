@@ -37,6 +37,7 @@ frame .editor
 pack .editor -side top -expand true -fill both
 
 # TODO: tidy up wrapping option setting.
+# Most of the editor happens in this one line, thanks to Tk's great text widget:
 text .editor.text -wrap word -undo true -height 10 -width 80
 set ::wrap_mode "Word Wrap"
 
@@ -50,6 +51,8 @@ pack .editor.scrollbar -side left -fill y
 
 # Apply font preference:
 .editor.text configure -font $::font
+.editor.text configure -spacing1 $::line_padding -spacing3 $::line_padding
+# -spacing2 is for wrapped lines, and we kinda want to emphasise that they are just one line, so leave that at 0.
 
 # Apply a colour scheme:
 .editor.text configure -background $::background_colour -foreground $::text_colour -selectbackground $::selectbackground_colour -insertbackground $::insertbackground_colour
@@ -105,5 +108,6 @@ set ::status "Ready"
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
+
 
 

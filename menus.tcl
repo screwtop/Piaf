@@ -51,33 +51,36 @@ menu .menubar.insert
 
 # Search menu? Or perhaps a more general Navigate menu?
 menu .menubar.search
-.menubar add cascade -label "Search" -menu .menubar.search
+# Disabled for now:
+#.menubar add cascade -label "Search" -menu .menubar.search
 
 
 # Tabular menu, to assist in creating multi-range sel tags for tabular blocks?  Mark Start, Mark End, etc.?
 # Or mabye a Select/Selection or Mark menu?  For commands like Mark Matching..., Mark Lines Matching... as well as tabular operations?  Selection Invert?  Select None?
 menu .menubar.select
 	.menubar.select add command -label "All" -command select_all
-	.menubar.select add command -label "None" -command {}
-	.menubar.select add command -label "Invert Selection" -command {}
-	.menubar.select add command -label "Text Matching…" -command {}
-	.menubar.select add command -label "Lines Matching…" -command {}
+	.menubar.select add command -label "None" -command select_none
+#	.menubar.select add command -label "Invert Selection" -command {}
+#	.menubar.select add command -label "Text Matching…" -command {}	;# This could probably just loop through existing code
+#	.menubar.select add command -label "Lines Matching…" -command {}
 .menubar add cascade -label "Select" -menu .menubar.select -underline 0
 
 
 # Transform menu:
 menu .menubar.transform
 	.menubar.transform add command -label "Indent" -command {transform_selection ::piaf::transform::indent}
-	.menubar.transform add command -label "Case > Upper" -command {transform_selection ::piaf::transform::uppercase}
-	.menubar.transform add command -label "Case > Lower" -command {transform_selection ::piaf::transform::lowercase}
+	.menubar.transform add command -label "Case > UPPER" -command {transform_selection ::piaf::transform::uppercase}
+	.menubar.transform add command -label "Case > lower" -command {transform_selection ::piaf::transform::lowercase}
+	.menubar.transform add command -label "Collapse whitespace" -command {transform_selection ::piaf::transform::collapse_whitespace}
 	.menubar.transform add command -label "Linebreaks > CR" -command {transform_selection ::piaf::transform::crlinebreaks}
 	.menubar.transform add command -label "Linebreaks > LF" -command {transform_selection ::piaf::transform::lflinebreaks}
 	.menubar.transform add command -label "Linebreaks > CRLF" -command {transform_selection ::piaf::transform::crlflinebreaks}
-	.menubar.transform add command -label "Reverse Chars" -command {transform_selection ::piaf::transform::reverse}
+	.menubar.transform add command -label "Reverse chars" -command {transform_selection ::piaf::transform::reverse}
 	.menubar.transform add command -label "Rot-13" -command {transform_selection ::piaf::transform::rot13}
-	.menubar.transform add command -label "Sort Chars" -command {transform_selection ::piaf::transform::sort}
-	.menubar.transform add command -label "Sort Lines" -command {transform_selection ::piaf::transform::sort_lines}
+	.menubar.transform add command -label "Sort chars" -command {transform_selection ::piaf::transform::sort}
+	.menubar.transform add command -label "Sort lines" -command {transform_selection ::piaf::transform::sort_lines}
 	.menubar.transform add command -label "Spaces to tabs" -command {transform_selection ::piaf::transform::spaces_to_tabs}
+	.menubar.transform add command -label "Strip blank lines" -command {transform_selection ::piaf::transform::strip_blank_lines}
 	.menubar.transform add command -label "Tabs to spaces" -command {transform_selection ::piaf::transform::tabs_to_spaces}
 	.menubar.transform add command -label "Trim trailing whitespace" -command {transform_selection ::piaf::transform::remove_trailing_whitespace}
 	.menubar.transform add command -label "Unwrap" -command {transform_selection ::piaf::transform::unwrap}
@@ -88,7 +91,8 @@ menu .menubar.transform
 menu .menubar.language
 	.menubar.language add command -label "Check Spelling" -command {}
 #	.menubar.language add command -label "" -command {}
-.menubar add cascade -label "Language" -menu .menubar.language -underline 0
+# Disabled for now:
+#.menubar add cascade -label "Language" -menu .menubar.language -underline 0
 
 
 # Reference menu, with Web searches and such
@@ -109,7 +113,8 @@ menu .menubar.reference
 
 # Window/Files/Buffer menu
 menu .menubar.window
-.menubar add cascade -label "Window" -menu .menubar.window -underline 0
+# Disabled for now:
+#.menubar add cascade -label "Window" -menu .menubar.window -underline 0
 
 
 
@@ -133,6 +138,9 @@ menu .popup_menu
 
 
 # TODO: Transform submenu for uppercase, lowercase, init caps, reverse, sort
+
+
+
 
 
 

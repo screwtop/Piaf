@@ -11,5 +11,8 @@ set ::current_line_background_colour #404040
 
 set ::font "LetterGothic12Pitch 10"
 set ::fixed_gui_font "LetterGothic12Pitch 8"
+set ::line_padding 3	;# Pixels, both above and below each line.
 
 set ::browser firefox
+
+

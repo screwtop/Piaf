@@ -4,6 +4,12 @@
 
 proc select_all {} {.editor.text tag add sel 0.0 end}
 proc select_current_line {} {.editor.text tag add sel "insert linestart" "insert lineend"}
+proc select_none {} {
+	foreach {start_index end_index} [.editor.text tag ranges sel] {
+		.editor.text tag remove sel $start_index $end_index
+	}
+}
+
 proc get_selection {} {.editor.text get sel.first sel.last}	;# TODO: what if there are multiple selection ranges?  It can happen!
 proc get_all {} {.editor.text get 0.0 end}	;# TODO: does this add a trailing linebreak?!
 proc get_current_line {} {.editor.text get "insert linestart" "insert lineend"}
@@ -353,7 +359,11 @@ proc quit {} {
 #	if {![.editor.text edit modified]} {}
 	# Maybe prompt for user certainty regardless?
 	# Log QUIT operation as well?
+	puts "Closing database…"
 	::piaf::database close
+	puts "Exiting…"
 	exit
 }
+
+
 
