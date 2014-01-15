@@ -1,6 +1,9 @@
 # Components and functionality for Find panel
 
 frame .search
+
+# TODO: also provide a button for closing the Find panel?
+
 pack [label .search.label -text "Find:"] -side left
 pack [entry .search.entry -width 20 -textvariable ::search_term] -side left
 
@@ -39,5 +42,5 @@ toggle_find_panel
 bind . <Control-f> toggle_find_panel
 bind .editor.text <Control-f> {toggle_find_panel; break}
 
-
+bind .search.entry <Escape> toggle_find_panel
 
