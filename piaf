@@ -24,10 +24,26 @@ source "$::binary_path/settings.tcl"	;# Load system-wide settings first...
 catch {source ~/.piaf/settings.tcl}		;# ...then any user-defined settings.
 
 # We use an SQLite database to keep track of recently modified files, collections of files making up projects, etc.
-package require sqlite3
-sqlite3 ::piaf::database ~/.piaf/data.db
-# TODO: create database if necessary?
-puts stderr "SQLite database opened, version [::piaf::database version]"
+if {[catch {package require sqlite3} message]} {
+	# No sqlite3
+	puts stderr $message
+	puts stderr "sqlite3 library for Tcl not found; please install it for greater functionality"
+	puts stderr "	e.g. sudo apt-get install libsqlite3-tcl"
+	set ::use_database false
+} else {
+	# We do have the sqlite3 library at least...
+	# Now see if we have a user database:
+	if {[catch {sqlite3 ::piaf::database ~/.piaf/data.db} message]} {
+		# Could not open.  Perhaps it doesn't exist.  If so, create it.  If something else, give up?  How do we tell?  We just get "unable to open database file" if it fails.  And SQLite's [errorcode] is only available for an open database.
+		# The install script should have created the database anyway.
+		puts stderr $message
+		puts stderr "Try running the install script to create the user database (~/.piaf/data.db)."
+	} else {
+		puts stderr "SQLite database opened, version [::piaf::database version]"
+		set ::use_database true
+	}
+}
+
 
 source "$::binary_path/tooltips.tcl"
 source "$::binary_path/menus.tcl"
@@ -108,6 +124,7 @@ set ::status "Ready"
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
+
 
 
 

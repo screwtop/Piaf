@@ -36,6 +36,7 @@ proc redo {} {.editor.text edit redo}
 # How to determine hostname?  [info hostname] generally just returns the host name portion, not the domain name.  $env(??)?
 proc log_file_operation {filename operation} {
 	global env
+	if !$::use_database return
 	set sql "insert into File_Log (Hostname, Username, Filename, Date_Performed, Operation) values ('[info hostname]', '$env(USER)', '$filename', current_timestamp, '$operation');"
 #	puts stderr $sql
 	::piaf::database eval $sql
@@ -359,11 +360,15 @@ proc quit {} {
 #	if {![.editor.text edit modified]} {}
 	# Maybe prompt for user certainty regardless?
 	# Log QUIT operation as well?
-	puts "Closing database…"
-	::piaf::database close
+	if {$::use_database} {
+		puts "Closing database…"
+		::piaf::database close
+	}
 	puts "Exiting…"
 	exit
 }
+
+
 
 
 
