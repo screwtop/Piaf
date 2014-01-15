@@ -76,7 +76,7 @@ proc new_file {filename} {
 }
 
 # Open a file, replacing all current text:
-# Don't override built-in [open]!
+# This is named open_file so as not to override Tcl's built-in [open]!
 proc open_file {filename} {
 #	log_file_operation $filename OPEN	;# Don't bother - just log centrally in "load" proc.
 	if {$filename != ""} {
@@ -101,6 +101,7 @@ proc load {filename} {
 		return
 	}
 	set ::unsaved false
+	event generate .editor.text <<Modified>>
 #	.editor.text edit modified false	;# Reset modification flag
 	log_file_operation $filename LOAD
 	set ::status "File loaded"
@@ -367,6 +368,7 @@ proc quit {} {
 	puts "Exiting…"
 	exit
 }
+
 
 
 

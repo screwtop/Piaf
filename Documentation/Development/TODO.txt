@@ -1,11 +1,18 @@
 
 TODO:
 
+ - Toggleable line up/down movement behaviour; see http://wiki.tcl.tk/3082
+ - Enter/Return to save by default in "unsaved" panel (focus?)
+ - Add alert label to "unsaved" panel?
+ - Strip code prior to sending to Frink.  And only send it one line!
  - Fix erratically funky Frink results
- - Have stop_frinkserver run it the background somehow (currently it hangs the GUI)
+ - Have stop_frinkserver run in the background somehow (currently it hangs the GUI)
  - Status display of frinkserver status?  At least "starting"/"shutting down"
+ - Fix "X server insecure (must use xauth-style authorization); command ignored"
+ - Have find panel use grid!  Also, find out why it currently makes the X server go crazy busy!
  - support "Esc" for dismissing the Find panel
  - get list of recent files (and show in menu/sidebar)
+ - Detect Linux distro and install dependencies (if necessary? - detecting what's iinstalled might be harder than just installing needlessly)
  - Project menu and functionality
  - Redo top-level geometry as grid (for easier hide/show of components)
  - Navigate/Navigation/Move menu
@@ -18,12 +25,14 @@ TODO:
  - load/save filters for converting line endings and character encodings
  - Separate character, word and line count statusbar items
  - Make char/word/line count computation happen truly in the background.
- - Transformation: "strip blank lines"
+ - Command: "Select None" (cf. "Select All")
+ - Transformation: "strip blank lines" (those that consist solely of whitespace, or those matching "\n" only?)
  - Transformation: "remove duplicate characters/lines"
  - Maybe have text transformations apply to the entire editor buffer if there is no selection active.
  - Have text transformations apply correctly when there are multiple selection ranges.
  - Have install script accept a destination argument (and patch Piaf's script path accordingly?!)
  - Have the file log normalise filenames for full path
+ - Make the database optional, in case of no sqlite3 Tcl library
  - file log (database) browser
  - Record full hostname + domain name in file log
  - Create appropriate database indexes
@@ -40,6 +49,10 @@ TODO:
 
 DONE:
 
+ - Added modification event generation to "load" proc.
+ - More generous line spacing
+ - Pop-up panel when unsaved changes exist.
+ - Use highlighting to show the extent of the file (visible end of file).
  - Fix bug in selection line counting which causes " characters to be treated as linebreaks.
  - Frink integration in Reference menu?   Spawn an ongoing background server-type process with Expect?
  - Find/Search dialog/toolbar/popup thingy
@@ -69,7 +82,6 @@ DONE:
  - Made SQL DDL script at least syntactically valid
  - Added beginnings of an install script
  - Rearranged main menu order slightly
-
 
 
 

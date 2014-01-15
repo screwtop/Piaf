@@ -33,6 +33,7 @@ if {[catch {package require sqlite3} message]} {
 } else {
 	# We do have the sqlite3 library at least...
 	# Now see if we have a user database:
+	# TODO: fix: this doesn't work at present (sqlite3 will create the database implicitly if it doesn't exist!)
 	if {[catch {sqlite3 ::piaf::database ~/.piaf/data.db} message]} {
 		# Could not open.  Perhaps it doesn't exist.  If so, create it.  If something else, give up?  How do we tell?  We just get "unable to open database file" if it fails.  And SQLite's [errorcode] is only available for an open database.
 		# The install script should have created the database anyway.
@@ -124,6 +125,7 @@ set ::status "Ready"
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
+
 
 
 
