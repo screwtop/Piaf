@@ -1,0 +1,61 @@
+Let's try a simple scanner for lexical highlighting.  Tcl comments are probably a good start.  Or maybe strings (because detecting special characters in strings should be avoided!)
+
+# Would imagine a whole bunch of these colour definitions (maybe put them in their own namespace):
+# ...and maybe even multiple colour schemes (stored in files or in the database?)
+# Have to give consideration to how the colouring will play with other kinds of tag highlighting that might be overlaid (esp. current line, selection).
+set ::comment_foreground_colour #87ceeb
+
+.editor.text tag configure comment -foreground $::comment_foreground_colour
+
+# Scanner should search for all occurrences and add the ranges to the tag
+# Should it aim for a single pass, or a pass for each lexical element (e.g. strings, comments, function names, etc.)?
+# This can all be done in the background, in a separate process, asynchronously, so it's maybe not a big deal how computationally intensive it'll be (ease of implementation is what I'm going for here!).
+# However, if the scanning takes a long time, ranges may have become invalid.  Not sure how gracefully we can handle that.
+# Also, it's nice that the default behaviour of the text widget is to extend the tag if you insert text into the middle of it.
+
+.editor.text tag add comment 1.0 1.24
+
+regexp -all -indices -inline "#\[^\n\]*\n" [get_all]
+# Getting close!  But how to convert those into line and column numbers?  Use text's "+ COUNT chars" syntax for indexes?
+
+proc tag_comments {} {
+foreach index [regexp -all -indices -inline "#\[^\n\]*\n" [get_all]] {
+	set start [lindex $index 0]
+	set end [lindex $index 1]
+	.editor.text tag add comment "1.0 + $start chars" "1.0 + $end chars"
+}
+}
+# That'll do, pig; that'll do! :)
+
+
+# How about strings?
+
+set ::string_foreground_colour #ffa0a0
+.editor.text tag configure string -foreground $::string_foreground_colour
+
+# TODO: don't include " chars that are preceded by a backslash! (or the right number of backslashes?!)
+proc tag_strings {} {
+	foreach index [regexp -all -indices -inline "\"\[^\"\]*\"" [get_all]] {
+		set start [lindex $index 0]
+		set end [expr {[lindex $index 1] + 1}]
+		.editor.text tag add string "1.0 + $start chars" "1.0 + $end chars"
+	}
+}
+
+# Maybe the main scanner would look something like:
+proc tag_all {} {
+	foreach lexical_element {comments literals strings numbers keywords operators variables} {
+		catch {tag_$lexical_element}
+	}
+}
+
+every 500 tag_all
+
+# The scanning will definitely need to be done in a separate process (or at least properly backgrounded so as not to interfere with the GUI).  I imagine the bulk of the time is due to the [regexp], which is atomic, so we can't just [after idle] it.
+
+
+--
+
+Should select_line include the trailing "\n"?  Should there perhaps be a separate command for that?  Maybe <Control-L> for including the newline, and <Control-l> for without.
+
+

@@ -9,13 +9,9 @@ TODO:
  - Have stop_frinkserver run in the background somehow (currently it hangs the GUI)
  - Status display of frinkserver status?  At least "starting"/"shutting down"
  - Fix "X server insecure (must use xauth-style authorization); command ignored"
- - Have find panel use grid!  Also, find out why it currently makes the X server go crazy busy!
- - support "Esc" for dismissing the Find panel
- - A prompt panel, in the event of unsaved changes when quitting
  - get list of recent files (and show in menu/sidebar)
- - Detect Linux distro and install dependencies (if necessary? - detecting what's iinstalled might be harder than just installing needlessly)
+ - Detect Linux distro and install dependencies (only if necessary...and detecting what's installed might be harder than just installing needlessly)
  - Project menu and functionality
- - Redo top-level geometry as grid (for easier hide/show of components)
  - Navigate/Navigation/Move menu
  - Horizontal scrolling (with scrollbar only when needed?)
  - Set more appropriate (smaller) width and height of text widget (and also set initial geometry for non-tiling window systems)
@@ -37,10 +33,11 @@ TODO:
  - file log (database) browser
  - Record full hostname + domain name in file log
  - Create appropriate database indexes
- - Handle multiple files?!?!
+ - Handle multiple files?!?!  Use multiple windows, tabs, split panes, or paging?!
  - About, Help menus
  - Various menu items for commands
  - Generic error dialog/panel?
+ - Generic user input dialog/panel? (for use in scripts requiring interaction)
  - Lexical colouring/highlighting for various languages
  - Language-specific Insert submenu(s)?
 	including a language-sensitive "strip comment lines" transformation
@@ -50,6 +47,11 @@ TODO:
 
 DONE:
 
+ - Set filename in titlebar when saving as (or opening, or new-ing). (Yay, [trace variable]!)
+ - Added "Close" and "Clear" buttons to search bar.
+ - support "Esc" for dismissing the Find panel
+ - Have find panel also use grid!  Also, find out why it currently makes the X server go crazy busy!
+ - Redo top-level geometry as grid (for easier hide/show of components)
  - Enter/Return to save by default in "unsaved" panel (focus?)
  - Added loading of user keybindings.
  - Added space/tab transformations to menu.
@@ -91,6 +93,4 @@ DONE:
  - Made SQL DDL script at least syntactically valid
  - Added beginnings of an install script
  - Rearranged main menu order slightly
-
-
 
