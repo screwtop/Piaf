@@ -1,4 +1,4 @@
-# Text processing functions for Edita
+# Text processing functions for Piaf text editor
 
 namespace eval ::piaf::transform {}
 
@@ -15,6 +15,9 @@ proc ::piaf::transform::sort {s} {join [lsort [split $s {}]] {}}
 
 proc ::piaf::transform::sort_lines {text} {join [lsort [split $text "\n"]] "\n"}
 
+# Remove duplicates (implicitly sorting in the process!):
+proc ::piaf::transform::remove_duplicate_characters {s} {join [lsort -unique [split $s {}]] {}}
+proc ::piaf::transform::remove_duplicate_lines {text} {join [lsort -unique [split $text "\n"]] "\n"}
 
 # Randomly permute characters in a selection
 
@@ -30,8 +33,11 @@ proc ::piaf::transform::spaces_to_tabs {s} {string map {"    " "\t"} $s}
 proc ::piaf::transform::remove_trailing_whitespace {s} {regsub -all {[\t ]+\n} $s "\n"}
 
 # Strip blank lines:
-proc ::piaf::transform::strip_blank_lines {s} {regsub -all {\n\n+} $s "\n"}
+# TODO: handle blank line at the start correctly
+#proc ::piaf::transform::strip_blank_lines {s} {regsub -all {\n+} $s "\n"}
 # TODO: maybe treat lines containing only whitespace as blank?  User could just remove trailing whitespace first, then strip blank lines.
+# Here's an implementation due to DKF:
+proc ::piaf::transform::strip_blank_lines {s} {regsub -all {^\n+|\n+$|(\n)+} $s {\1}}
 
 # Normalise/collapse whitespace
 proc ::piaf::transform::collapse_whitespace {s} {regsub -all "\[\r\n\t \]+" $s " "}
@@ -54,6 +60,8 @@ proc ::piaf::transform::indent {s} {
 	# Can we just blanket trim any trailing tabs?  What if there was a trailing tab at the end of a line already?!
 	string trimright [string map {"\n" "\n\t"} $s] "\t"
 }
+
+# TODO: unindent
 
 # Smarten quotes
 
@@ -110,6 +118,10 @@ proc ::piaf::latex::figure {} {insert {
 \end{figure}
 }
 }
+
+
+
+
 
 
 
