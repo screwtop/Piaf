@@ -1,12 +1,23 @@
 # Basic spellcheck capability (not realtime yet - will need to be implemented as a separate process - and I'm not sure what IPC method would be best there, as there would often be too much text for [tk send]).
 
+# Now uses an array, since in Tcl these are implemented as a hash.
+# Spellcheck using list for ::dictionary: 6.3 seconds for MPlayer docs vidix.txt (858 words).
+# Using a hash took it down to 42 milliseconds for the same text. ;)
+
 puts -nonewline stderr "Loading dictionary from \"$::dictionary_file\"…"
-#set ::dictionary [slurp $::dictionary_file]
-set ::dictionary [list]
-foreach word [slurp $::dictionary_file] {lappend ::dictionary $word}
-#set ::dictionary [list [slurp $::dictionary_file]]	;# Will this make it faster?
-puts stderr "[llength $::dictionary] words loaded."
+foreach word [slurp $::dictionary_file] {set ::dictionary([string tolower $word]) 1}
+puts stderr "[array size ::dictionary] words loaded."
+
 .editor.text tag configure misspelled -foreground $::misspelled_foreground_colour -underline true
+
+
+# Case-sensitivity?  Could convert to lowercase when creating the array, and also when looking up...
+proc word_exists {word} {
+	if {[catch {set result $::dictionary([string tolower $word])}]} {
+		set result 0
+	}
+	return $result
+}
 
 
 # For proper asynchronous spellchecking, I think we need to make a copy of the entire text in a variable first (for atomicity):
@@ -26,12 +37,12 @@ proc spellcheck {} {
 		set end [lindex $index 1]
 		set word [string range $text $start $end]
 		# Look up word in dictionary:
-		if {[lsearch -nocase $::dictionary $word] == -1} {
+	#	if {[lsearch -nocase $::dictionary $word] == -1} {}
+		if {![word_exists $word]} {
 			# Unrecognised word: highlight!
-			puts stderr "Unrecognised: \"$word\" (chars $start-$end)"
+		#	puts stderr "Unrecognised: \"$word\" (chars $start-$end)"
 			.editor.text tag add misspelled "1.0 + $start chars" "1.0 + [expr {$end + 1}] chars"
 		}
 	}
 }
-
 

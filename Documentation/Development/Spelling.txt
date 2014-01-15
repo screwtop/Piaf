@@ -38,4 +38,27 @@ proc spellcheck {} {
 
 # TODO: clear (remove all) "misspelled" tags every time?
 
+--
+
+What about using a hash rather than an array?  Let's test...
+
+Spellcheck using list for ::dictionary: 6.3 seconds for vidix.txt (858 words).
+Using a hash took it down to 42 milliseconds for the same text. ;)
+
+Working:
+
+
+array unset ::dict
+foreach word $::dictionary {set ::dict($word) 1}	;# Copy dictionary list into new array
+array size ::dict
+
+# Case-sensitivity?  Could convert to lowercase when creating the array, and also when looking up...
+proc word_exists {word} {
+	if {[catch {set result $::dict($word)} message]} {
+		set result 0
+	}
+	return $result
+}
+word_exists hello	;# ~1 microsecond
+word_exists helloe	;#	~16 microseconds
 
