@@ -49,8 +49,10 @@ setTooltip .statusbar.position "Cursor position (Line:Column)"
 # TODO: figure out how to bind an event handler to changes to the insert mark.  You can do it with tags (.editor.text tag bind ...).
 # Might be nice to format the line-column value for ease of interpretation, e.g. L12:C23 (for Line and Column).
 # In the meantime, we'll use a scheduled approach:
-every 50 {set ::insert_position "L[join [split [.editor.text index insert] .] {:C}]"}
-
+#every 50 {set ::insert_position "L[join [split [.editor.text index insert] .] {:C}]"}
+# We're now generating our own virtual event for motion of the "insert" mark, so we can [bind] instead (see ??):
+proc update_insert_mark_display {new_position} {set ::insert_position "L[join [split $new_position .] {:C}]"}
+#bind .editor.text <<Motion>> {set ::insert_position "L[join [split %d .] {:C}]"}	;# Only bind in one place!
 
 # Status/last operation/action performed:
 pack [label .statusbar.status -textvariable ::status -relief sunken -font $::fixed_gui_font -width 15] -side right

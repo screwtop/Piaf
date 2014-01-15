@@ -9,7 +9,7 @@
 # Will this fail if there is no such tag?
 .editor.text tag configure current_line -background $::current_line_background_colour
 
-proc update_current_line {} {
+proc update_current_line_highlighting {} {
 	foreach {start_index end_index} [.editor.text tag ranges current_line] {
 		.editor.text tag remove current_line $start_index $end_index
 	}
@@ -21,5 +21,5 @@ proc update_current_line {} {
 .editor.text tag lower current_line sel
 # Ah-ha: nice. :)
 
-every 20 update_current_line
+# See insert_mark_tracking.tcl for the event stuff for this.
 
