@@ -127,3 +127,27 @@ The "text" widget has undo/redo functionality built in.  However, text transform
 Can we query the length of the undo history and display it in the status bar?
 
 
+
+Word count:
+
+% time {string length [get_all]} 100000
+9.69714 microseconds per iteration
+
+% time {.editor.text count 0.0 end} 100000
+5.42893 microseconds per iteration
+
+
+Executing long-running processes in a separate OS process
+For extremely large files, counting the number of words, characters and lines takes long enough that it noticeably interrupts the editor's interactivity, especially if it's being done every second.  I wondered about using a separate process for performing the data crunching for this (and other big tasks, such as building the index of file-type-specific features in a buffer, or perhaps background spell-checking), or indeed running LaTeX periodically in the background for near-real-time WYSIWYG.
+
+Tk's [send] command is an option.  I haven't played with this before, but was aware of it, and it's simple to use.  However, sending large amounts of text seems to cause Badness, causing the background process to be unresponsive.  Simple commands work fine, however, and message passing can be done asynchronously even.
+
+Hmm, might it be the -async option combined with large amounts of data being sent?
+
+	-async returns in only a few milliseconds, whereas the default synchronous send can take 50 ms or more.
+
+Yeah, I think there's a size limit of the script/command you can [send]. :(
+
+Oh, indeed:
+http://computer-programming-forum.com/57-tcl/4af11d22be08afcf.htm
+

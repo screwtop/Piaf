@@ -1,29 +1,50 @@
 
 TODO:
 
-
- - "Strip blank lines" transformation
- - "Remove duplicate characters/lines" transformations
- - Updating of line/column numbers in statusbar
+ - Fix erratically funky Frink results
+ - Have stop_frinkserver run it the background somehow (currently it hangs the GUI)
+ - Status display of frinkserver status?  At least "starting"/"shutting down"
+ - support "Esc" for dismissing the Find panel
+ - get list of recent files (and show in menu/sidebar)
+ - Project menu and functionality
+ - Redo top-level geometry as grid (for easier hide/show of components)
+ - Navigate/Navigation/Move menu
+ - Horizontal scrolling (with scrollbar only when needed?)
+ - Set more appropriate (smaller) width and height of text widget (and also set initial geometry for non-tiling window systems)
+ - jump to insert point when inserting via commands
+ - Display lines loaded in statusbar
+        maybe not necessary, as we now have a live char/word/line counter display
+ - highlight current line
+ - load/save filters for converting line endings and character encodings
+ - Separate character, word and line count statusbar items
+ - Make char/word/line count computation happen truly in the background.
+ - Transformation: "strip blank lines"
+ - Transformation: "remove duplicate characters/lines"
  - Maybe have text transformations apply to the entire editor buffer if there is no selection active.
+ - Have text transformations apply correctly when there are multiple selection ranges.
  - Have install script accept a destination argument (and patch Piaf's script path accordingly?!)
  - Have the file log normalise filenames for full path
+ - file log (database) browser
  - Record full hostname + domain name in file log
  - Create appropriate database indexes
  - Handle multiple files?!?!
  - About, Help menus
  - Various menu items for commands
- - Generic error dialog?
- - Find/Search dialog/toolbar/popup thingy
+ - Generic error dialog/panel?
  - Lexical colouring/highlighting for various languages
  - Language-specific Insert submenu(s)?
 	including a language-sensitive "strip comment lines" transformation
- - Folding
+ - Folding?
 
 
 
 DONE:
 
+ - Fix bug in selection line counting which causes " characters to be treated as linebreaks.
+ - Frink integration in Reference menu?   Spawn an ongoing background server-type process with Expect?
+ - Find/Search dialog/toolbar/popup thingy
+ - Tooltips, e.g. full path for brief filename in statusbar
+ - Updating of line/column numbers in statusbar
  - Factored out colour and font settings
  - Window title now shows filename
  - Set "insert" mark to 0.0 on startup/file load
@@ -48,5 +69,7 @@ DONE:
  - Made SQL DDL script at least syntactically valid
  - Added beginnings of an install script
  - Rearranged main menu order slightly
+
+
 
 
