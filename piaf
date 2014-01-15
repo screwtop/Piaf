@@ -98,9 +98,12 @@ focus .editor.text
 # (Optionally?) start the Frink server:
 start_frinkserver
 
+wm protocol . WM_DELETE_WINDOW quit
+
 set ::status "Ready"
 
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
+
 
