@@ -61,6 +61,7 @@ source "$::binary_path/functions.tcl"	;# Text filters
 source "$::binary_path/commands.tcl"	;# Editor command set
 source "$::binary_path/find_panel.tcl"	;# Togglable simple Find panel
 source "$::binary_path/statusbar.tcl"
+source "$::binary_path/current_line_highlighting.tcl"
 source "$::binary_path/bindings.tcl"	;# Key event bindings
 catch {source ~/.piaf/bindings.tcl}	;# User can override and add their own too
 
