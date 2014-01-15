@@ -2,10 +2,10 @@
 
 frame .search
 
-# TODO: also provide a button for closing the Find panel?
-
+pack [button .search.close -text "✖" -command toggle_find_panel] -side left; setTooltip .search.close "Close search bar"
 pack [label .search.label -text "Find:"] -side left
 pack [entry .search.entry -width 20 -textvariable ::search_term] -side left
+pack [button .search.clear -text ⌧ -command {set ::search_term ""}] -side left; setTooltip .search.clear "Clear search field"
 
 # TODO: clear field button, prev/next buttons, found/not found status, maybe count of matches
 # ...
@@ -43,4 +43,5 @@ bind . <Control-f> toggle_find_panel
 bind .editor.text <Control-f> {toggle_find_panel; break}
 
 bind .search.entry <Escape> toggle_find_panel
+
 
