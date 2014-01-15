@@ -83,7 +83,8 @@ proc open_file {filename} {
 		# Remember filename globally
 		set ::filename $filename
 		# Set the window title as well (perhaps just the file's basename or the abbreviated filename?):
-		wm title . "Piaf: [file tail $::filename]"
+		# Now handled by a variable trace on ::filename.
+	#	wm title . "Piaf: [file tail $::filename]"
 		clear
 		load $filename
 		.editor.text mark set insert 0.0
@@ -368,6 +369,7 @@ proc quit {} {
 	puts "Exiting…"
 	exit
 }
+
 
 
 

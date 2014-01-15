@@ -3,7 +3,8 @@
 # My (increasingly less) simple Tcl/Tk text editor/idioter.
 
 
-wm title . Piaf
+tk appname Piaf
+wm title . [tk appname]
 
 #puts stderr $argv
 
@@ -112,6 +113,17 @@ grid forget .search
 # That's it for the GUI layout.
 
 
+set ::filename ""
+
+# Put a trace on the filename variable, for things that can't be updated automatically using -textvariable (such as the window title):
+trace variable ::filename w filename_changed
+
+# What to do when the filename changes?
+proc filename_changed {name1 name2 op} {
+	wm title . "[tk appname]: [file tail $::filename]"
+}
+
+
 # Check if a filename was specified on the command line:
 if {[llength $argv] > 0} {open_file [lindex $argv 0]}
 
@@ -129,9 +141,5 @@ set ::status "Ready"
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
-
-
-
-
 
 
