@@ -1,6 +1,6 @@
 # Components and functionality for Find panel
 
-pack [frame .search] -fill x
+frame .search
 pack [label .search.label -text "Find:"] -side left
 pack [entry .search.entry -width 20 -textvariable ::search_term] -side left
 
@@ -23,12 +23,12 @@ set ::find_panel_enabled true
 proc toggle_find_panel {} {
 	if {!$::find_panel_enabled} {
 		# Activate
-		pack .search -fill x
+		show_find_panel
 		set ::find_panel_enabled true
 		focus .search.entry
 	} else {
 		# Deactivate
-		pack forget .search
+		grid remove .search
 		set ::find_panel_enabled false
 		focus .editor.text
 	}
@@ -38,4 +38,6 @@ toggle_find_panel
 
 bind . <Control-f> toggle_find_panel
 bind .editor.text <Control-f> {toggle_find_panel; break}
+
+
 

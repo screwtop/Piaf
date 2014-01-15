@@ -97,8 +97,12 @@ grid columnconfigure . $::main_column -weight 1	;# Main column should fill the w
 # "grid slaves ." to find children
 grid configure .menubar   -row 0 -column $::main_column -sticky ew
 grid configure .editor    -row 1 -column $::main_column -sticky nsew; grid rowconfigure . 1 -weight 1
+proc show_unsaved_panel {} {
 grid configure .unsaved   -row 2 -column $::main_column -sticky ew
+}
+proc show_find_panel {} {
 grid configure .search    -row 3 -column $::main_column -sticky ew
+}
 grid configure .statusbar -row 4 -column $::main_column -sticky ew
 
 grid forget .unsaved
@@ -125,6 +129,7 @@ set ::status "Ready"
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
+
 
 
 
