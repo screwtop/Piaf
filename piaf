@@ -62,6 +62,7 @@ source "$::binary_path/commands.tcl"	;# Editor command set
 source "$::binary_path/find_panel.tcl"	;# Togglable simple Find panel
 source "$::binary_path/statusbar.tcl"
 source "$::binary_path/bindings.tcl"	;# Key event bindings
+catch {source ~/.piaf/bindings.tcl}	;# User can override and add their own too
 
 
 # Check if a filename was specified on the command line:
@@ -73,10 +74,6 @@ focus .editor.text
 
 # (Optionally?) start the Frink server:
 start_frinkserver
-# There only needs to be one running, which can be shared by all Piaf instances.  Check and start if necessary:
-#if {[catch {send frinkserver {puts stderr {Piaf instance connected}}}]} {
-#	exec "$::binary_path/frinkserver.tcl" 2> /dev/null &
-#}
 
 set ::status "Ready"
 

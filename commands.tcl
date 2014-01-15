@@ -309,6 +309,7 @@ proc transform_selection {function} {
 	set ::status "Transforming…"
 	set initial_insert_mark [.editor.text index insert]	;# Remember initial insert point
 	set text [get_selection]	;# Copy original text
+#	set transformed_text [transform $function $text]
 	set transformed_text [$function $text]
 	.editor.text delete sel.first sel.last	;# Remove the selected text (to be replaced with transformed)
 	set sel_start [.editor.text index insert]	;# Note start of new sel range

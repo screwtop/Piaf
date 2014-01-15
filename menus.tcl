@@ -14,7 +14,7 @@ menu .menubar.file
 	.menubar.file add command -label "Reload" -command reload	;# TODO: confirm? or just support undo? ;)
 	.menubar.file add command -label "Close" -command close_file
 	.menubar.file add separator
-	.menubar.file add command -label "Exit" -command exit	;# TODO: nicer anti-lose-work exit routine
+	.menubar.file add command -label "Exit" -command quit	;# TODO: nicer anti-lose-work exit routine
 .menubar add cascade -label File -menu .menubar.file -underline 0
 
 # Edit menu:
@@ -73,12 +73,14 @@ menu .menubar.transform
 	.menubar.transform add command -label "Linebreaks > CR" -command {transform_selection ::piaf::transform::crlinebreaks}
 	.menubar.transform add command -label "Linebreaks > LF" -command {transform_selection ::piaf::transform::lflinebreaks}
 	.menubar.transform add command -label "Linebreaks > CRLF" -command {transform_selection ::piaf::transform::crlflinebreaks}
+	.menubar.transform add command -label "Reverse Chars" -command {transform_selection ::piaf::transform::reverse}
 	.menubar.transform add command -label "Rot-13" -command {transform_selection ::piaf::transform::rot13}
-	.menubar.transform add command -label "Sort Characters" -command {transform_selection ::piaf::transform::sort}
+	.menubar.transform add command -label "Sort Chars" -command {transform_selection ::piaf::transform::sort}
 	.menubar.transform add command -label "Sort Lines" -command {transform_selection ::piaf::transform::sort_lines}
-	.menubar.transform add command -label "Reverse" -command {transform_selection ::piaf::transform::reverse}
+	.menubar.transform add command -label "Spaces to tabs" -command {transform_selection ::piaf::transform::spaces_to_tabs}
+	.menubar.transform add command -label "Tabs to spaces" -command {transform_selection ::piaf::transform::tabs_to_spaces}
+	.menubar.transform add command -label "Trim trailing whitespace" -command {transform_selection ::piaf::transform::remove_trailing_whitespace}
 	.menubar.transform add command -label "Unwrap" -command {transform_selection ::piaf::transform::unwrap}
-	.menubar.transform add command -label "Whitespace: Remove Trailing" -command {transform_selection ::piaf::transform::removetrailingwhitespace}
 .menubar add cascade -label "Transform" -menu .menubar.transform -underline 0
 
 
@@ -126,6 +128,7 @@ menu .popup_menu
 		.popup_menu.transform add command -label "Rot-13" -command {transform_selection ::piaf::transform::rot13}
 		.popup_menu.transform add command -label "Sort" -command {transform_selection ::piaf::transform::sort}
 
+#	.popup_menu add cascade -labe "Transform" -menu .menubar.transform	;# Can we do this? i.e. share a menu among multiple cascade parents?
 	.popup_menu add cascade -label "Transform" -menu .popup_menu.transform
 
 

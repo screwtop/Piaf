@@ -21,13 +21,13 @@ proc ::piaf::transform::sort_lines {text} {join [lsort [split $text "\n"]] "\n"}
 # Randomly permute lines in a selection
 
 # Tabs to spaces
-proc ::piaf::transform::tabstospaces {s} {string map {"\t" "    "} $s}
+proc ::piaf::transform::tabs_to_spaces {s} {string map {"\t" "    "} $s}
 
 # Spaces to tabs
-proc ::piaf::transform::spacestotabs {s} {string map {"    " "\t"} $s}
+proc ::piaf::transform::spaces_to_tabs {s} {string map {"    " "\t"} $s}
 
 # Remove trailing whitespace
-proc ::piaf::transform::removetrailingwhitespace {s} {regsub -all {[\t ]+\n} $s "\n"}
+proc ::piaf::transform::remove_trailing_whitespace {s} {regsub -all {[\t ]+\n} $s "\n"}
 
 # Normalise/collapse whitespace
 #string map {"\n" " " "\t" " "} 

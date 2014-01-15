@@ -10,6 +10,7 @@ bind .editor.text <3> "tk_popup .popup_menu %X %Y"
 # Ctrl-A likewise to move to start of line.
 # Should these be bound to the toplevel (.) or the editor text widget?
 bind . <Control-a> select_all	;# TODO: remove built-in binding for text widget (go to start of line)
+bind . <Control-l> select_current_line
 # These are already bound in the text widget:
 #bind .editor.text <Control-x> cut
 #bind .editor.text <Control-c> copy
