@@ -1,10 +1,15 @@
 
 TODO:
 
+ - Investigate generating a new virtual event when a change of the insert mark is detected (to avoid having a whole bunch of [after]s watching things)
+ - Have paste replace current selection
+ - Have closing the window cause the graceful [quit] routine to be run
+ - Detect unsaved changes on [close_file]
  - Fix erratically funky Frink results
  - Have stop_frinkserver run it the background somehow (currently it hangs the GUI)
  - Status display of frinkserver status?  At least "starting"/"shutting down"
  - support "Esc" for dismissing the Find panel
+ - A prompt panel, in the event of unsaved changes when quitting
  - get list of recent files (and show in menu/sidebar)
  - Project menu and functionality
  - Redo top-level geometry as grid (for easier hide/show of components)
@@ -40,6 +45,10 @@ TODO:
 
 DONE:
 
+ - Added loading of user keybindings.
+ - Added space/tab transformations to menu.
+ - Fixed command name in binding for select_current_line
+ - Linked Exit menu with graceful quit routine
  - Fix bug in selection line counting which causes " characters to be treated as linebreaks.
  - Frink integration in Reference menu?   Spawn an ongoing background server-type process with Expect?
  - Find/Search dialog/toolbar/popup thingy

@@ -1,0 +1,37 @@
+# Highighting the current line
+
+
+.editor.text tag add current_line "insert linestart" "insert lineend + 1 char"	;# + 1 char to catch the newline so that the entire line is highlighted (especially important when the line is empty, because they would otherwise have no visible highlighting at all).
+.editor.text tag configure current_line -background #404040
+
+# This deletes the tag entirely, including the configuration:
+.editor.text tag delete current_line
+
+# This just removes specific ranges from the tag:
+.editor.text tag remove [...]
+
+foreach {start_index end_index} [.editor.text tag ranges current_line] {
+	puts "$start_index $end_index"
+	.editor.text tag remove current_line $start_index $end_index
+}
+
+# Question: is it faster to iterate through and use "tag remove", or just delete the tag and start anew?
+#	Well, my initial stab (which uses remove) takes 11 microseconds per iteration, so I think we don't need to worry!
+
+# TODO: merge with updating of current position display in status bar?
+
+# Will this fail if there is no such tag?
+.editor.text tag configure current_line -background #404040
+
+proc update_current_line {} {
+	foreach {start_index end_index} [.editor.text tag ranges current_line] {
+		.editor.text tag remove current_line $start_index $end_index
+	}
+	.editor.text tag add current_line "insert linestart" "insert lineend + 1 char"
+	# + 1 char to catch the newline so that the entire line is highlighted (especially important when the line is empty, because they would otherwise have no visible highlighting at all).
+}
+
+# How to play nicely with the selection tagging?  You can change the priorities:
+.editor.text tag lower current_line sel
+# Ah-ha: nice. :)
+

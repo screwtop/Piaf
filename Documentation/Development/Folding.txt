@@ -1,0 +1,9 @@
+# Folding
+# Tag elision looks like it will be the key to this.
+
+.editor.text tag configure folded -elide true
+
+# Or, more likely, tag each foldable block of text:
+
+.editor.text tag configure some_function_FOLDABLE -elide true
+
