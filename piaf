@@ -88,6 +88,8 @@ source "$::binary_path/text_modification_tracking.tcl"	;# Important for detectin
 source "$::binary_path/insert_mark_tracking.tcl"	;# Generating virtual events for motion of the "insert" mark (cursor position)
 source "$::binary_path/bindings.tcl"	;# Key event bindings
 catch {source ~/.piaf/bindings.tcl}	;# User can override and add their own too
+source "$::binary_path/spelling.tcl"
+
 
 # Apply new grid layout:
 # (TODO: remove existing pack calls that are made redundant by this)
@@ -141,5 +143,6 @@ set ::status "Ready"
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
+
 
 

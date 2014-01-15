@@ -89,10 +89,9 @@ menu .menubar.transform
 
 # Language menu, for programming languages as well as spelling and grammar stuff.
 menu .menubar.language
-	.menubar.language add command -label "Check Spelling" -command {}
+	.menubar.language add command -label "Check Spelling" -command spellcheck
 #	.menubar.language add command -label "" -command {}
-# Disabled for now:
-#.menubar add cascade -label "Language" -menu .menubar.language -underline 0
+.menubar add cascade -label "Language" -menu .menubar.language -underline 0
 
 
 # Reference menu, with Web searches and such
@@ -138,6 +137,7 @@ menu .popup_menu
 
 
 # TODO: Transform submenu for uppercase, lowercase, init caps, reverse, sort
+
 
 
 

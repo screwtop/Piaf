@@ -1,0 +1,41 @@
+Yes, we could use an external spelling checker such as aspell or ispell, but I'd kinda like to see how quickly-n-dirtily we can put something together just in Tcl...
+
+set dictionary [slurp /usr/share/dict/words]
+llength $dictionary
+
+set word attitude
+lsearch -nocase $dictionary $word	;# ~ 3 ms per search; returns -1 if not found
+
+set ::misspelled_foreground_colour #ff8080
+.editor.text tag configure misspelled -foreground $::misspelled_foreground_colour -underline true
+
+
+# For proper asynchronous spellchecking, I think we need to make a copy of the entire text in a variable first (for atomicity):
+proc spellcheck {} {
+	global dictionary
+	set text [get_all]
+
+	# Remove existing highlighting:
+	foreach {start_index end_index} [.editor.text tag ranges misspelled] {
+		.editor.text tag remove misspelled $start_index $end_index
+	}
+	# TODO: apply those removals line by line, as the spellcheck proceeds.
+	# Indeed, it would be sensible to limit the spellchecking to the current line, once the main document has been checked once through (in the background).
+
+	# Split into words:
+	foreach index [regexp -all -indices -inline "\[A-Za-z\]+" $text] {
+		set start [lindex $index 0]
+		set end [lindex $index 1]
+		set word [string range $text $start $end]
+		# Look up word in dictionary:
+		if {[lsearch -nocase $dictionary $word] == -1} {
+			# Unrecognised word: highlight!
+			puts stderr "Unrecognised: \"$word\" (chars $start-$end)"
+			.editor.text tag add misspelled "1.0 + $start chars" "1.0 + [expr {$end + 1}] chars"
+		}
+	}
+}
+
+# TODO: clear (remove all) "misspelled" tags every time?
+
+

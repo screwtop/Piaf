@@ -15,4 +15,10 @@ set ::line_padding 3	;# Pixels, both above and below each line.
 
 set ::browser firefox
 
+# Spell-checking stuff:
+set ::dictionary_file /usr/share/dict/words
+set ::misspelled_foreground_colour #ff8080
+# or maybe just:
+# set "-foreground white -background red -underline true"
+# and then you can set whatever additional properties there
 
