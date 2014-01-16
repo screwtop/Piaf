@@ -91,6 +91,8 @@ menu .menubar.transform
 menu .menubar.language
 	.menubar.language add command -label "Check Spelling" -command spellcheck
 	.menubar.language add command -label "Clear Misspellings" -command clear_spelling_errors
+	.menubar.language add separator
+	.menubar.language add command -label "Tcl" -command {source "$::binary_path/scanners/Tcl.tcl"}
 .menubar add cascade -label "Language" -menu .menubar.language -underline 0
 
 
@@ -146,6 +148,7 @@ menu .popup_menu
 
 
 # TODO: Transform submenu for uppercase, lowercase, init caps, reverse, sort
+
 
 
 

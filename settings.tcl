@@ -1,6 +1,12 @@
 # Various settings for Piaf text editor
 # Can be overridden by those in ~/.piaf/settings.tcl
 
+# Font settings first:
+set ::font "LetterGothic12Pitch 10"
+set ::fixed_gui_font "LetterGothic12Pitch 8"
+set ::line_padding 3	;# Pixels, both above and below each line.
+
+# Colour scheme:
 set ::void_colour black	;# The colour of no text
 set ::background_colour #202020	;# Background colour of the text extent
 set ::text_colour white
@@ -9,9 +15,13 @@ set ::insertbackground_colour green
 set ::current_line_background_colour #404040
 #set ::current_line_foreground_colour $::text_colour
 
-set ::font "LetterGothic12Pitch 10"
-set ::fixed_gui_font "LetterGothic12Pitch 8"
-set ::line_padding 3	;# Pixels, both above and below each line.
+# Preferences for lexical highlighting:
+set ::comment_foreground_colour #87ceeb
+set ::string_foreground_colour #ffa0a0
+set ::keyword_foreground_colour #f0e68c
+set ::keyword_font "$::font bold"
+
+
 
 set ::browser firefox
 
@@ -21,4 +31,5 @@ set ::misspelled_foreground_colour #ff8080
 # or maybe just:
 # set "-foreground white -background red -underline true"
 # and then you can set whatever additional properties there
+
 

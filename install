@@ -11,6 +11,7 @@
 #echo -n "Setting up user's database..."
 ./install-db.sh
 #mkdir -p ~/.piaf
+# mkdir -p ~/.piaf/dictionaries
 #rm -f ~/.piaf/data.db
 #echo .exit | sqlite3 -batch -bail -init schema.sql ~/.piaf/data.db
 #echo "done."
@@ -26,9 +27,11 @@ DEST=/usr/local/piaf
 
 mkdir -p $STAGE/bin
 cp piaf *.tcl $STAGE/bin
+cp -R scanners $STAGE/bin
 
 sudo mkdir -p $DEST/bin
 sudo cp $STAGE/bin/piaf $STAGE/bin/*.tcl $DEST/bin
+sudo cp -R $STAGE/bin/scanners $DEST/bin/
 sudo rm -f /usr/local/bin/piaf
 sudo ln -s $STAGE/bin/piaf /usr/local/bin/piaf
 

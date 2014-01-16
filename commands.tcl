@@ -260,6 +260,8 @@ proc open_selection_in_browser {} {
 	set ::status "Ready"
 }
 
+# TODO: factor out common browser code.  Perhaps use string substitution for search term placeholder.  Definitely think about applying some URL-encoding.
+
 proc search_web_for_selection {} {
 	# TODO: encode search terms for URL:
 	set ::status "Opening browser…"
@@ -369,10 +371,4 @@ proc quit {} {
 	puts "Exiting…"
 	exit
 }
-
-
-
-
-
-
 

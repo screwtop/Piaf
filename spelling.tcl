@@ -1,8 +1,11 @@
 # Basic spellcheck capability (not realtime yet - will need to be implemented as a separate process - and I'm not sure what IPC method would be best there, as there would often be too much text for [tk send]).
 
+# TODO: prevent spelling tags from messing with the file modification status.
+
 # Now uses an array, since in Tcl these are implemented as a hash.
 # Spellcheck using list for ::dictionary: 6.3 seconds for MPlayer docs vidix.txt (858 words).
 # Using a hash took it down to 42 milliseconds for the same text. ;)
+
 
 proc load_dictionary {filename} {
 	puts -nonewline stderr "Loading dictionary from \"$filename\"…"
@@ -67,6 +70,7 @@ proc clear_spelling_errors {} {
 		.editor.text tag remove misspelled $start_index $end_index
 	}
 }
+
 
 
 

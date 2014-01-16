@@ -91,6 +91,7 @@ source "$::binary_path/insert_mark_tracking.tcl"	;# Generating virtual events fo
 source "$::binary_path/bindings.tcl"	;# Key event bindings
 catch {source ~/.piaf/bindings.tcl}	;# User can override and add their own too
 after 100 {source "$::binary_path/spelling.tcl"}	;# Loading the dictionary can take some time, so better to do this after everything else has been set up.  The user probably isn't going to start spell checking in the first second anyway.  TODO: have this run after the window is created, rather than arbitrarily after 100 ms.
+after 100 {source "$::binary_path/scanning.tcl"}
 
 
 # Apply new grid layout:
