@@ -4,8 +4,17 @@
 # Spellcheck using list for ::dictionary: 6.3 seconds for MPlayer docs vidix.txt (858 words).
 # Using a hash took it down to 42 milliseconds for the same text. ;)
 
-puts -nonewline stderr "Loading dictionary from \"$::dictionary_file\"…"
-foreach word [slurp $::dictionary_file] {set ::dictionary([string tolower $word]) 1}
+proc load_dictionary {filename} {
+	puts -nonewline stderr "Loading dictionary from \"$filename\"…"
+	foreach word [slurp $filename] {set ::dictionary([string tolower $word]) 1}
+	puts stderr "done."
+}
+
+load_dictionary $::dictionary_file
+# Also load user dict, if it exists (todo: settings for multiple custom dictionaries):
+catch {load_dictionary ~/.piaf/userdict.txt}
+
+# Print dictionary stats:
 puts stderr "[array size ::dictionary] words loaded."
 puts stderr "[array statistics ::dictionary]\n"
 
@@ -55,5 +64,6 @@ proc clear_spelling_errors {} {
 		.editor.text tag remove misspelled $start_index $end_index
 	}
 }
+
 
 
