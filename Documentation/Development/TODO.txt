@@ -1,10 +1,11 @@
 
 TODO:
 
-
+ - Updating of line/column numbers in statusbar
+ - Detect file modification and avoid data loss on close/exit (offer to save)
+ - File versioning on save
  - "Strip blank lines" transformation
  - "Remove duplicate characters/lines" transformations
- - Updating of line/column numbers in statusbar
  - Maybe have text transformations apply to the entire editor buffer if there is no selection active.
  - Have install script accept a destination argument (and patch Piaf's script path accordingly?!)
  - Have the file log normalise filenames for full path
@@ -48,5 +49,6 @@ DONE:
  - Made SQL DDL script at least syntactically valid
  - Added beginnings of an install script
  - Rearranged main menu order slightly
+
 
 
