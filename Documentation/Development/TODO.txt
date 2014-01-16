@@ -1,30 +1,77 @@
 
 TODO:
 
- - Updating of line/column numbers in statusbar
- - Detect file modification and avoid data loss on close/exit (offer to save)
- - File versioning on save
- - "Strip blank lines" transformation
- - "Remove duplicate characters/lines" transformations
+ - Language Menu item for clearing misspelled word tags.
+ - Commands for loading, appending, clearing the dictionary.
+ - Have paste replace current selection
+ - Toggleable line up/down movement behaviour; see http://wiki.tcl.tk/3082
+ - Add alert label to "unsaved" panel?
+ - Strip code prior to sending to Frink.  And only send it one line!
+ - Fix erratically funky Frink results
+ - Have stop_frinkserver run in the background somehow (currently it hangs the GUI)
+ - Status display of frinkserver status?  At least "starting"/"shutting down"
+ - Fix "X server insecure (must use xauth-style authorization); command ignored"
+ - get list of recent files (and show in menu/sidebar)
+ - Detect Linux distro and install dependencies (only if necessary...and detecting what's installed might be harder than just installing needlessly)
+ - Project menu and functionality
+ - Navigate/Navigation/Move menu
+ - Horizontal scrolling (with scrollbar only when needed?)
+ - Set more appropriate (smaller) width and height of text widget (and also set initial geometry for non-tiling window systems)
+ - A Tcl console/shell window.  See http://wiki.tcl.tk/786, http://wiki.tcl.tk/1026
+ - jump to insert point when inserting via commands
+ - Display lines loaded in statusbar
+        maybe not necessary, as we now have a live char/word/line counter display
+ - load/save filters for converting line endings and character encodings
+ - Separate character, word and line count statusbar items
+ - Make char/word/line count computation happen truly in the background.
+ - Command: "Select None" (cf. "Select All")
+ - Transformation: "strip blank lines" (those that consist solely of whitespace, or those matching "\n" only?)
+ - Transformation: "remove duplicate characters/lines"
  - Maybe have text transformations apply to the entire editor buffer if there is no selection active.
+ - Have text transformations apply correctly when there are multiple selection ranges.
  - Have install script accept a destination argument (and patch Piaf's script path accordingly?!)
  - Have the file log normalise filenames for full path
+ - Make the database optional, in case of no sqlite3 Tcl library
+ - file log (database) browser
  - Record full hostname + domain name in file log
  - Create appropriate database indexes
- - Handle multiple files?!?!
+ - Handle multiple files?!?!  Use multiple windows, tabs, split panes, or paging?!
  - About, Help menus
  - Various menu items for commands
- - Generic error dialog?
- - Find/Search dialog/toolbar/popup thingy
+ - Generic error dialog/panel?
+ - Generic user input dialog/panel? (for use in scripts requiring interaction)
  - Lexical colouring/highlighting for various languages
  - Language-specific Insert submenu(s)?
 	including a language-sensitive "strip comment lines" transformation
- - Folding
+ - Folding?
 
 
 
 DONE:
 
+ - Set filename in titlebar when saving as (or opening, or new-ing). (Yay, [trace variable]!)
+ - Added "Close" and "Clear" buttons to search bar.
+ - support "Esc" for dismissing the Find panel
+ - Have find panel also use grid!  Also, find out why it currently makes the X server go crazy busy!
+ - Redo top-level geometry as grid (for easier hide/show of components)
+ - Enter/Return to save by default in "unsaved" panel (focus?)
+ - Added loading of user keybindings.
+ - Added space/tab transformations to menu.
+ - Fixed command name in binding for select_current_line
+ - Detect unsaved changes on [close_file]
+ - Have closing the window cause the graceful [quit] routine to be run
+ - Linked Exit menu with graceful quit routine
+ - Added modification event generation to "load" proc.
+ - More generous line spacing
+ - Pop-up panel when unsaved changes exist.
+ - Use highlighting to show the extent of the file (visible end of file).
+ - Investigate generating a new virtual event when a change of the insert mark is detected (to avoid having a whole bunch of [after]s watching things)
+ - highlight current line
+ - Fix bug in selection line counting which causes " characters to be treated as linebreaks.
+ - Frink integration in Reference menu?   Spawn an ongoing background server-type process with Expect?
+ - Find/Search dialog/toolbar/popup thingy
+ - Tooltips, e.g. full path for brief filename in statusbar
+ - Updating of line/column numbers in statusbar
  - Factored out colour and font settings
  - Window title now shows filename
  - Set "insert" mark to 0.0 on startup/file load
@@ -49,6 +96,4 @@ DONE:
  - Made SQL DDL script at least syntactically valid
  - Added beginnings of an install script
  - Rearranged main menu order slightly
-
-
 

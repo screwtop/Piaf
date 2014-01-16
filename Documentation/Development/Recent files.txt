@@ -1,0 +1,15 @@
+-- Most recent files
+
+-- First, need to find the most recent load timestamp for each file, then order by date and limit to top (say) 10:
+
+select Filename, max(Date_Performed) as Timestamp from File_Log
+where Operation = 'LOAD'
+group by Filename
+order by Timestamp
+limit 10;
+
+-- TODO: include the entire PK in the grouping, or restrict to files on the current machine.
+
+-- Hm, I should really normalise all the filenames as they're going in...could end up with lots of ".git/COMMIT_EDITING" entries that are really different files.
+
+

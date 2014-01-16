@@ -1,0 +1,14 @@
+Unicode characters of possible interest for GUI elements:
+×∅⊗⊙⊚⊠⌀☓✕✖✗✘❌❎❖⤫⤬⨂⨉⨯⨻
+⎉⎊⎋
+∗
+⎌
+⎗⎘
+⎙
+⎚
+☐☑☒
+☠☡☮☹☺♡
+♲♻♼♽
+⚙⚛⚠⚡⛁✁
+⌘⌚⌛⌤⌥⌦⌧⌨⌫⎇
+

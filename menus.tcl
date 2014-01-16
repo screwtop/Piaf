@@ -14,7 +14,7 @@ menu .menubar.file
 	.menubar.file add command -label "Reload" -command reload	;# TODO: confirm? or just support undo? ;)
 	.menubar.file add command -label "Close" -command close_file
 	.menubar.file add separator
-	.menubar.file add command -label "Exit" -command exit	;# TODO: nicer anti-lose-work exit routine
+	.menubar.file add command -label "Exit" -command quit	;# TODO: nicer anti-lose-work exit routine
 .menubar add cascade -label File -menu .menubar.file -underline 0
 
 # Edit menu:
@@ -51,41 +51,48 @@ menu .menubar.insert
 
 # Search menu? Or perhaps a more general Navigate menu?
 menu .menubar.search
-.menubar add cascade -label "Search" -menu .menubar.search
+# Disabled for now:
+#.menubar add cascade -label "Search" -menu .menubar.search
 
 
 # Tabular menu, to assist in creating multi-range sel tags for tabular blocks?  Mark Start, Mark End, etc.?
 # Or mabye a Select/Selection or Mark menu?  For commands like Mark Matching..., Mark Lines Matching... as well as tabular operations?  Selection Invert?  Select None?
 menu .menubar.select
 	.menubar.select add command -label "All" -command select_all
-	.menubar.select add command -label "None" -command {}
-	.menubar.select add command -label "Invert Selection" -command {}
-	.menubar.select add command -label "Text Matching…" -command {}
-	.menubar.select add command -label "Lines Matching…" -command {}
+	.menubar.select add command -label "None" -command select_none
+#	.menubar.select add command -label "Invert Selection" -command {}
+#	.menubar.select add command -label "Text Matching…" -command {}	;# This could probably just loop through existing code
+#	.menubar.select add command -label "Lines Matching…" -command {}
 .menubar add cascade -label "Select" -menu .menubar.select -underline 0
 
 
 # Transform menu:
 menu .menubar.transform
 	.menubar.transform add command -label "Indent" -command {transform_selection ::piaf::transform::indent}
-	.menubar.transform add command -label "Case > Upper" -command {transform_selection ::piaf::transform::uppercase}
-	.menubar.transform add command -label "Case > Lower" -command {transform_selection ::piaf::transform::lowercase}
+	.menubar.transform add command -label "Case > UPPER" -command {transform_selection ::piaf::transform::uppercase}
+	.menubar.transform add command -label "Case > lower" -command {transform_selection ::piaf::transform::lowercase}
+	.menubar.transform add command -label "Collapse whitespace" -command {transform_selection ::piaf::transform::collapse_whitespace}
 	.menubar.transform add command -label "Linebreaks > CR" -command {transform_selection ::piaf::transform::crlinebreaks}
 	.menubar.transform add command -label "Linebreaks > LF" -command {transform_selection ::piaf::transform::lflinebreaks}
 	.menubar.transform add command -label "Linebreaks > CRLF" -command {transform_selection ::piaf::transform::crlflinebreaks}
+	.menubar.transform add command -label "Reverse chars" -command {transform_selection ::piaf::transform::reverse}
 	.menubar.transform add command -label "Rot-13" -command {transform_selection ::piaf::transform::rot13}
-	.menubar.transform add command -label "Sort Characters" -command {transform_selection ::piaf::transform::sort}
-	.menubar.transform add command -label "Sort Lines" -command {transform_selection ::piaf::transform::sort_lines}
-	.menubar.transform add command -label "Reverse" -command {transform_selection ::piaf::transform::reverse}
+	.menubar.transform add command -label "Sort chars" -command {transform_selection ::piaf::transform::sort}
+	.menubar.transform add command -label "Sort lines" -command {transform_selection ::piaf::transform::sort_lines}
+	.menubar.transform add command -label "Spaces to tabs" -command {transform_selection ::piaf::transform::spaces_to_tabs}
+	.menubar.transform add command -label "Strip blank lines" -command {transform_selection ::piaf::transform::strip_blank_lines}
+	.menubar.transform add command -label "Tabs to spaces" -command {transform_selection ::piaf::transform::tabs_to_spaces}
+	.menubar.transform add command -label "Trim trailing whitespace" -command {transform_selection ::piaf::transform::remove_trailing_whitespace}
 	.menubar.transform add command -label "Unwrap" -command {transform_selection ::piaf::transform::unwrap}
-	.menubar.transform add command -label "Whitespace: Remove Trailing" -command {transform_selection ::piaf::transform::removetrailingwhitespace}
 .menubar add cascade -label "Transform" -menu .menubar.transform -underline 0
 
 
 # Language menu, for programming languages as well as spelling and grammar stuff.
 menu .menubar.language
-	.menubar.language add command -label "Check Spelling" -command {}
-#	.menubar.language add command -label "" -command {}
+	.menubar.language add command -label "Check Spelling" -command spellcheck
+	.menubar.language add command -label "Clear Misspellings" -command clear_spelling_errors
+	.menubar.language add separator
+	.menubar.language add command -label "Tcl" -command {source "$::binary_path/scanners/Tcl.tcl"}
 .menubar add cascade -label "Language" -menu .menubar.language -underline 0
 
 
@@ -95,12 +102,29 @@ menu .menubar.reference
 	.menubar.reference add command -label "Search Wikipedia" -command search_wikipedia_for_selection
 	.menubar.reference add command -label "Search Google" -command search_web_for_selection
 	.menubar.reference add command -label "Open URL in browser" -command open_selection_in_browser
+	.menubar.reference add command -label "Evaluate in Frink" -command frink_eval
+
+	menu .menubar.reference.frink
+		.menubar.reference.frink add command -label "Terminate Frink server" -command stop_frinkserver
+		.menubar.reference.frink add command -label "Start Frink server" -command start_frinkserver
+	.menubar.reference add cascade -label "Frink server" -menu .menubar.reference.frink
+
 .menubar add cascade -label "Reference" -menu .menubar.reference -underline 0
 
 
 # Window/Files/Buffer menu
 menu .menubar.window
-.menubar add cascade -label "Window" -menu .menubar.window -underline 0
+# Disabled for now:
+#.menubar add cascade -label "Window" -menu .menubar.window -underline 0
+
+
+# Console (or more general System) menu:
+menu .menubar.console
+	.menubar.console add command -label "Show Console window" -command {wm deiconify .console}
+	.menubar.console add command -label "Hide Console window" -command {wm withdraw .console}
+.menubar add cascade -label "Console" -menu .menubar.console -underline 0
+
+
 
 
 
@@ -119,10 +143,18 @@ menu .popup_menu
 		.popup_menu.transform add command -label "Rot-13" -command {transform_selection ::piaf::transform::rot13}
 		.popup_menu.transform add command -label "Sort" -command {transform_selection ::piaf::transform::sort}
 
+#	.popup_menu add cascade -labe "Transform" -menu .menubar.transform	;# Can we do this? i.e. share a menu among multiple cascade parents?
 	.popup_menu add cascade -label "Transform" -menu .popup_menu.transform
 
 
 # TODO: Transform submenu for uppercase, lowercase, init caps, reverse, sort
+
+
+
+
+
+
+
 
 
 

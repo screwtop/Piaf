@@ -1,4 +1,4 @@
-# Text processing functions for Edita
+# Text processing functions for Piaf text editor
 
 namespace eval ::piaf::transform {}
 
@@ -15,22 +15,32 @@ proc ::piaf::transform::sort {s} {join [lsort [split $s {}]] {}}
 
 proc ::piaf::transform::sort_lines {text} {join [lsort [split $text "\n"]] "\n"}
 
+# Remove duplicates (implicitly sorting in the process!):
+proc ::piaf::transform::remove_duplicate_characters {s} {join [lsort -unique [split $s {}]] {}}
+proc ::piaf::transform::remove_duplicate_lines {text} {join [lsort -unique [split $text "\n"]] "\n"}
 
 # Randomly permute characters in a selection
 
 # Randomly permute lines in a selection
 
 # Tabs to spaces
-proc ::piaf::transform::tabstospaces {s} {string map {"\t" "    "} $s}
+proc ::piaf::transform::tabs_to_spaces {s} {string map {"\t" "    "} $s}
 
 # Spaces to tabs
-proc ::piaf::transform::spacestotabs {s} {string map {"    " "\t"} $s}
+proc ::piaf::transform::spaces_to_tabs {s} {string map {"    " "\t"} $s}
 
 # Remove trailing whitespace
-proc ::piaf::transform::removetrailingwhitespace {s} {regsub -all {[\t ]+\n} $s "\n"}
+proc ::piaf::transform::remove_trailing_whitespace {s} {regsub -all {[\t ]+\n} $s "\n"}
+
+# Strip blank lines:
+# TODO: handle blank line at the start correctly
+#proc ::piaf::transform::strip_blank_lines {s} {regsub -all {\n+} $s "\n"}
+# TODO: maybe treat lines containing only whitespace as blank?  User could just remove trailing whitespace first, then strip blank lines.
+# Here's an implementation due to DKF:
+proc ::piaf::transform::strip_blank_lines {s} {regsub -all {^\n+|\n+$|(\n)+} $s {\1}}
 
 # Normalise/collapse whitespace
-#string map {"\n" " " "\t" " "} 
+proc ::piaf::transform::collapse_whitespace {s} {regsub -all "\[\r\n\t \]+" $s " "}
 
 proc ::piaf::transform::lflinebreaks {s} {regsub -all {[\r\n]+} $s "\n"}
 proc ::piaf::transform::crlinebreaks {s} {regsub -all {[\r\n]+} $s "\r"}
@@ -51,9 +61,11 @@ proc ::piaf::transform::indent {s} {
 	string trimright [string map {"\n" "\n\t"} $s] "\t"
 }
 
+# TODO: unindent
+
 # Smarten quotes
 
-# Add quotes
+# Add quotes around selection
 
 # Remove punctuation
 
@@ -106,5 +118,10 @@ proc ::piaf::latex::figure {} {insert {
 \end{figure}
 }
 }
+
+
+
+
+
 
 
