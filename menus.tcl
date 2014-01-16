@@ -90,7 +90,7 @@ menu .menubar.transform
 # Language menu, for programming languages as well as spelling and grammar stuff.
 menu .menubar.language
 	.menubar.language add command -label "Check Spelling" -command spellcheck
-#	.menubar.language add command -label "" -command {}
+	.menubar.language add command -label "Clear Misspellings" -command clear_spelling_errors
 .menubar add cascade -label "Language" -menu .menubar.language -underline 0
 
 
@@ -116,6 +116,15 @@ menu .menubar.window
 #.menubar add cascade -label "Window" -menu .menubar.window -underline 0
 
 
+# Console (or more general System) menu:
+menu .menubar.console
+	.menubar.console add command -label "Show Console window" -command {wm deiconify .console}
+	.menubar.console add command -label "Hide Console window" -command {wm withdraw .console}
+.menubar add cascade -label "Console" -menu .menubar.console -underline 0
+
+
+
+
 
 # Contextual menu for text also (with cut, copy, paste, delete/clear, mark for swap, etc.
 # Don't want f***ing drag-and-drop.
@@ -137,6 +146,8 @@ menu .popup_menu
 
 
 # TODO: Transform submenu for uppercase, lowercase, init caps, reverse, sort
+
+
 
 
 

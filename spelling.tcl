@@ -7,6 +7,7 @@
 puts -nonewline stderr "Loading dictionary from \"$::dictionary_file\"…"
 foreach word [slurp $::dictionary_file] {set ::dictionary([string tolower $word]) 1}
 puts stderr "[array size ::dictionary] words loaded."
+puts stderr "[array statistics ::dictionary]\n"
 
 .editor.text tag configure misspelled -foreground $::misspelled_foreground_colour -underline true
 
@@ -45,4 +46,14 @@ proc spellcheck {} {
 		}
 	}
 }
+
+# TODO: alias "check_spelling" for "spellcheck"?
+
+# Remove all the "misspelled" tag ranges to clear them.
+proc clear_spelling_errors {} {
+	foreach {start_index end_index} [.editor.text tag ranges misspelled] {
+		.editor.text tag remove misspelled $start_index $end_index
+	}
+}
+
 
