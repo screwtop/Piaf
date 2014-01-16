@@ -1,6 +1,8 @@
 
 TODO:
 
+ - Language Menu item for clearing misspelled word tags.
+ - Commands for loading, appending, clearing the dictionary.
  - Have paste replace current selection
  - Toggleable line up/down movement behaviour; see http://wiki.tcl.tk/3082
  - Add alert label to "unsaved" panel?
@@ -15,10 +17,10 @@ TODO:
  - Navigate/Navigation/Move menu
  - Horizontal scrolling (with scrollbar only when needed?)
  - Set more appropriate (smaller) width and height of text widget (and also set initial geometry for non-tiling window systems)
+ - A Tcl console/shell window.  See http://wiki.tcl.tk/786, http://wiki.tcl.tk/1026
  - jump to insert point when inserting via commands
  - Display lines loaded in statusbar
         maybe not necessary, as we now have a live char/word/line counter display
- - highlight current line
  - load/save filters for converting line endings and character encodings
  - Separate character, word and line count statusbar items
  - Make char/word/line count computation happen truly in the background.
@@ -64,6 +66,7 @@ DONE:
  - Pop-up panel when unsaved changes exist.
  - Use highlighting to show the extent of the file (visible end of file).
  - Investigate generating a new virtual event when a change of the insert mark is detected (to avoid having a whole bunch of [after]s watching things)
+ - highlight current line
  - Fix bug in selection line counting which causes " characters to be treated as linebreaks.
  - Frink integration in Reference menu?   Spawn an ongoing background server-type process with Expect?
  - Find/Search dialog/toolbar/popup thingy
