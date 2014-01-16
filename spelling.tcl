@@ -10,9 +10,12 @@ proc load_dictionary {filename} {
 	puts stderr "done."
 }
 
-load_dictionary $::dictionary_file
-# Also load user dict, if it exists (todo: settings for multiple custom dictionaries):
-catch {load_dictionary ~/.piaf/userdict.txt}
+load_dictionary $::dictionary_file	;# Main dictionary file
+
+# Also load user dict(s) (todo: settings for multiple custom dictionaries; for now just load them all):
+foreach dictionary_file [glob -nocomplain ~/.piaf/dictionaries/*] {
+	catch {load_dictionary $dictionary_file}
+}
 
 # Print dictionary stats:
 puts stderr "[array size ::dictionary] words loaded."
@@ -64,6 +67,8 @@ proc clear_spelling_errors {} {
 		.editor.text tag remove misspelled $start_index $end_index
 	}
 }
+
+
 
 
 
