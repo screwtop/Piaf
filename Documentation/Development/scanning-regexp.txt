@@ -1,0 +1,19 @@
+# Trying to figure out how to use [regexp] as part of lexical scanning
+
+# I got very close to what I want by using "-all indices -inline", but there were complications with submatches.
+# I've got closer still by using non-matching groups, specified by (?:PATTERN).  However, the structure of the list returned varies depending on the number of submatches:
+
+% regexp -all -indices -inline "(X)(dog)(X)" "adogb XdogX ZdogZ"
+{6 10} {6 6} {7 9} {10 10}
+i.e. entire match, submatch 1, submatch 2, submatch 3
+
+% regexp -all -indices -inline "(?:X)(dog)(?:X)" "adogb XdogX ZdogZ"
+{6 10} {7 9}
+i.e. entire match, submatch 1
+
+foreach {all sub} [regexp -all -indices -inline "(?:X)(dog)(?:X)" "adogb XdogX ZdogZ"] {puts $sub}
+
+# Ah-ha: you can use [regexp -about] to find out the number of subexpressions. :)  You have to [regexp] twice, but at least Tcl caches regexps (the last 30, apparently), and you can run it with an empty string as the string argument.
+
+# So, if the number of submatches is 0, we want to examine all indexes, and if it's more than 0, we need to discard every second one because it's the entire match (provided there's only one non-non-matching group).
+

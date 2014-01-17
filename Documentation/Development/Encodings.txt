@@ -1,0 +1,6 @@
+As usual, great stuff is built in.
+
+% encoding names
+cp860 cp861 cp862 cp863 tis-620 cp864 cp865 cp866 gb12345 gb2312-raw cp949 cp950 cp869 dingbats ksc5601 macCentEuro cp874 macUkraine jis0201 gb2312 euc-cn euc-jp iso8859-10 macThai jis0208 iso2022-jp iso2022 macIceland iso8859-13 jis0212 iso8859-14 iso8859-15 cp737 iso8859-16 euc-kr big5 macRomania gb1988 iso2022-kr macTurkish macGreek cp437 ascii macRoman iso8859-1 iso8859-2 iso8859-3 ebcdic koi8-r macCroatian iso8859-4 iso8859-5 cp1250 cp1251 iso8859-6 macCyrillic cp1252 koi8-u macDingbats iso8859-7 cp1253 iso8859-8 cp1254 iso8859-9 cp1255 cp850 cp1256 cp932 identity cp852 cp1257 macJapan cp1258 shiftjis utf-8 cp855 cp936 symbol cp775 unicode cp857
+
+
