@@ -28,7 +28,7 @@ foreach index [regexp -all -indices -inline "#\[^\n\]*\n" [get_all]] {
 # That'll do, pig; that'll do! :)
 
 
-# How about strings?
+# How about strings?  A simple regexp might be "\"\[^\"\]*\"".
 
 set ::string_foreground_colour #ffa0a0
 .editor.text tag configure string -foreground $::string_foreground_colour
@@ -51,12 +51,14 @@ proc tag_all {} {
 
 every 500 tag_all
 
+# (only parameterised somehow for the language.  Speaking of which, how to identify what kind of text we're dealing with?  Filename (suffix), magic numbers, Bayesian something, ...?  Allow the user to specify/override as in Vim?)
+
 # The scanning will definitely need to be done in a separate process (or at least properly backgrounded so as not to interfere with the GUI).  I imagine the bulk of the time is due to the [regexp], which is atomic, so we can't just [after idle] it.
+
+# We'll also need to consider how to design the implementation.  There will be many different languages, each with their own set of syntactical characteristics.  But maybe we can generalise.  Store in files or in database?  Have only one scanner active per file?
 
 
 --
 
 Should select_line include the trailing "\n"?  Should there perhaps be a separate command for that?  Maybe <Control-L> for including the newline, and <Control-l> for without.
-
-
 

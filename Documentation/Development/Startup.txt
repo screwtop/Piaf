@@ -1,0 +1,37 @@
+wish startup experiment
+How to defer certain code until the main script has been executed and the GUI is open and ready to rock?  I get the impression that wish will typically defer displaying the toplevel window when running a script until it reaches EOF of that script.  Let's first test that hypothesis:
+
+#!/usr/bin/wish
+wm title . TEST
+exec sleep 5
+wm title . Boo!
+
+Yep, sure enough, the GUI does not appear for 5 seconds.
+
+So, how to have code in the startup script be deferred until loading is done and the GUI is visible?  An GUI-related event?  Or a file-related one on stdin?  I tried binding to <<Map>> and <<Create>> and nothing happened.
+
+Oh, I was basically right to begin with - just had <<Map>> instead of <Map> (those X-related events are not virtual events, as I'd assumed).  However, oddly, only the last [bind] seems to take effect.
+
+bind . <<Map>> {puts stderr "Window mapped!"; puts [wm geometry .]}
+bind . <<Create>> {puts stderr "Window mapped!"; puts [wm geometry .]}
+
+Create	Doesn't happen for "."
+Destroy	Happens when window is closed
+Map	Happens when window opens
+Unmap	Doesn't happen when window closes
+Configure	Happens several times when the window is opening (1x1+0+0 -> 200x200+0+0 -> 200x200+464+0 -> 810x120+464+0, obvious interaction with the window manager there)
+
+--
+
+Another thing: I quite like GVim's behaviour of forking from the spawning terminal, as it frees up that terminal for further use.  Maybe we can have Piaf do the same.
+
+There is a [fork] in Tcl, IIRC.
+
+--
+
+Another thing I really want to be able to do is leave the Tcl shell open in the terminal that launched the wish process.  However, I think wish closes this when it's run with a script argument.
+
+Maybe Expect could be used?
+
+How would this interact with the forking idea?  Maybe have a command-line argument to specify whether to leave the Tcl shell open for interaction.
+
