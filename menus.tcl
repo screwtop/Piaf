@@ -70,19 +70,21 @@ menu .menubar.select
 menu .menubar.transform
 	menu .menubar.transform.convert
 		.menubar.transform.convert add command -label "Binary to decimal" -command {transform_selection ::piaf::transform::bin_to_dec}
-		.menubar.transform.convert add command -label "Decimal to binary" -command {transform_selection ::piaf::transform::dec_to_bin}
-		.menubar.transform.convert add command -label "Octal to decimal" -command {transform_selection ::piaf::transform::oct_to_dec}
-		.menubar.transform.convert add command -label "Decimal to octal" -command {transform_selection ::piaf::transform::dec_to_oct}
-		.menubar.transform.convert add command -label "Hexadecimal to decimal" -command {transform_selection ::piaf::transform::hex_to_dec}
-		.menubar.transform.convert add command -label "Decimal to hexadecimal" -command {transform_selection ::piaf::transform::dec_to_hex}
-		# TODO: these are more textual than numeric; move somewhere else.
+		.menubar.transform.convert add command -label "Binary string to data" -command {transform_selection ::piaf::transform::bin_to_char}
 		.menubar.transform.convert add separator
+		.menubar.transform.convert add command -label "Decimal to binary" -command {transform_selection ::piaf::transform::dec_to_bin}
+		.menubar.transform.convert add command -label "Decimal to octal" -command {transform_selection ::piaf::transform::dec_to_oct}
+		.menubar.transform.convert add command -label "Decimal to hexadecimal" -command {transform_selection ::piaf::transform::dec_to_hex}
 		.menubar.transform.convert add command -label "Decimal to Unicode" -command {transform_selection ::piaf::transform::dec_to_unicode}
+		.menubar.transform.convert add separator
+		.menubar.transform.convert add command -label "Hexadecimal to decimal" -command {transform_selection ::piaf::transform::hex_to_dec}
 		.menubar.transform.convert add command -label "Hexadecimal to Unicode" -command {transform_selection ::piaf::transform::hex_to_unicode}
+		.menubar.transform.convert add separator
+		.menubar.transform.convert add command -label "Octal to decimal" -command {transform_selection ::piaf::transform::oct_to_dec}
+		.menubar.transform.convert add separator
 		.menubar.transform.convert add command -label "Unicode to decimal" -command {transform_selection ::piaf::transform::unicode_to_dec}
 		.menubar.transform.convert add command -label "Unicode to hexadecimal" -command {transform_selection ::piaf::transform::unicode_to_hex}
 		.menubar.transform.convert add separator
-		.menubar.transform.convert add command -label "Binary string to data" -command {transform_selection ::piaf::transform::bin_to_char}
 		.menubar.transform.convert add command -label "Data to binary string" -command {transform_selection ::piaf::transform::char_to_bin}
 	.menubar.transform add cascade -label "Convert" -menu .menubar.transform.convert
 
@@ -168,6 +170,8 @@ menu .popup_menu
 
 
 # TODO: Transform submenu for uppercase, lowercase, init caps, reverse, sort
+
+
 
 
 
