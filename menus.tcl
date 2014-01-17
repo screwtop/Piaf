@@ -68,6 +68,25 @@ menu .menubar.select
 
 # Transform menu:
 menu .menubar.transform
+	menu .menubar.transform.convert
+		.menubar.transform.convert add command -label "Binary to decimal" -command {transform_selection ::piaf::transform::bin_to_dec}
+		.menubar.transform.convert add command -label "Decimal to binary" -command {transform_selection ::piaf::transform::dec_to_bin}
+		.menubar.transform.convert add command -label "Octal to decimal" -command {transform_selection ::piaf::transform::oct_to_dec}
+		.menubar.transform.convert add command -label "Decimal to octal" -command {transform_selection ::piaf::transform::dec_to_oct}
+		.menubar.transform.convert add command -label "Hexadecimal to decimal" -command {transform_selection ::piaf::transform::hex_to_dec}
+		.menubar.transform.convert add command -label "Decimal to hexadecimal" -command {transform_selection ::piaf::transform::dec_to_hex}
+		# TODO: these are more textual than numeric; move somewhere else.
+		.menubar.transform.convert add separator
+		.menubar.transform.convert add command -label "Decimal to Unicode" -command {transform_selection ::piaf::transform::dec_to_unicode}
+		.menubar.transform.convert add command -label "Hexadecimal to Unicode" -command {transform_selection ::piaf::transform::hex_to_unicode}
+		.menubar.transform.convert add command -label "Unicode to decimal" -command {transform_selection ::piaf::transform::unicode_to_dec}
+		.menubar.transform.convert add command -label "Unicode to hexadecimal" -command {transform_selection ::piaf::transform::unicode_to_hex}
+		.menubar.transform.convert add separator
+		.menubar.transform.convert add command -label "Binary string to data" -command {transform_selection ::piaf::transform::bin_to_char}
+		.menubar.transform.convert add command -label "Data to binary string" -command {transform_selection ::piaf::transform::char_to_bin}
+	.menubar.transform add cascade -label "Convert" -menu .menubar.transform.convert
+
+	.menubar.transform add separator
 	.menubar.transform add command -label "Indent" -command {transform_selection ::piaf::transform::indent}
 	.menubar.transform add command -label "Case > UPPER" -command {transform_selection ::piaf::transform::uppercase}
 	.menubar.transform add command -label "Case > lower" -command {transform_selection ::piaf::transform::lowercase}
@@ -93,6 +112,7 @@ menu .menubar.language
 	.menubar.language add command -label "Clear Misspellings" -command clear_spelling_errors
 	.menubar.language add separator
 	.menubar.language add command -label "Tcl" -command {source "$::binary_path/scanners/Tcl.tcl"}
+	.menubar.language add command -label "XML" -command {source "$::binary_path/scanners/XML.tcl"}
 .menubar add cascade -label "Language" -menu .menubar.language -underline 0
 
 
@@ -148,14 +168,6 @@ menu .popup_menu
 
 
 # TODO: Transform submenu for uppercase, lowercase, init caps, reverse, sort
-
-
-
-
-
-
-
-
 
 
 

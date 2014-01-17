@@ -38,3 +38,4 @@ set ::scanner_regexp(keyword) {LoadBLT|after|append|apply|array|auto_execok|auto
 # NOTE: remember that braces inside comments ARE significant because they are actually part of the core syntax.
 set ::scanner_regexp(symbol) {\[|\]|\{|\}|;|$}
 
+

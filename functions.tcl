@@ -69,12 +69,41 @@ proc ::piaf::transform::indent {s} {
 
 # Remove punctuation
 
-# Zap gremlins"
+# "Zap gremlins"
 
 # rot-13, why not? :)
 proc ::piaf::transform::rot13 {s} {
 	string map [list A N B O C P D Q E R F S G T H U I V J W K X L Y M Z N A O B P C Q D R E S F T G U H V I W J X K Y L Z M a n b o c p d q e r f s g t h u i v j w k x l y m z n a o b p c q d r e s f t g u h v i w j x k y l z m] $s
 }
+
+
+# Number system conversions:
+# TODO: maybe make some of these more forgiving in what they'll accept...
+
+# Trickiness here because we have to pad to a minimum number of digits for "W" (64-bit) format.
+# Is 64 bits excessive?  To be really useful we'd have a dialog with length and signedness and endianness and such.  But one does often encounter binary strings longer than 32 bits (e.g. Ethernet MACs, HDD LBAs, IPv6 addresses).
+proc ::piaf::transform::bin_to_dec {binary_string} {binary scan [binary format B* [format %064s $binary_string]] Wu* binary; return $binary}
+proc ::piaf::transform::dec_to_bin {num} {binary scan [binary format Wu* $num] B* res; string trimleft $res 0}
+
+# Hexadecimal:
+proc ::piaf::transform::hex_to_dec {hex} {scan $hex %x}
+proc ::piaf::transform::dec_to_hex {num} {return "0x[format %x $num]"}
+
+# Octal:
+proc ::piaf::transform::oct_to_dec {oct} {scan $oct %o}
+proc ::piaf::transform::dec_to_oct {num} {format %o $num}
+
+# Find Unicode code point for character (decimal):
+proc ::piaf::transform::unicode_to_dec {char} {scan $char %c}
+proc ::piaf::transform::unicode_to_hex {char} {return "0x[format %x [scan $char %c]]"}
+# TODO: decimal and hexadecimal to Unicode character
+proc ::piaf::transform::dec_to_unicode {num} {format %c $num}
+#proc ::piaf::transform::hex_to_unicode {hex} {return "\u$hex"}
+proc ::piaf::transform::hex_to_unicode {hex} {format %c [scan $hex %x]}
+
+# Actual binary data:
+proc ::piaf::transform::bin_to_char {binary_string} {binary format B* $binary_string}
+proc ::piaf::transform::char_to_bin {char} {binary scan $char B* binary; return $binary}
 
 
 # Function for shortening long filenames (primarily for use within the Piaf GUI itself, but maybe useful otherwise):
@@ -118,6 +147,7 @@ proc ::piaf::latex::figure {} {insert {
 \end{figure}
 }
 }
+
 
 
 

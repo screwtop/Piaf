@@ -9,11 +9,14 @@
 .editor.text tag configure string -foreground $::string_foreground_colour
 .editor.text tag configure keyword -foreground $::keyword_foreground_colour -font $::keyword_font;# bold? that's a font attribute.
 .editor.text tag configure symbol -foreground $::keyword_foreground_colour -font $::keyword_font
+.editor.text tag configure literal -foreground $::literal_foreground_colour
 
 # Now, try to get the tag priority right:
 .editor.text tag raise keyword symbol
 .editor.text tag raise string keyword
 .editor.text tag raise comment string
+.editor.text tag raise comment literal
+
 
 
 # Remove all ranges for the specified tag:
@@ -57,6 +60,7 @@ proc tag_all {} {
 # Refresh the highlighting periodically.
 every 500 tag_all
 # TODO: How do we cancel that, if we ever want/need to turn the live highlighting off?
+
 
 
 

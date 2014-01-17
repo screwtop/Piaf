@@ -20,8 +20,8 @@ set ::comment_foreground_colour #87ceeb
 set ::string_foreground_colour #ffa0a0
 set ::keyword_foreground_colour #f0e68c
 set ::keyword_font "$::font bold"
-
-
+set ::literal_foreground_colour #98fb98
+# and specific colour for numeric literals?
 
 set ::browser firefox
 
@@ -31,5 +31,6 @@ set ::misspelled_foreground_colour #ff8080
 # or maybe just:
 # set "-foreground white -background red -underline true"
 # and then you can set whatever additional properties there
+
 
 
