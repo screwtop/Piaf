@@ -88,10 +88,9 @@ source "$::binary_path/console.tcl"
 source "$::binary_path/current_line_highlighting.tcl"	;# Must go before text_modification_tracking!
 source "$::binary_path/text_modification_tracking.tcl"	;# Important for detecting unsaved changes, and also includes colouring the "void" beyond EOF differently from the editor text extent.
 source "$::binary_path/insert_mark_tracking.tcl"	;# Generating virtual events for motion of the "insert" mark (cursor position)
+source "$::binary_path/spelling_aspell.tcl"
 source "$::binary_path/bindings.tcl"	;# Key event bindings
 catch {source ~/.piaf/bindings.tcl}	;# User can override and add their own too
-after 100 {source "$::binary_path/spelling.tcl"}	;# Loading the dictionary can take some time, so better to do this after everything else has been set up.  The user probably isn't going to start spell checking in the first second anyway.  TODO: have this run after the window is created, rather than arbitrarily after 100 ms.
-after 100 {source "$::binary_path/scanning.tcl"}
 
 
 # Apply new grid layout:
@@ -142,17 +141,28 @@ start_frinkserver
 wm protocol . WM_DELETE_WINDOW quit
 
 set ::status "Ready"
-set ::running true
-#puts stderr [wm geometry .]	;# 1x1+0+0 at this point!
-#after idle {puts stderr [wm geometry .]}	;# Still 1x1+0+0, but the dictionary stuff was run first.  I have a feeling Wish doesn't display the main window until it reaches EOF, when running a script file.
-#after 100 {puts stderr [wm geometry .]}
 
-# OK, how about:
-#bind . <<Map>> {puts stderr "Window mapped!"; puts stderr [wm geometry .]}
-# OR:
-#bind . <<Create>> {puts stderr "Window created!"; puts stderr [wm geometry .]}
+# Certain stuff can be done in the background after the GUI has loaded.  Wish doesn't display the main window until it reaches EOF, when running a script file, so we have to arrange for these things to happen later:
+#set ::running true	;# Where/how is this used?
+set ::setup_done false
+proc deferred_startup_actions {} {
+	after idle {
+		if { ! $::setup_done} {
+			puts stderr "[wm geometry .]"
+			# TODO: maybe a "foreach script $deferred_scripts ..."?
+			after 500 {
+				source "$::binary_path/spelling.tcl"	;# Loading the dictionary can take some time, so better to do this after everything else has been set up.  The user probably isn't going to start spell checking in the first second anyway.		Even with the [after]s, this is still obtrusive, so maybe try to load it in the background (or don't bother with any of this)
+				source "$::binary_path/scanning.tcl"
+			}
+			set ::setup_done true
+		}
+	}
+}
+
+bind . <Map> deferred_startup_actions
 
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
+# [fork]? (Expect/TclX)
 
