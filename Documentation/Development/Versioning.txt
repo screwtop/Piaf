@@ -1,0 +1,31 @@
+# Many ways to determine the Tcl version, not all equal:
+
+package provide Tcl
+info tclversion
+info patchlevel
+return $tcl_version
+return $tcl_patchLevel
+
+# You can reliably compare version numbers as well, like so:
+package vcompare [package provide Tcl] 8.5 ;# essentially signum(B-A)
+
+set required_tcl_patchlevel 8.5
+if {[package vcompare [package provide Tcl] $required_tcl_patchlevel] < 0} {
+	puts stderr "Tcl version [package provide Tcl] inadequate; need at least $required_tcl_patchlevel"
+	exit
+}
+
+
+if {[package vcompare [package require Expect] 5.44] < 0} {puts fail}
+
+# Of course, loading a package will report the version number, and if you require a specific minimum version, you can specify that as an argument to [package require].
+
+% package require Expect 5.45
+version conflict for package "Expect": have 5.44.1.14, need 5.45
+
+
+
+# The "Tcl" package is special though because it's never loaded explicitly.
+
+# Also, STUBS...?
+

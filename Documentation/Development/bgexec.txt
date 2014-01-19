@@ -1,0 +1,34 @@
+# Testing BLT's bgexec:
+
+# [Install BLT from source...]
+package require BLT
+::blt::bgexec done cal
+#% time {::blt::bgexec done cal}
+#1003671 microseconds per iteration
+# WTF?!
+
+# Can we make it work in the background, at least?
+package require Tk; wm withdraw .	;# Import Tk so we can use the event loop.
+
+proc process {args} {
+	puts "args = $args"
+}
+
+::blt::bgexec done -onoutput process cal
+# Interesting: "process" is called immediately, but the bgexec command doesn't return for a second.  Could it be waiting to make sure things are all properly tidied up on close?
+
+# The output variable has been set like so:
+#% puts $done
+#EXITED 29010 0 {child completed normally}
+
+# OK, so we can get around the bgexec return delay using [after idle], right?
+
+after idle {::blt::bgexec done -onoutput process cal}
+# That's more like it - it returns immediately, and we only see the output from the "process" callback.  No need for "vwait done" (though it might be useful, right? or just use the calback?).
+
+# vwait done
+
+# Here we can see that bgexec is indeed returning a string when it finishes, a second after the output is actually processed:
+after idle {puts [::blt::bgexec done -onoutput process cal]}
+
+

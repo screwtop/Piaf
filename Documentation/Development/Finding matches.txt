@@ -1,0 +1,40 @@
+# Finding nearest matching something (e.g. URL, binary string).
+
+# We know the insertion point ("insert" mark).
+.editor.text index insert
+
+# Now how do we find the matching regexp in that area?  I think we'll have to find all of them and examine the index ranges to find the one containing the insert mark position (assuming there is one - and, indeed could there be more than one?!).
+
+# Here's an example for binary strings:
+set binary_string_regexp {[0\\]?[bB]?[01]+}
+regexp -all -indices -inline $binary_string_regexp [get_all]
+
+# We then have a list of lists (pairs) where it matched.  We want to find any that surround the insert mark.
+
+foreach range [regexp -all -indices -inline $binary_string_regexp [get_all]] {
+	puts $range
+}
+
+# The regexp ranges are characters from the start, but the index mark is a line:column co-ordinate.  We can use the text widget to do position arithmetic in certain contexts, e.g. below, but it might not be usable here.
+
+.editor.text mark set insert "1.0 + 17 chars"
+
+# If we only wanted to highlight them all, that'd be easy.  Actually, a "select matching" with regexp capability is something I want this to have.  It'd look something like the following:
+
+# For hexadecimal, you could possibly say that it has to be at least two hex digits long, but you do often see 0x0 for zero, so maybe not.
+set hex_string_regexp {[0\\]?x?[0-9A-Fa-f]+}
+.editor.text tag remove sel 1.0 end
+set count 0
+foreach range [regexp -all -indices -inline $hex_string_regexp [get_all]] {
+#	puts $range
+	set start [lindex $range 0]
+	set end [expr {[lindex $range 1] + 1}]
+	.editor.text tag add sel "1.0 + $start chars" "1.0 + $end chars"
+	incr count
+}
+puts "$count matches found"
+# However, that does take a helluva long time...
+
+
+
+

@@ -1,0 +1,17 @@
+[ ] Hex to dec gives negative numbers
+[ ] Automatically select nearest appropriate string (binary string, URL, etc.) for transformations and reference lookups
+
+
+
+
+
+
+General backgroundings:
+[ ] Spelling checker (try aspell)
+[ ] Word/Line/Char count
+[ ] 
+Tricky: how to transfer large amounts of data without impinging on interactivity? Might have to be a little nonatomic...
+	after idle ... send?  If doing line-by-line, should be OK.
+	That'd be OK for spelling and word/line/char count, but not lexical analysis.
+	If I need to devise a more general approach, maybe I should just use that for everything
+
