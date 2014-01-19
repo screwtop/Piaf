@@ -49,7 +49,7 @@ proc stop_aspell {} {
 }
 
 
-proc check_spelling {} {
+proc spellcheck_aspell {} {
 	# TODO: First, make sure a spellcheck isn't already in progress!
 	# ...
 
@@ -72,10 +72,9 @@ proc check_spelling {} {
 	}
 }
 
+# Make this the default "spellcheck" command:
+interp alias {} spellcheck {} spellcheck_aspell
+interp alias {} check_spelling {} spellcheck_aspell
 
 start_aspell
-
-#every 1000 check_spelling
-# Or just have check_spelling run itself again after idle/delay.  More flexible to be able to call check_spelling on demand, though.  Also to be able to turn off periodic spellchecking.
-# Regarding shifting line numbers: at least the text widget will bump existing tags with lines anyway.  Expect some glitches though.  As race conditions go, some shimmering of text highlighting isn't too bad.
 

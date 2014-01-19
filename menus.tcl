@@ -110,9 +110,11 @@ menu .menubar.transform
 
 # Language menu, for programming languages as well as spelling and grammar stuff.
 menu .menubar.language
-	.menubar.language add command -label "Check Spelling (Aspell)" -command check_spelling
-	.menubar.language add command -label "Check Spelling (built-in)" -command spellcheck
+	.menubar.language add command -label "Check Spelling" -command spellcheck	;# Using the current active/default spellchecker
+	.menubar.language add command -label "Check Spelling (Aspell)" -command spellcheck_aspell
+	.menubar.language add command -label "Check Spelling (built-in)" -command spellcheck_builtin
 	.menubar.language add command -label "Clear Misspellings" -command clear_spelling_errors
+	# TODO: periodic spellchecking on/off
 	.menubar.language add separator
 	.menubar.language add command -label "Tcl" -command {source "$::binary_path/scanners/Tcl.tcl"}
 	.menubar.language add command -label "XML" -command {source "$::binary_path/scanners/XML.tcl"}
@@ -171,6 +173,7 @@ menu .popup_menu
 
 
 # TODO: Transform submenu for uppercase, lowercase, init caps, reverse, sort
+
 
 
 

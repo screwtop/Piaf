@@ -24,7 +24,7 @@ set ::literal_foreground_colour #98fb98
 # and specific colour for numeric literals?
 set ::identifier_foreground_colour #ff9966
 
-set ::highlight_interval_ms 60000	;# Long interval while testing
+set ::highlight_interval_ms 5000	;# Long interval while testing
 
 
 
