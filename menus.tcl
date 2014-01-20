@@ -90,6 +90,7 @@ menu .menubar.transform
 
 	.menubar.transform add separator
 	.menubar.transform add command -label "Indent" -command {transform_selection ::piaf::transform::indent}
+	.menubar.transform add command -label "Unindent" -command {transform_selection ::piaf::transform::unindent}
 	.menubar.transform add command -label "Case > UPPER" -command {transform_selection ::piaf::transform::uppercase}
 	.menubar.transform add command -label "Case > lower" -command {transform_selection ::piaf::transform::lowercase}
 	.menubar.transform add command -label "Collapse whitespace" -command {transform_selection ::piaf::transform::collapse_whitespace}
@@ -173,6 +174,7 @@ menu .popup_menu
 
 
 # TODO: Transform submenu for uppercase, lowercase, init caps, reverse, sort
+
 
 
 
