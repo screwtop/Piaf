@@ -53,15 +53,28 @@ proc ::piaf::transform::unwrap {s} {regsub -all {([^\n])\n([^\n])} $s {\1\2}}
 # TODO: honour user preference for tabs/spaces for indenting?
 # TODO: also indent the first line if the selection starts at the start of a line
 # TODO: also don't add a new tab at end?  If the user selects a whole line, they probably don't want to indent the following line, even though technically they have selected the line break as well.
-proc ::piaf::transform::indent {s} {
+proc ::piaf::transform::indent {text} {
+	# Handle the first line specially (there's no "\n" at the start of the text!)
 	if {[lindex [split [.editor.text index sel.first] {.}] 1] == 0} {
-		set s "\t$s"
+		set text "\t$text"
 	}
-	# Can we just blanket trim any trailing tabs?  What if there was a trailing tab at the end of a line already?!
-	string trimright [string map {"\n" "\n\t"} $s] "\t"
+	# Expand linebreaks to linebreak-with-tab, and then remove the trailing tab on the last line (is this really necessary?)
+	string map {"\n" "\n\t"} $text
+#	string trimright [string map {"\n" "\n\t"} $text] "\t"
 }
 
-# TODO: unindent
+# And unindent:
+# TODO: avoid adding a newline at the start!
+proc ::piaf::transform::unindent {text} {
+	# Handle the first line specially (there's no "\n" at the start of the text!)
+	if {[lindex [split [.editor.text index sel.first] {.}] 1] == 0} {
+		# Only add the extra linebreak if the first character of the first line is a tab!
+		if {[string range [get_line 1] 0 0] == "\t"} {
+			set text "\n$text"
+		}
+	}
+	string map {"\n\t" "\n"} $text
+}
 
 # Smarten quotes
 
@@ -147,6 +160,9 @@ proc ::piaf::latex::figure {} {insert {
 \end{figure}
 }
 }
+
+
+
 
 
 
