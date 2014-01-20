@@ -90,7 +90,7 @@ source "$::binary_path/text_modification_tracking.tcl"	;# Important for detectin
 source "$::binary_path/insert_mark_tracking.tcl"	;# Generating virtual events for motion of the "insert" mark (cursor position)
 source "$::binary_path/bindings.tcl"	;# Key event bindings
 catch {source ~/.piaf/bindings.tcl}	;# User can override and add their own too
-
+source "$::binary_path/recent_files.tcl"	;# This has to be run early because of the possibility of loading a file specified on the command line.  open_file calls refresh_recent_files.
 
 # Apply new grid layout:
 # (TODO: remove existing pack calls that are made redundant by this)
@@ -145,26 +145,29 @@ set ::status "Ready"
 #set ::running true	;# Where/how is this used?
 set ::setup_done false
 proc deferred_startup_actions {} {
-	after idle {
+#	after idle {
 		if { ! $::setup_done} {
-			puts stderr "[wm geometry .]"
+			puts stderr "Running deferred startup actions.  Window geometry = [wm geometry .]."
 			# TODO: maybe a "foreach script $deferred_scripts ..."?
-			after 500 {
+#			after 500 {
 				source "$::binary_path/scanning.tcl"
 				source "$::binary_path/spelling.tcl"	;# General spelling routines/setup
-				source "$::binary_path/spelling_builtin.tcl"	;# My own quick-n-dirty spellchecker. Loading the dictionary can take some time, so better to do this after everything else has been set up.  The user probably isn't going to start spell checking in the first second anyway.		Even with the [after]s, this is still obtrusive, so maybe try to load it in the background (or don't bother with any of this)
-				source "$::binary_path/spelling_aspell.tcl"	;# Aspell does a better job, really.  And it's in a separate process so it won't bog down the GUI.
-
-			}
+#				source "$::binary_path/spelling_builtin.tcl"	;# My own quick-n-dirty spellchecker. Loading the dictionary can take some time, so better to do this after everything else has been set up.  The user probably isn't going to start spell checking in the first second anyway.		Even with the [after]s, this is still obtrusive, so maybe try to load it in the background (or don't bother with any of this)
+#				source "$::binary_path/spelling_aspell.tcl"	;# Aspell does a better job, really.  And it's in a separate process so it won't bog down the GUI.  Also, is this responsible for the command prompt not returning when testing a la "package require Tk; source piaf"?
+#			}
 			set ::setup_done true
 		}
-	}
+#	}
 }
 
-bind . <Map> deferred_startup_actions
+# Do non-essential startup things after the window has appeared:
+#bind . <Map> deferred_startup_actions
+deferred_startup_actions
 
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
 # [fork]? (Expect/TclX)
+
+
 

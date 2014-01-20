@@ -79,6 +79,7 @@ proc new_file {filename} {
 # This is named open_file so as not to override Tcl's built-in [open]!
 proc open_file {filename} {
 #	log_file_operation $filename OPEN	;# Don't bother - just log centrally in "load" proc.
+	check_for_unsaved_changes
 	if {$filename != ""} {
 		# Remember filename globally
 		set ::filename $filename
@@ -104,7 +105,8 @@ proc load {filename} {
 	set ::unsaved false
 	event generate .editor.text <<Modified>>
 #	.editor.text edit modified false	;# Reset modification flag
-	log_file_operation $filename LOAD
+	log_file_operation [file normalize $filename] LOAD
+	refresh_recent_file_list
 	set ::status "File loaded"
 }
 
@@ -122,7 +124,6 @@ proc reload {} {
 
 # Prompt user for file to open:
 proc prompt_open_file {} {
-	check_for_unsaved_changes
 	# TODO: handle filename being empty?  Or do that in open_file itself?
 	open_file [tk_getOpenFile -title "Open text file for editing"]	;# -initialdir -initialfile -message "Select text file to open for editing"
 }
@@ -371,4 +372,6 @@ proc quit {} {
 	puts "Exiting…"
 	exit
 }
+
+
 
