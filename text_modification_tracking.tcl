@@ -41,16 +41,40 @@ proc check_for_unsaved_changes {} {
 .editor.text tag configure extent -background $::background_colour
 .editor.text tag lower extent current_line
 
+# Routines for showing/hiding the mouse pointer/cursor (pretty much only relevant for not obscuring the user's view of the editor while making changes, but could be called from elsewhere too I guess):
+# TODO: only bother actually changing the cursor if it's in the wrong state?  Yes: resetting the mouse cursor also causes the insert point to reset!
+set ::mouse_pointer_enabled true
+proc hide_mouse_pointer {} {
+	if {$::mouse_pointer_enabled} {
+		.editor.text configure -cursor none
+		set ::mouse_pointer_enabled false
+	}
+}
+proc show_mouse_pointer {} {
+	if {!$::mouse_pointer_enabled} {
+		.editor.text configure -cursor [lindex [.editor.text configure -cursor] 3]
+		set ::mouse_pointer_enabled true
+	}
+}
+
+# Restore the mouse pointer/cursor when the mouse is moved
+# TODO: maybe flash the pointer briefly to make it easy to spot?
+bind .editor.text <Motion> show_mouse_pointer
+# and other mouse events too? Buttons?
+bind .editor.text <ButtonPress> show_mouse_pointer
+bind .editor.text <ButtonRelease> show_mouse_pointer
+
 # Detect file modification.  We need to know if it's been modified to know whether to allow quitting without saving, and also to adjust the text extent tag range for showing EOF.
 set ::unsaved false
-bind .editor.text <<Modified>> {
-	# TODO: should this be in a proc?  Bytecode and all that?
+proc text_modification_handler {} {
 	;# WARNING: don't clobber existing binding!
 #	puts stderr modified
-	# NOTE: we DO need to check this result, because (oddly) setting the flag to false will actually trigger <<Modified>>.
+	# NOTE: we DO need to check this result, because (oddly, IMO) setting the flag to false will actually trigger <<Modified>>.
 	if {[.editor.text edit modified]} {
 		set ::status Modified
 		set ::unsaved true
+		# Hide mouse pointer while typing (TODO: maybe save initial cursor setting so we can restore it correctly; on Linux/X11, the default cursor for text widgets is "xterm"):
+		hide_mouse_pointer
 		# Update text extent background colouring:
 		foreach {start_index end_index} [.editor.text tag ranges extent] {
 	                .editor.text tag remove extent $start_index $end_index
@@ -64,11 +88,10 @@ bind .editor.text <<Modified>> {
 	# Try doing it only conditionally, in the "modified true" block above
 }
 
+bind .editor.text <<Modified>> text_modification_handler
+
 # TODO: Could possibly want to log the file modification event to the file log as well (the event is only triggered by the first modification).
 # Interestingly (and kind of annoyingly), the act of setting the "modified" flag to false also triggers the <<Modified>> event!
 
 # TODO: fix very strange thing that happens if you go to the end of the text, Shift+RightArrow to select the rest of the line (which shouldn't really be anything because there's no linebreak there), and press Enter/Return.  <<Modified>> events for the text widget then don't happen (until you call close_file anyway).
-
-
-
 
