@@ -68,7 +68,7 @@ bind .editor.text <ButtonRelease> show_mouse_pointer
 set ::unsaved false
 proc text_modification_handler {} {
 	;# WARNING: don't clobber existing binding!
-	puts stderr "<<Modified>>: text_modification_handler called; filename=$::filename; ::unsaved=$::unsaved"
+#	puts stderr "<<Modified>>: text_modification_handler called; filename=$::filename; ::unsaved=$::unsaved"
 	# NOTE: we DO need to check this result, because (oddly, IMO) setting the flag to false will actually trigger <<Modified>>.
 	if {[.editor.text edit modified]} {
 		set ::status Modified
@@ -95,6 +95,7 @@ bind .editor.text <<Modified>> text_modification_handler
 # Interestingly (and kind of annoyingly), the act of setting the "modified" flag to false also triggers the <<Modified>> event!
 
 # TODO: fix very strange thing that happens if you go to the end of the text, Shift+RightArrow to select the rest of the line (which shouldn't really be anything because there's no linebreak there), and press Enter/Return.  <<Modified>> events for the text widget then don't happen (until you call close_file anyway).
+
 
 
 
