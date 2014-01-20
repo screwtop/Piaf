@@ -90,6 +90,18 @@ proc ::piaf::transform::rot13 {s} {
 }
 
 
+# Find/Change AKA Search/Replace operations:
+
+# First the simple non-regexp literal-text one:
+proc ::piaf::transform::replace_all {text original replacement} {string map [list $original $replacement] $text}
+
+# Now how to make a case-insensitive version of the same?  [string map -nocase ...] in a pinch, but it might be nice for it to retain the case for each character when doing a replacement!
+proc ::piaf::transform::replace_all_case_insensitive {text original replacement} {string map -nocase [list $original $replacement] $text}
+
+# And one that will only match "whole words"?
+
+
+
 # Number system conversions:
 # TODO: maybe make some of these more forgiving in what they'll accept...
 
@@ -160,14 +172,4 @@ proc ::piaf::latex::figure {} {insert {
 \end{figure}
 }
 }
-
-
-
-
-
-
-
-
-
-
 

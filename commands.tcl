@@ -2,6 +2,9 @@
 # Many of these will have menu items and keyboard shortcuts.  Oh, does Tk allow you to define a keyboard shortcut as part of the menu item?  Would be especially nice if that were done in a platform-independent way.
 # I could also imagine these being used in scripts, either for remotely controlling the application, or just for automating actions within it.
 
+# TODO: maybe clear/reset the undo history on commands like "new" and "open_file".
+
+
 proc select_all {} {.editor.text tag add sel 0.0 end}
 proc select_current_line {} {.editor.text tag add sel "insert linestart" "insert lineend"}
 proc select_none {} {
@@ -53,34 +56,38 @@ proc slurp {filename} {
 }
 
 
-# Or just plain "new"?
-proc new {} {
+# We don't want to allow the user to lose work accidentally, so we track whether the current buffer is unsaved in the variable ::unsaved.
+# Any time we want to reset that, we also need to change the "modified" flag in the text widget itself.
+# We could possibly also ensure consistency by putting a variable trace on ::unsaved, yes?  Ah, but "load" needs to be able to restore the old value of ::unsaved without triggering <<Modified>>, so no!
+
+proc set_unsaved {args} {
+	# No arg -> true
+	set ::unsaved [expr {[llength $args] == 0 || [lindex $args 0]}]
+	.editor.text edit modified $::unsaved
+}
+
+
+# Discard old editor buffer and create a new one (optionally under the specified filename).
+# TODO: call this if the file requested on the command line does not exist.
+proc new {args} {
 	check_for_unsaved_changes
-	set ::filename ""	;# OR unsert ::filename?
+	if {[llength $args] > 0} {
+		set ::filename [lindex $args 0]
+	} else {
+		set ::filename ""	;# OR unset ::filename?
+	}
 	clear
-	set ::unsaved false
-#	.editor.text edit modified false
+	set_unsaved false
 	set ::status "New"
 }
 
-# Create a new document and set the filename:
-# Maybe do away with new and just allow calling "new_file {}"?  They're otherwise just the same.  Or make the "filename" arg optional?
-proc new_file {filename} {
-	check_for_unsaved_changes
-	# Should this actually create/touch the file, or just set the filename?
-	set ::filename $filename
-	clear
-	set ::unsaved false
-#	.editor.text edit modified false
-	set ::status "New file"
-}
 
 # Open a file, replacing all current text:
 # This is named open_file so as not to override Tcl's built-in [open]!
 proc open_file {filename} {
 #	log_file_operation $filename OPEN	;# Don't bother - just log centrally in "load" proc.
-	check_for_unsaved_changes
 	if {$filename != ""} {
+		check_for_unsaved_changes
 		# Remember filename globally
 		set ::filename $filename
 		# Set the window title as well (perhaps just the file's basename or the abbreviated filename?):
@@ -88,26 +95,45 @@ proc open_file {filename} {
 	#	wm title . "Piaf: [file tail $::filename]"
 		clear
 		load $filename
+		set_unsaved false
 		.editor.text mark set insert 0.0
+		focus .editor.text
 	} else {
 		set ::status "Cancelled/No file specified"
 	}
 }
 
-# Load text from file (at current insert mark, keeping other text? I do plan to have an "Insert file into current buffer" command as well.):
+# Carry out the lower-level function of actually loading the text from file; essentially "load text from filename into buffer".  This doesn't clear the existing text, so that it can serve as the basis for plain old "Open" as well as an "Insert file into current buffer".  It therefore doesn't need to trigger <<Modified>>.
 proc load {filename} {
 	set ::status "Loading…"
+	# The editor insert command below will reset the modification flag on the text, which we don't necessarily want, so store the current value so we can restore it afterwards:
+	set current_unsaved_value $::unsaved
 	if {[catch {.editor.text insert insert [slurp $filename]} message]} {
 		set ::status $message
 		unset message
 		return
 	}
-	set ::unsaved false
-	event generate .editor.text <<Modified>>
-#	.editor.text edit modified false	;# Reset modification flag
+	set ::unsaved $current_unsaved_value
+	# Um, if "load" is being called from "insert_file", we want ::unsaved to be true!  However, if it's being called from open_file, it should be false.  So, don't set it here!  Likewise for the <<Modified>> virtual event.
 	log_file_operation [file normalize $filename] LOAD
 	refresh_recent_file_list
 	set ::status "File loaded"
+	unset current_unsaved_value
+}
+
+# The only difference when doing an "Insert" from a file is that it'd be nice to be left with the new text highlighted for ease of recognition, further transformation, etc.
+proc insert_file {filename} {
+	# Take a note of the current insert mark position (this will be the start of the inserted text range):
+	set ::inserted_text_start_index [.editor.text index insert]
+	load $filename
+	set ::inserted_text_end_index [.editor.text index insert]	;# Where are we now?
+	.editor.text tag add sel $::inserted_text_start_index $::inserted_text_end_index	;# Mark the new text as the selection range (TODO: only if the load was invoked by the "insert" command.
+	set_unsaved true
+	.editor.text mark set insert 0.0
+	focus .editor.text
+
+	unset ::inserted_text_start_index
+	unset ::inserted_text_end_index
 }
 
 # Reload/refresh from file:
@@ -117,8 +143,10 @@ proc reload {} {
 	if {$::filename != ""} {
 		clear
 		load $::filename
+		set_unsaved false
+		set ::status "Reloaded"
 	}
-	set ::status "Reloaded"
+
 }
 
 
@@ -129,8 +157,9 @@ proc prompt_open_file {} {
 }
 
 # Likewise, but for inserting/append the text into the current buffer:
-proc prompt_load_file {} {
-	load [tk_getOpenFile -title "Open text file for editing"]
+proc prompt_insert_file {} {
+	# We don't just use [load] here, because we want slighly different behaviour (namely to highlight the new text).
+	insert_file [tk_getOpenFile -title "Open text file for editing"]
 }
 
 
@@ -150,7 +179,8 @@ proc save_as {filename} {
 	save
 }
 
-# Save to specific file but without changing ::filename (basically, save a copy)
+# The core "save" command: save to specific file (without changing ::filename)
+# This could be called from "Save", "Save As", or "Save a Copy as"!
 # TODO: some error handling?
 # Haha, my first test of this found a problem: attempting to write to an existing FIFO!  TODO: remedy.
 proc save_to {filename} {
@@ -166,8 +196,7 @@ proc save_to {filename} {
 	set file [open $filename w]
 	puts -nonewline $file [get_all]	;# Hmm, even with -nonewline we're ending up with extra creeping newlines appearing each time we save (or open?).  TODO: fix.
 	close $file
-	set ::unsaved false
-#	.editor.text edit modified false	;# Reset modification flag
+	set_unsaved false
 	set ::status "File saved"
 }
 
@@ -186,14 +215,7 @@ proc prompt_save_to {} {save_to [prompt_save_generic]}	;# Save a copy here, but 
 
 
 # Isn't this basically the same as "new"?
-proc close_file {} {
-	check_for_unsaved_changes
-	set ::filename ""	;# or unset ::filename?
-	clear
-	set ::unsaved false
-#	.editor.text edit modified false
-	set ::status "File closed"
-}
+proc close_file {} {new}
 
 
 
@@ -251,7 +273,12 @@ proc find {search_term} {
 
 # Interestingly, each search continues adding ranges to the selection. :)  Could be good to make use of that...
 
-
+# Text replacement (e.g. for Find/Change AKA Search/Replace) is really a transformation, so see functions.tcl for that instead.
+proc replace_all {original replacement} {
+	# TODO: might be nicer to have it use the "find" mechanism so that replaced text is left selected after being replaced.
+	select_all
+	transform_selection ::piaf::transform::replace_all $original $replacement
+}
 
 
 
@@ -335,12 +362,13 @@ proc transform {function text} {::piaf::transform::$function $text}
 # NOTE: currently does not handle the case of the "sel" mark having multiple ranges!
 # Also, somehow handle invoking this with no selection active.  Could maybe just do nothing if there's no selection...but this function might also be used for generators, in which case there might not be a selection.
 # TODO: currently this plays strangely with undo: the deletion counts as an extra operation.  Can we exempt that somehow?
-proc transform_selection {function} {
+# TODO: a similar "transform_all" which will be applied if no text is selected.  Will need to factor out common behaviour and put in another new proc.
+proc transform_selection {function args} {
 	set ::status "Transforming…"
 	set initial_insert_mark [.editor.text index insert]	;# Remember initial insert point
 	set text [get_selection]	;# Copy original text
 #	set transformed_text [transform $function $text]
-	set transformed_text [$function $text]
+	set transformed_text [$function $text {*}$args]
 	.editor.text delete sel.first sel.last	;# Remove the selected text (to be replaced with transformed)
 	set sel_start [.editor.text index insert]	;# Note start of new sel range
 	.editor.text insert insert $transformed_text	;# Insert the transformed text
@@ -353,7 +381,7 @@ proc transform_selection {function} {
 	set ::status "Transformed"
 }
 
-# Might it make sense to have simple wrappers for transformation functions for use in scripts?
+# Might it make sense to have simple wrappers for transformation functions for use in scripts?  What if we want to have commands figure out for themselves whether to apply to the current selection, the entire buffer, or automatically work out a suitable selection if there is none?
 proc rot13 {} {transform_selection ::piaf::transform::rot13}
 
 
@@ -377,6 +405,23 @@ proc quit {} {
 	puts "Exiting…"
 	exit
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

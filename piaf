@@ -161,8 +161,8 @@ proc deferred_startup_actions {} {
 }
 
 # Do non-essential startup things after the window has appeared:
-#bind . <Map> deferred_startup_actions
-deferred_startup_actions
+bind . <Map> deferred_startup_actions
+#deferred_startup_actions
 
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
