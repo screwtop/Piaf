@@ -7,7 +7,7 @@ pack .menubar -side top -fill x
 menu .menubar.file
 	.menubar.file add command -label "New" -command new
 	.menubar.file add command -label "Open…" -command prompt_open_file
-	.menubar.file add command -label "Insert" -command {}	;# "load $filename"
+	.menubar.file add command -label "Insert…" -command prompt_load_file	;# Cf. prompt_open_file
 	.menubar.file add command -label "Save as…" -command prompt_save_as
 	.menubar.file add command -label "Save" -command save
 	.menubar.file add command -label "Save a Copy as…" -command prompt_save_to
@@ -173,6 +173,7 @@ menu .popup_menu
 
 
 # TODO: Transform submenu for uppercase, lowercase, init caps, reverse, sort
+
 
 
 

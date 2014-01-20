@@ -128,6 +128,11 @@ proc prompt_open_file {} {
 	open_file [tk_getOpenFile -title "Open text file for editing"]	;# -initialdir -initialfile -message "Select text file to open for editing"
 }
 
+# Likewise, but for inserting/append the text into the current buffer:
+proc prompt_load_file {} {
+	load [tk_getOpenFile -title "Open text file for editing"]
+}
+
 
 
 # Save to already known filename
@@ -372,6 +377,9 @@ proc quit {} {
 	puts "Exiting…"
 	exit
 }
+
+
+
 
 
 
