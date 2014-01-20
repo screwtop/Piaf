@@ -56,27 +56,31 @@ proc slurp {filename} {
 }
 
 
-# Or just plain "new"?
-proc new {} {
+# We don't want to allow the user to lose work accidentally, so we track whether the current buffer is unsaved in the variable ::unsaved.
+# Any time we want to reset that, we also need to change the "modified" flag in the text widget itself.
+# We could possibly also ensure consistency by putting a variable trace on ::unsaved, yes?  Ah, but "load" needs to be able to restore the old value of ::unsaved without triggering <<Modified>>, so no!
+
+proc set_unsaved {args} {
+	# No arg -> true
+	set ::unsaved [expr {[llength $args] == 0 || [lindex $args 0]}]
+	.editor.text edit modified $::unsaved
+}
+
+
+# Discard old editor buffer and create a new one (optionally under the specified filename).
+# TODO: call this if the file requested on the command line does not exist.
+proc new {args} {
 	check_for_unsaved_changes
-	set ::filename ""	;# OR unsert ::filename?
+	if {[llength $args] > 0} {
+		set ::filename [lindex $args 0]
+	} else {
+		set ::filename ""	;# OR unset ::filename?
+	}
 	clear
-	set ::unsaved false
-#	.editor.text edit modified false
+	set_unsaved false
 	set ::status "New"
 }
 
-# Create a new document and set the filename:
-# Maybe do away with new and just allow calling "new_file {}"?  They're otherwise just the same.  Or make the "filename" arg optional?
-proc new_file {filename} {
-	check_for_unsaved_changes
-	# Should this actually create/touch the file, or just set the filename?
-	set ::filename $filename
-	clear
-	set ::unsaved false
-#	.editor.text edit modified false
-	set ::status "New file"
-}
 
 # Open a file, replacing all current text:
 # This is named open_file so as not to override Tcl's built-in [open]!
@@ -91,8 +95,7 @@ proc open_file {filename} {
 	#	wm title . "Piaf: [file tail $::filename]"
 		clear
 		load $filename
-		.editor.text edit modified false
-		set ::unsaved false
+		set_unsaved false
 		.editor.text mark set insert 0.0
 		focus .editor.text
 	} else {
@@ -112,9 +115,6 @@ proc load {filename} {
 	}
 	set ::unsaved $current_unsaved_value
 	# Um, if "load" is being called from "insert_file", we want ::unsaved to be true!  However, if it's being called from open_file, it should be false.  So, don't set it here!  Likewise for the <<Modified>> virtual event.
-#	set ::unsaved false
-#	event generate .editor.text <<Modified>>
-#	.editor.text edit modified false	;# Reset modification flag
 	log_file_operation [file normalize $filename] LOAD
 	refresh_recent_file_list
 	set ::status "File loaded"
@@ -128,8 +128,7 @@ proc insert_file {filename} {
 	load $filename
 	set ::inserted_text_end_index [.editor.text index insert]	;# Where are we now?
 	.editor.text tag add sel $::inserted_text_start_index $::inserted_text_end_index	;# Mark the new text as the selection range (TODO: only if the load was invoked by the "insert" command.
-	.editor.text edit modified true	;# Will also trigger <<Modified>>, yes?  And set ::unsaved true too?
-	set ::unsaved true
+	set_unsaved true
 	.editor.text mark set insert 0.0
 	focus .editor.text
 
@@ -144,7 +143,7 @@ proc reload {} {
 	if {$::filename != ""} {
 		clear
 		load $::filename
-		.editor.text edit modified false	;# Will also trigger <<Modified>>, yes?
+		set_unsaved false
 		set ::status "Reloaded"
 	}
 
@@ -180,7 +179,8 @@ proc save_as {filename} {
 	save
 }
 
-# Save to specific file but without changing ::filename (basically, save a copy)
+# The core "save" command: save to specific file (without changing ::filename)
+# This could be called from "Save", "Save As", or "Save a Copy as"!
 # TODO: some error handling?
 # Haha, my first test of this found a problem: attempting to write to an existing FIFO!  TODO: remedy.
 proc save_to {filename} {
@@ -196,8 +196,7 @@ proc save_to {filename} {
 	set file [open $filename w]
 	puts -nonewline $file [get_all]	;# Hmm, even with -nonewline we're ending up with extra creeping newlines appearing each time we save (or open?).  TODO: fix.
 	close $file
-	set ::unsaved false
-#	.editor.text edit modified false	;# Reset modification flag
+	set_unsaved false
 	set ::status "File saved"
 }
 
@@ -216,14 +215,7 @@ proc prompt_save_to {} {save_to [prompt_save_generic]}	;# Save a copy here, but 
 
 
 # Isn't this basically the same as "new"?
-proc close_file {} {
-	check_for_unsaved_changes
-	set ::filename ""	;# or unset ::filename?
-	clear
-	set ::unsaved false
-#	.editor.text edit modified false
-	set ::status "File closed"
-}
+proc close_file {} {new}
 
 
 
@@ -413,6 +405,8 @@ proc quit {} {
 	puts "Exiting…"
 	exit
 }
+
+
 
 
 
