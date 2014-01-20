@@ -12,7 +12,9 @@ pack [button .search.clear -text ⌧ -command {set ::search_term ""}] -side left
 
 pack [button .search.next -text "Next \u2192" -command {find $::search_term}] -side left
 
-bind .search.entry <Return> {find $::search_term}
+#bind .search.entry <Return> {.search.next flash; .search.next invoke}
+# Nah, actually, the flashing is annoying and impedes the nice fast auto-repeat+highlight capability.
+bind .search.entry <Return> {.search.next invoke}
 
 # TODO: when the search text is changed (or perhaps only when it's cleared to start a new search), resume searching from the start of the buffer.
 
@@ -40,8 +42,10 @@ proc toggle_find_panel {} {
 toggle_find_panel
 
 bind . <Control-f> toggle_find_panel
+
 bind .editor.text <Control-f> {toggle_find_panel; break}
 
-bind .search.entry <Escape> toggle_find_panel
-
+# Even here the flashing is a bit obtrusive.
+#bind .search.entry <Key-Escape> {.search.close flash; .search.close invoke}
+bind .search.entry <Key-Escape> {toggle_find_panel}
 

@@ -10,5 +10,10 @@ pack [button .unsaved.save -text "Save" -command {save; set ::unsaved_condition_
 pack [button .unsaved.savecopy -text "Save a Copy..." -command {prompt_save_to; set ::unsaved_condition_dealt_with save}] -side right
 pack [button .unsaved.discard -text "Discard Changes" -command {set ::unsaved_condition_dealt_with discard}] -side right
 
+# TODO: make this work (focus issue?).  Cheap workaround: bind to the Save button, which gets focus by default.
+bind .unsaved.save <Key-Escape> {.unsaved.cancel flash; .unsaved.cancel invoke}
+
 # TODO: some kind of "review changes" or at least stats would be helpful.  The user will want to know exactly what they've changed.  Maybe a built-in diff function would be handy here.
+
+
 
