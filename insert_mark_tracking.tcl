@@ -5,6 +5,7 @@
 
 set ::prev_insert_mark [.editor.text index insert]	;# initialise
 
+# It would be good to know how long this proc takes to run under real conditions (esp. when the mark changes), to help in determining the update period below.
 proc detect_insert_mark_motion {} {
 	set ::curr_insert_mark [.editor.text index insert]
 	if {$::curr_insert_mark != $::prev_insert_mark} {
@@ -27,4 +28,5 @@ bind .editor.text <<Motion>> {update_current_line_highlighting; update_insert_ma
 #event generate .editor.text <<Motion>> -data 1.0
 # How come that doesn't work?
 #	Indeed, how comes it doesn't work but doesn't cause an error on Marvin, but fails at startup on Zaphod?  Race condition with opening GUI maybe?
+
 

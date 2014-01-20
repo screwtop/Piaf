@@ -41,6 +41,12 @@ proc check_for_unsaved_changes {} {
 .editor.text tag configure extent -background $::background_colour
 .editor.text tag lower extent current_line
 
+proc update_text_extent_display {} {
+	# Update text extent background colouring:
+	.editor.text tag remove extent 1.0 end
+        .editor.text tag add    extent 1.0 end
+}
+
 # Routines for showing/hiding the mouse pointer/cursor (pretty much only relevant for not obscuring the user's view of the editor while making changes, but could be called from elsewhere too I guess):
 # TODO: only bother actually changing the cursor if it's in the wrong state?  Yes: resetting the mouse cursor also causes the insert point to reset!
 set ::mouse_pointer_enabled true
@@ -75,13 +81,11 @@ proc text_modification_handler {} {
 		set ::unsaved true
 		# Hide mouse pointer while typing (TODO: maybe save initial cursor setting so we can restore it correctly; on Linux/X11, the default cursor for text widgets is "xterm"):
 		hide_mouse_pointer
-		# Update text extent background colouring:
-		foreach {start_index end_index} [.editor.text tag ranges extent] {
-	                .editor.text tag remove extent $start_index $end_index
-	        }
-	        .editor.text tag add extent 0.0 end
-		# TODO: is it really necessary to [after idle] these?!
-		after idle {.editor.text edit modified false}
+		update_text_extent_display
+		# Lastly, reset the modified flag for the text widget so we can detect the next modification:
+		.editor.text edit modified false
+		# TODO: is it really necessary to [after idle] these?!  Might it not be better to have it executed synchronously/sequentially?
+	#	after idle {.editor.text edit modified false}
 	}
 	# Regardless of what we just did, set the modified flag back to false so we can detect the next modification.  Uh, but we can't do that, because it would cause infinite recursion of <<Modified>> events.  Well, at least Tcl detects that and puts a stop to it!
 	# Could we schedule something using [after]?  If we use [after idle], we peg the CPU, but it does work.  [after 0] would hang the GUI.  If we used a timed delay, we might miss fast edits.  Hmm.
@@ -95,6 +99,9 @@ bind .editor.text <<Modified>> text_modification_handler
 # Interestingly (and kind of annoyingly), the act of setting the "modified" flag to false also triggers the <<Modified>> event!
 
 # TODO: fix very strange thing that happens if you go to the end of the text, Shift+RightArrow to select the rest of the line (which shouldn't really be anything because there's no linebreak there), and press Enter/Return.  <<Modified>> events for the text widget then don't happen (until you call close_file anyway).
+
+
+
 
 
 

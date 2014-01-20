@@ -77,6 +77,7 @@ proc new {args} {
 		set ::filename ""	;# OR unset ::filename?
 	}
 	clear
+	update_text_extent_display
 	set_unsaved false
 	set ::status "New"
 }
@@ -116,6 +117,7 @@ proc load {filename} {
 	set ::unsaved $current_unsaved_value
 	# Um, if "load" is being called from "insert_file", we want ::unsaved to be true!  However, if it's being called from open_file, it should be false.  So, don't set it here!  Likewise for the <<Modified>> virtual event.
 	log_file_operation [file normalize $filename] LOAD
+	update_text_extent_display
 	refresh_recent_file_list
 	set ::status "File loaded"
 	unset current_unsaved_value
@@ -194,7 +196,7 @@ proc save_to {filename} {
 	# file stat /tmp/test.txt file_stats
 	# file copy SOURCE TARGET
 	set file [open $filename w]
-	puts -nonewline $file [get_all]	;# Hmm, even with -nonewline we're ending up with extra creeping newlines appearing each time we save (or open?).  TODO: fix.
+	puts -nonewline $file [get_all]	;# Hmm, even with -nonewline we're ending up with extra creeping newlines appearing each time we save (or open?).  TODO: fix.  I think it might be the text widget itself that's generating these (one school of thought is that every text file must end in a newline).
 	close $file
 	set_unsaved false
 	set ::status "File saved"
@@ -405,26 +407,4 @@ proc quit {} {
 	puts "Exiting…"
 	exit
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
