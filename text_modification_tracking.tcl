@@ -28,6 +28,7 @@ proc check_for_unsaved_changes {} {
 		if {$::unsaved_condition_dealt_with == "cancel"} {
 			error "Operation cancelled!"
 		}
+		focus .editor.text
 		set ::status "Ready"
 	}
 	return -code ok
@@ -99,6 +100,7 @@ bind .editor.text <<Modified>> text_modification_handler
 # Interestingly (and kind of annoyingly), the act of setting the "modified" flag to false also triggers the <<Modified>> event!
 
 # TODO: fix very strange thing that happens if you go to the end of the text, Shift+RightArrow to select the rest of the line (which shouldn't really be anything because there's no linebreak there), and press Enter/Return.  <<Modified>> events for the text widget then don't happen (until you call close_file anyway).
+
 
 
 
