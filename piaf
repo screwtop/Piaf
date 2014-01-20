@@ -145,29 +145,30 @@ set ::status "Ready"
 #set ::running true	;# Where/how is this used?
 set ::setup_done false
 proc deferred_startup_actions {} {
-#	after idle {
+	after idle {
 		if { ! $::setup_done} {
 			puts stderr "Running deferred startup actions.  Window geometry = [wm geometry .]."
 			# TODO: maybe a "foreach script $deferred_scripts ..."?
-#			after 500 {
+			after 500 {
 				source "$::binary_path/scanning.tcl"
 				source "$::binary_path/spelling.tcl"	;# General spelling routines/setup
-#				source "$::binary_path/spelling_builtin.tcl"	;# My own quick-n-dirty spellchecker. Loading the dictionary can take some time, so better to do this after everything else has been set up.  The user probably isn't going to start spell checking in the first second anyway.		Even with the [after]s, this is still obtrusive, so maybe try to load it in the background (or don't bother with any of this)
-#				source "$::binary_path/spelling_aspell.tcl"	;# Aspell does a better job, really.  And it's in a separate process so it won't bog down the GUI.  Also, is this responsible for the command prompt not returning when testing a la "package require Tk; source piaf"?
-#			}
+				source "$::binary_path/spelling_builtin.tcl"	;# My own quick-n-dirty spellchecker. Loading the dictionary can take some time, so better to do this after everything else has been set up.  The user probably isn't going to start spell checking in the first second anyway.		Even with the [after]s, this is still obtrusive, so maybe try to load it in the background (or don't bother with any of this)
+				source "$::binary_path/spelling_aspell.tcl"	;# Aspell does a better job, really.  And it's in a separate process so it won't bog down the GUI.  Also, is this responsible for the command prompt not returning when testing a la "package require Tk; source piaf"?
+			}
 			set ::setup_done true
 		}
-#	}
+	}
 }
 
 # Do non-essential startup things after the window has appeared:
-#bind . <Map> deferred_startup_actions
-deferred_startup_actions
+bind . <Map> deferred_startup_actions
+#deferred_startup_actions
 
 # And from here we just enter the Tcl event loop.
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
 # [fork]? (Expect/TclX)
+
 
 
 

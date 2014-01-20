@@ -34,6 +34,13 @@ create index File_Log_Date_Index on File_Log (Date_Performed);
 create index File_Log_Filename_Index on File_Log (Filename);
 -- And also composite one on the PK? Or is one automatically created?
 
+create view Recent_Files as
+select Filename, max(Date_Performed) as Timestamp from File_Log
+where Operation = 'LOAD'
+group by Filename
+order by Timestamp desc;
+--limit 10;
+-- Probably do the limiting in the calling query.
 
 
 create table Project

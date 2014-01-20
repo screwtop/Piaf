@@ -89,12 +89,13 @@ proc open_file {filename} {
 		clear
 		load $filename
 		.editor.text mark set insert 0.0
+		focus .editor.text
 	} else {
 		set ::status "Cancelled/No file specified"
 	}
 }
 
-# Load text from file (at current insert mark, keeping other text? I do plan to have an "Insert file into current buffer" command as well.):
+# Carry out the lower-level function of actually loading the text from file.  This doesn't clear the existing text, so that it can serve as the basis for plain old "Open" as well as an "Insert file into current buffer".
 proc load {filename} {
 	set ::status "Loading…"
 	if {[catch {.editor.text insert insert [slurp $filename]} message]} {
@@ -108,6 +109,21 @@ proc load {filename} {
 	log_file_operation [file normalize $filename] LOAD
 	refresh_recent_file_list
 	set ::status "File loaded"
+}
+
+# The only difference when doing an "Insert" from a file is that it'd be nice to be left with the new text highlighted for ease of recognition, further transformation, etc.
+proc insert_file {filename} {
+	# Take a note of the current insert mark position (this will be the start of the inserted text range):
+	set ::inserted_text_start_index [.editor.text index insert]
+	load $filename
+	set ::inserted_text_end_index [.editor.text index insert]	;# Where are we now?
+	.editor.text tag add sel $::inserted_text_start_index $::inserted_text_end_index	;# Mark the new text as the selection range (TODO: only if the load was invoked by the "insert" command.
+
+	.editor.text mark set insert 0.0
+	focus .editor.text
+
+	unset ::inserted_text_start_index
+	unset ::inserted_text_end_index
 }
 
 # Reload/refresh from file:
@@ -129,8 +145,9 @@ proc prompt_open_file {} {
 }
 
 # Likewise, but for inserting/append the text into the current buffer:
-proc prompt_load_file {} {
-	load [tk_getOpenFile -title "Open text file for editing"]
+proc prompt_insert_file {} {
+	# We don't just use [load] here, because we want slighly different behaviour (namely to highlight the new text).
+	insert_file [tk_getOpenFile -title "Open text file for editing"]
 }
 
 
@@ -251,7 +268,12 @@ proc find {search_term} {
 
 # Interestingly, each search continues adding ranges to the selection. :)  Could be good to make use of that...
 
-
+# Text replacement (e.g. for Find/Change AKA Search/Replace) is really a transformation, so see functions.tcl for that instead.
+proc replace_all {original replacement} {
+	# TODO: might be nicer to have it use the "find" mechanism so that replaced text is left selected after being replaced.
+	select_all
+	transform_selection ::piaf::transform::replace_all $original $replacement
+}
 
 
 
@@ -335,12 +357,13 @@ proc transform {function text} {::piaf::transform::$function $text}
 # NOTE: currently does not handle the case of the "sel" mark having multiple ranges!
 # Also, somehow handle invoking this with no selection active.  Could maybe just do nothing if there's no selection...but this function might also be used for generators, in which case there might not be a selection.
 # TODO: currently this plays strangely with undo: the deletion counts as an extra operation.  Can we exempt that somehow?
-proc transform_selection {function} {
+# TODO: a similar "transform_all" which will be applied if no text is selected.  Will need to factor out common behaviour and put in another new proc.
+proc transform_selection {function args} {
 	set ::status "Transforming…"
 	set initial_insert_mark [.editor.text index insert]	;# Remember initial insert point
 	set text [get_selection]	;# Copy original text
 #	set transformed_text [transform $function $text]
-	set transformed_text [$function $text]
+	set transformed_text [$function $text {*}$args]
 	.editor.text delete sel.first sel.last	;# Remove the selected text (to be replaced with transformed)
 	set sel_start [.editor.text index insert]	;# Note start of new sel range
 	.editor.text insert insert $transformed_text	;# Insert the transformed text
@@ -353,7 +376,7 @@ proc transform_selection {function} {
 	set ::status "Transformed"
 }
 
-# Might it make sense to have simple wrappers for transformation functions for use in scripts?
+# Might it make sense to have simple wrappers for transformation functions for use in scripts?  What if we want to have commands figure out for themselves whether to apply to the current selection, the entire buffer, or automatically work out a suitable selection if there is none?
 proc rot13 {} {transform_selection ::piaf::transform::rot13}
 
 
@@ -377,6 +400,13 @@ proc quit {} {
 	puts "Exiting…"
 	exit
 }
+
+
+
+
+
+
+
 
 
 
