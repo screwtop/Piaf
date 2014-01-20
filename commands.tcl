@@ -2,6 +2,9 @@
 # Many of these will have menu items and keyboard shortcuts.  Oh, does Tk allow you to define a keyboard shortcut as part of the menu item?  Would be especially nice if that were done in a platform-independent way.
 # I could also imagine these being used in scripts, either for remotely controlling the application, or just for automating actions within it.
 
+# TODO: maybe clear/reset the undo history on commands like "new" and "open_file".
+
+
 proc select_all {} {.editor.text tag add sel 0.0 end}
 proc select_current_line {} {.editor.text tag add sel "insert linestart" "insert lineend"}
 proc select_none {} {
@@ -79,8 +82,8 @@ proc new_file {filename} {
 # This is named open_file so as not to override Tcl's built-in [open]!
 proc open_file {filename} {
 #	log_file_operation $filename OPEN	;# Don't bother - just log centrally in "load" proc.
-	check_for_unsaved_changes
 	if {$filename != ""} {
+		check_for_unsaved_changes
 		# Remember filename globally
 		set ::filename $filename
 		# Set the window title as well (perhaps just the file's basename or the abbreviated filename?):
@@ -88,6 +91,8 @@ proc open_file {filename} {
 	#	wm title . "Piaf: [file tail $::filename]"
 		clear
 		load $filename
+		.editor.text edit modified false
+		set ::unsaved false
 		.editor.text mark set insert 0.0
 		focus .editor.text
 	} else {
@@ -95,20 +100,25 @@ proc open_file {filename} {
 	}
 }
 
-# Carry out the lower-level function of actually loading the text from file.  This doesn't clear the existing text, so that it can serve as the basis for plain old "Open" as well as an "Insert file into current buffer".
+# Carry out the lower-level function of actually loading the text from file; essentially "load text from filename into buffer".  This doesn't clear the existing text, so that it can serve as the basis for plain old "Open" as well as an "Insert file into current buffer".  It therefore doesn't need to trigger <<Modified>>.
 proc load {filename} {
 	set ::status "Loading…"
+	# The editor insert command below will reset the modification flag on the text, which we don't necessarily want, so store the current value so we can restore it afterwards:
+	set current_unsaved_value $::unsaved
 	if {[catch {.editor.text insert insert [slurp $filename]} message]} {
 		set ::status $message
 		unset message
 		return
 	}
-	set ::unsaved false
-	event generate .editor.text <<Modified>>
+	set ::unsaved $current_unsaved_value
+	# Um, if "load" is being called from "insert_file", we want ::unsaved to be true!  However, if it's being called from open_file, it should be false.  So, don't set it here!  Likewise for the <<Modified>> virtual event.
+#	set ::unsaved false
+#	event generate .editor.text <<Modified>>
 #	.editor.text edit modified false	;# Reset modification flag
 	log_file_operation [file normalize $filename] LOAD
 	refresh_recent_file_list
 	set ::status "File loaded"
+	unset current_unsaved_value
 }
 
 # The only difference when doing an "Insert" from a file is that it'd be nice to be left with the new text highlighted for ease of recognition, further transformation, etc.
@@ -118,7 +128,8 @@ proc insert_file {filename} {
 	load $filename
 	set ::inserted_text_end_index [.editor.text index insert]	;# Where are we now?
 	.editor.text tag add sel $::inserted_text_start_index $::inserted_text_end_index	;# Mark the new text as the selection range (TODO: only if the load was invoked by the "insert" command.
-
+	.editor.text edit modified true	;# Will also trigger <<Modified>>, yes?  And set ::unsaved true too?
+	set ::unsaved true
 	.editor.text mark set insert 0.0
 	focus .editor.text
 
@@ -133,8 +144,10 @@ proc reload {} {
 	if {$::filename != ""} {
 		clear
 		load $::filename
+		.editor.text edit modified false	;# Will also trigger <<Modified>>, yes?
+		set ::status "Reloaded"
 	}
-	set ::status "Reloaded"
+
 }
 
 
@@ -400,6 +413,14 @@ proc quit {} {
 	puts "Exiting…"
 	exit
 }
+
+
+
+
+
+
+
+
 
 
 
