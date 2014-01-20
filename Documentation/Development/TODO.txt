@@ -1,11 +1,12 @@
 
 TODO:
-
+ 
+ - Have undo reset on new file?  Or would it be quite handy to be able to undo beyond save boundaries?
+ - Fix text extent/EOL highlighting not working on opened files until edited
  - Other "language scratchpads", not just Frink (with option to have output in a new window)
  - Replace, not just Find (incl. regexp/literal option)
  - Start/stop background spelling checking
  - Tag-based pop-up menu for misspelled words (incl. replace from suggestion, add to user dictionary).
- - Esc key for cancelling save unsaved
  - Return focus to .editor.text when hiding panels
  - Commands for loading, appending, clearing the dictionary.
  - Have paste replace current selection
@@ -56,8 +57,11 @@ TODO:
 
 DONE:
 
+ - Dismissing the unsaved panel should restore focus to the text area
+ - Fixed problem with text extent background not being displayed after load/new.
  - Language Menu item for clearing misspelled word tags.
  - Set filename in titlebar when saving as (or opening, or new-ing). (Yay, [trace variable]!)
+ - Esc key for cancelling save unsaved dialog
  - Added "Close" and "Clear" buttons to search bar.
  - support "Esc" for dismissing the Find panel
  - Have find panel also use grid!  Also, find out why it currently makes the X server go crazy busy!
@@ -104,5 +108,7 @@ DONE:
  - Made SQL DDL script at least syntactically valid
  - Added beginnings of an install script
  - Rearranged main menu order slightly
+
+
 
 
