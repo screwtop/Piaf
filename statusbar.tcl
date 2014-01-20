@@ -13,6 +13,7 @@ proc every {ms body} {
 	if 1 $body
 	after $ms [list after idle [info level 0]]
 }
+# However, for certain timers, it might be useful to be able to adjust the timing once the "every" cycle has begun (certainly while testing, anyway).  TODO: implement.
 
 
 # menubutton or tk_optionMenu for these?  It'd be nice to show the current state on the menu button itself...
@@ -71,7 +72,8 @@ proc update_size_status {} {
 	set ::size_status "${chars}C,${words}W,${lines}L"
 }
 
-every 2000 update_size_status
+# TODO: replace with smarter approach using an external process for calculating the stats
+#every 2000 update_size_status
 
 
 
@@ -103,5 +105,7 @@ bind .editor.text <<Selection>> {
 
 
 # TODO: live counts of characters, lines and maybe words
+
+
 
 

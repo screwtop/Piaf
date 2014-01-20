@@ -19,7 +19,7 @@ Create	Doesn't happen for "."
 Destroy	Happens when window is closed
 Map	Happens when window opens
 Unmap	Doesn't happen when window closes
-Configure	Happens several times when the window is opening (1x1+0+0 -> 200x200+0+0 -> 200x200+464+0 -> 810x120+464+0, obvious interaction with the window manager there)
+Configure	Happens several times when the window is opening (geometry: 1x1+0+0 -> 200x200+0+0 -> 200x200+464+0 -> 810x120+464+0, obvious interaction with the window manager there)
 
 --
 

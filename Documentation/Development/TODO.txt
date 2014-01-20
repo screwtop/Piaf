@@ -1,10 +1,15 @@
 
 TODO:
 
- - Language Menu item for clearing misspelled word tags.
+ - Other "language scratchpads", not just Frink (with option to have output in a new window)
+ - Replace, not just Find (incl. regexp/literal option)
+ - Start/stop background spelling checking
+ - Tag-based pop-up menu for misspelled words (incl. replace from suggestion, add to user dictionary).
+ - Esc key for cancelling save unsaved
+ - Return focus to .editor.text when hiding panels
  - Commands for loading, appending, clearing the dictionary.
  - Have paste replace current selection
- - Toggleable line up/down movement behaviour; see http://wiki.tcl.tk/3082
+ - Toggleable line up/down insert mark movement behaviour; see http://wiki.tcl.tk/3082
  - Add alert label to "unsaved" panel?
  - Strip code prior to sending to Frink.  And only send it one line!
  - Fix erratically funky Frink results
@@ -40,15 +45,18 @@ TODO:
  - Various menu items for commands
  - Generic error dialog/panel?
  - Generic user input dialog/panel? (for use in scripts requiring interaction)
+ - Lexical highlighting: support external scanner (e.g. written in flex) for greater power/speed/etc.
  - Lexical colouring/highlighting for various languages
  - Language-specific Insert submenu(s)?
 	including a language-sensitive "strip comment lines" transformation
+ - Language-specific "minify" transformations
  - Folding?
 
 
 
 DONE:
 
+ - Language Menu item for clearing misspelled word tags.
  - Set filename in titlebar when saving as (or opening, or new-ing). (Yay, [trace variable]!)
  - Added "Close" and "Clear" buttons to search bar.
  - support "Esc" for dismissing the Find panel
@@ -96,4 +104,5 @@ DONE:
  - Made SQL DDL script at least syntactically valid
  - Added beginnings of an install script
  - Rearranged main menu order slightly
+
 

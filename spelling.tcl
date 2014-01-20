@@ -19,3 +19,11 @@ proc clear_spelling_errors {} {
 # Or just have check_spelling run itself again after idle/delay.  More flexible to be able to call check_spelling on demand, though.  Also to be able to turn off periodic spellchecking.
 # Regarding shifting line numbers: at least the text widget will bump existing tags with lines anyway.  Expect some glitches though.  As race conditions go, some shimmering of text highlighting isn't too bad.
 
+menu .spelling
+.spelling add command -label "Ignore" -command {puts "Ignore"}
+.spelling add command -label "Add to dictionary" -command {puts "Add to dictionary"}
+.spelling add separator
+#.spelling add command -label "Ignore" -command {}
+
+
+

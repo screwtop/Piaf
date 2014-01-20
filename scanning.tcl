@@ -62,14 +62,6 @@ proc tag_all {} {
 }
 
 # Refresh the highlighting periodically.
-every 500 tag_all
+every $::highlight_interval_ms tag_all
 # TODO: How do we cancel that, if we ever want/need to turn the live highlighting off?
-
-
-
-
-
-
-
-
 
