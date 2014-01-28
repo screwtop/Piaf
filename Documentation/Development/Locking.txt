@@ -1,0 +1,72 @@
+It would be nice to detect if another Piaf instance is already editing a file.  Let's have Piaf create a lock file with a predictable filename when it has a file open for editing.  If the file is open, the user could choose to:
+ - Switch to the Piaf instance that holds the lock
+ - Open the file in read-only mode
+ - Give up (cancel the operation)
+
+Switching to/from a read-only mode might be a useful option in general too, or voluntarily opening a file read-only.
+
+What operations would need to involve locks?
+ - Open {acquire lock}
+ - New/Close {release lock}
+ - Save As {release old lock, acquire new lock}
+ - Save a Copy as? {no locking?}
+
+
+The lock file should contain some useful data about the locked file, so that the user can be informed when trying to open a locked file:
+
+proc set_lock_data {} {
+	set ::lock_data(filename) $::filename
+	# date created/modified
+	set ::lock_data(appname) [tk appname]
+	# [info script], [info nameofexecutable]
+	set ::lock_data(pwd) [pwd]
+	set ::lock_data(pid) [pid]
+	set ::lock_data(time) [clock seconds]
+	return
+}
+
+parray ::lock_data
+
+What would be the writing counterpart to [slurp]?  [splat]? [slap]? [spit]? [plonk]?
+
+plonk [array get ::lock_data] [get_lock_filename]
+
+array set ::checking_lock_data [slurp [get_lock_filename]]
+parray ::checking_lock_data
+
+# Generate a suitably obscure filename for the lock file based on the current filename.
+proc get_lock_filename {} {
+	if {$::filename != ""} {
+		return [file join [file dirname $::filename] "._piaf_.[file tail $::filename].lck"]
+	} else {
+		return ""
+	}
+}
+
+# Acquire a lock on the current file, by creating a lock file in the filesystem:
+proc acquire_file_lock {} {
+	# Check if a lock file exists for the current file:
+	if {[file exists [get_lock_filename]]} {
+		error "Lock file exists"
+	} else {
+		# No lock file, so go ahead and create it:
+		set lock_file [open [get_lock_filename] w]
+		set_lock_data	;# Goes into array ::lock_data
+		puts $lock_file [array get ::lock_data]
+		close $lock_file
+	}
+}
+
+# When closing a file or saving it under a new name, release the lock on the old one
+# Should probably be parameterised for filename, since ::filename is probably already set to the new one.
+proc release_file_lock {filename} {
+	# Check if a lock file exists for the current file:
+	if {[file exists [get_lock_filename]]} {
+		# Delete it.  Quite conceivable that this could fail - catch?!
+		file delete [get_lock_filename]
+	} else {
+		# File apparently wasn't locked.  Error, or do nothing?
+	}
+	return
+}
+

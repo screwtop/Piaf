@@ -80,6 +80,7 @@ pack .editor.scrollbar -side left -fill y
 # Bring in various support functionality:
 
 source "$::binary_path/functions.tcl"	;# Text filters
+source "$::binary_path/locking.tcl"	;# Locking routines, used by certain file commands
 source "$::binary_path/commands.tcl"	;# Editor command set
 source "$::binary_path/find_panel.tcl"	;# Toggleable simple Find panel
 source "$::binary_path/unsaved_panel.tcl"	;# Toggleable panel for dealing with unsaved changes
@@ -168,4 +169,5 @@ bind . <Map> deferred_startup_actions
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
 # [fork]? (Expect/TclX)
+
 

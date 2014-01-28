@@ -70,5 +70,9 @@ close $piaf_to_scanner
 
 # And of course there are buffering issues because it's a noninteractive pipe...bah...
 
+--
+
+flex --interactive --read ?
+
 
 
