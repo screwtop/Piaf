@@ -73,7 +73,10 @@ proc update_size_status {} {
 }
 
 # TODO: replace with smarter approach using an external process for calculating the stats
-#every 2000 update_size_status
+# or at least have a setting for how frequently it updates
+# Might be able to use ::blt::bgexec for this
+# Should send a line of text at a time to ensure GUI responsiveness
+every 1000 update_size_status
 
 
 
@@ -102,10 +105,4 @@ bind .editor.text <<Selection>> {
 
 # Interestingly, the <<Selection>> event is triggered even if the actual selection range doesn't change - a pixel's mouse movement is enough.
 # Also, a strange thing happens when using shift+cursor keys to select no range: it reports a selection of 1 char, not 0!  I think it's a weirdness in how the Tk text widget built-in selection stuff works.
-
-
-# TODO: live counts of characters, lines and maybe words
-
-
-
 
