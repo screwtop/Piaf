@@ -5,7 +5,7 @@
 # TODO: suitable padding for these
 
 
-pack [frame .statusbar] -fill x -expand 0
+frame .statusbar
 
 
 # Some of the displays will have to be refreshed periodically rather than event-driven, so this will come in handy:
@@ -105,4 +105,5 @@ bind .editor.text <<Selection>> {
 
 # Interestingly, the <<Selection>> event is triggered even if the actual selection range doesn't change - a pixel's mouse movement is enough.
 # Also, a strange thing happens when using shift+cursor keys to select no range: it reports a selection of 1 char, not 0!  I think it's a weirdness in how the Tk text widget built-in selection stuff works.
+
 

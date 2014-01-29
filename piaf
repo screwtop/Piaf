@@ -53,7 +53,6 @@ source "$::binary_path/menus.tcl"
 # TODO: toolbar?  Separate file.
 
 frame .editor
-pack .editor -side top -expand true -fill both
 
 # TODO: tidy up wrapping option setting.
 # Most of the editor happens in this one line, thanks to Tk's great text widget:
@@ -169,5 +168,6 @@ bind . <Map> deferred_startup_actions
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
 # [fork]? (Expect/TclX)
+
 
 
