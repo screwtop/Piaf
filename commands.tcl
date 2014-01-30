@@ -40,7 +40,7 @@ proc redo {} {.editor.text edit redo}
 proc log_file_operation {filename operation} {
 	global env
 	if !$::use_database return
-	set sql "insert into File_Log (Hostname, Username, Filename, Date_Performed, Operation) values ('[info hostname]', '$env(USER)', '$filename', current_timestamp, '$operation');"
+	set sql "insert into File_Log (Hostname, Username, Filename, Date_Performed, Operation) values ('[info hostname]', '$env(USER)', '[string map {' ''} $filename]', current_timestamp, '$operation');"
 #	puts stderr $sql
 	::piaf::database eval $sql
 	# TODO: check for success?
@@ -417,6 +417,7 @@ proc quit {} {
 	puts "Exiting…"
 	exit
 }
+
 
 
 
