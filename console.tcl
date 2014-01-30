@@ -14,7 +14,7 @@ bind .console.entry <Key-Up> {
 	.console.entry icursor end
 }
 pack [text .console.output -wrap word] -fill both -expand 1
-.console.output configure -font $::font -background black -foreground green
+.console.output configure -font $::font -background black -foreground #00ff00
 
 set ::console_history [list]
 
@@ -36,6 +36,7 @@ focus .console.entry
 
 wm withdraw .console	;# Hidden by default
 wm protocol .console WM_DELETE_WINDOW {wm withdraw .console}	;# Hide rather than close when "closed".
+
 
 
 

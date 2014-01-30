@@ -60,7 +60,7 @@ text .editor.text -wrap word -undo true -height 10 -width 80
 set ::wrap_mode "Word Wrap"
 
 # Scrollbar for the main text (on the left, dammit!):
-scrollbar .editor.scrollbar -command [list .editor.text yview]
+scrollbar .editor.scrollbar -command [list .editor.text yview] -troughcolor #606060
 .editor.text configure -yscrollcommand [list .editor.scrollbar set]
 
 pack .editor.text -side right -expand true -fill both
@@ -168,6 +168,7 @@ bind . <Map> deferred_startup_actions
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
 # [fork]? (Expect/TclX)
+
 
 
 
