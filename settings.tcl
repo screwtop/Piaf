@@ -11,7 +11,7 @@ set ::void_colour black	;# The colour of no text
 set ::background_colour #202020	;# Background colour of the text extent
 set ::text_colour white
 set ::selectbackground_colour #FFFF80
-set ::insertbackground_colour green
+set ::insertbackground_colour #00FF00
 set ::current_line_background_colour #404040
 #set ::current_line_foreground_colour $::text_colour
 
@@ -37,6 +37,7 @@ set ::misspelled_foreground_colour #ff8080
 # set "-foreground white -background red -underline true"
 # and then you can set whatever additional properties there
 set ::spellcheck_interval_ms 5000	;# Not yet honoured
+
 
 
 
