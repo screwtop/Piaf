@@ -40,7 +40,7 @@ proc redo {} {.editor.text edit redo}
 proc log_file_operation {filename operation} {
 	global env
 	if !$::use_database return
-	set sql "insert into File_Log (Hostname, Username, Filename, Date_Performed, Operation) values ('[info hostname]', '$env(USER)', '$filename', current_timestamp, '$operation');"
+	set sql "insert into File_Log (Hostname, Username, Filename, Date_Performed, Operation) values ('[info hostname]', '$env(USER)', '[string map {' ''} $filename]', current_timestamp, '$operation');"
 #	puts stderr $sql
 	::piaf::database eval $sql
 	# TODO: check for success?
@@ -71,6 +71,7 @@ proc set_unsaved {args} {
 # TODO: call this if the file requested on the command line does not exist.
 proc new {args} {
 	check_for_unsaved_changes
+	unlock $::filename
 	if {[llength $args] > 0} {
 		set ::filename [lindex $args 0]
 	} else {
@@ -89,6 +90,8 @@ proc open_file {filename} {
 #	log_file_operation $filename OPEN	;# Don't bother - just log centrally in "load" proc.
 	if {$filename != ""} {
 		check_for_unsaved_changes
+		unlock $::filename
+		if {![lock $filename]} {error "open_file $filename: file is locked ([get_lock_data $filename])"}
 		# Remember filename globally
 		set ::filename $filename
 		# Set the window title as well (perhaps just the file's basename or the abbreviated filename?):
@@ -104,7 +107,7 @@ proc open_file {filename} {
 	}
 }
 
-# Carry out the lower-level function of actually loading the text from file; essentially "load text from filename into buffer".  This doesn't clear the existing text, so that it can serve as the basis for plain old "Open" as well as an "Insert file into current buffer".  It therefore doesn't need to trigger <<Modified>>.
+# Carry out the lower-level function of actually loading the text from file; essentially "load text from filename into buffer".  This doesn't clear the existing text, so that it can serve as the basis for plain old "Open" as well as an "Insert file into current buffer".  It therefore doesn't need to trigger <<Modified>>.  Nor does it need to adjust any locks.
 proc load {filename} {
 	set ::status "Loading…"
 	# The editor insert command below will reset the modification flag on the text, which we don't necessarily want, so store the current value so we can restore it afterwards:
@@ -139,6 +142,7 @@ proc insert_file {filename} {
 }
 
 # Reload/refresh from file:
+# TODO: could maybe double-check that we do indeed hold the lock for this file.
 proc reload {} {
 	set ::status "Reloading…"
 	check_for_unsaved_changes
@@ -181,6 +185,8 @@ proc save_as {filename} {
 		set ::status "Cancelled/No file specified"
 		return
 	}
+#	lock $filename	;# No, leave the locking of the new file to the save_to procedure.
+	unlock $::filename	;# unlock the old file.
 	set ::filename $filename
 	save
 }
@@ -194,9 +200,12 @@ proc save_to {filename} {
 		set ::status "Cancelled/No file specified"
 		return
 	}
+	# Check that it's safe to write, by making sure there's no lock on the file already.
+	if {![lock $filename]} {error "save_to $filename: file is locked! ([get_lock_data $filename])"}	;# TODO: GUI interaction
+	# TODO: When to unlock that file is a bit murky, I think.  It depends on what called save_to.  At present I think this will leave locks hanging around after "Save a Copy As" operations!
 	set ::status "Saving…"
 	log_file_operation $filename SAVE
-	# Make backup/versioned copy always as well?
+	# TODO: Make backup/versioned copy always as well?  Perhaps a new proc for that, huh?
 	# file stat /tmp/test.txt file_stats
 	# file copy SOURCE TARGET
 	set file [open $filename w]
@@ -401,6 +410,7 @@ proc quit {} {
 	set ::status "Exiting…"
 	# Check for unsaved changes (and/or auto-save recovery files)
 	check_for_unsaved_changes
+	unlock $::filename
 #	if {![.editor.text edit modified]} {}
 	# Maybe prompt for user certainty regardless?
 	# Log QUIT operation as well?
@@ -411,5 +421,4 @@ proc quit {} {
 	puts "Exiting…"
 	exit
 }
-
 

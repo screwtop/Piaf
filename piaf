@@ -1,4 +1,4 @@
-#!/usr/bin/wish8.5
+#!/usr/bin/env wish8.6
 
 # My (increasingly less) simple Tcl/Tk text editor/idioter.
 
@@ -53,7 +53,6 @@ source "$::binary_path/menus.tcl"
 # TODO: toolbar?  Separate file.
 
 frame .editor
-pack .editor -side top -expand true -fill both
 
 # TODO: tidy up wrapping option setting.
 # Most of the editor happens in this one line, thanks to Tk's great text widget:
@@ -61,7 +60,7 @@ text .editor.text -wrap word -undo true -height 10 -width 80
 set ::wrap_mode "Word Wrap"
 
 # Scrollbar for the main text (on the left, dammit!):
-scrollbar .editor.scrollbar -command [list .editor.text yview]
+scrollbar .editor.scrollbar -command [list .editor.text yview] -troughcolor #606060
 .editor.text configure -yscrollcommand [list .editor.scrollbar set]
 
 pack .editor.text -side right -expand true -fill both
@@ -80,10 +79,12 @@ pack .editor.scrollbar -side left -fill y
 # Bring in various support functionality:
 
 source "$::binary_path/functions.tcl"	;# Text filters
+source "$::binary_path/locking.tcl"	;# Locking routines, used by certain file commands
 source "$::binary_path/commands.tcl"	;# Editor command set
 source "$::binary_path/find_panel.tcl"	;# Toggleable simple Find panel
 source "$::binary_path/unsaved_panel.tcl"	;# Toggleable panel for dealing with unsaved changes
 source "$::binary_path/statusbar.tcl"
+source "$::binary_path/wordcount.tcl"
 source "$::binary_path/console.tcl"
 source "$::binary_path/current_line_highlighting.tcl"	;# Must go before text_modification_tracking!
 source "$::binary_path/text_modification_tracking.tcl"	;# Important for detecting unsaved changes, and also includes colouring the "void" beyond EOF differently from the editor text extent.
@@ -169,6 +170,4 @@ bind . <Map> deferred_startup_actions
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
 # [fork]? (Expect/TclX)
-
-
 

@@ -32,3 +32,47 @@ after idle {::blt::bgexec done -onoutput process cal}
 after idle {puts [::blt::bgexec done -onoutput process cal]}
 
 
+--
+
+Oh, you're supposed to pass "&" as the last argument!  That makes the bgexec return immediately (though is there still some processing that continues for a second internally maybe? no matter...)
+
+time {::blt::bgexec ::bgexecStatus -linebuffer 1 -onerror {puts} -onoutput {puts} cal &}
+# Returns immediately.
+# Also, remember that bgexec passes args automatically to the -onoutput and -onerror callbacks, namely the text of the output/error.
+
+If you want to pass additional args to the command:
+::blt::bgexec ::bgexecStatus -linebuffer 1 -onerror {puts} -onoutput {puts} cat /etc/fstab &
+
+# Just to verify/illustrate that the output is handled line by line:
+set ::line_number 1
+proc handler {line_text} {
+	puts "$::line_number: $line_text"
+	incr ::line_number
+}
+::blt::bgexec ::bgexecStatus -linebuffer 1 -onerror {puts} -onoutput {handler} cat /etc/fstab &
+
+# Excellent. :)  This looks ideal for background tasks that require one instance per Piaf instance (e.g. aspell, lexical scanners for highlighting, but not Frink, as it's quite heavyweight and doesn't need special settings per Piaf instance - makes more sense to share it between programs on the same desktop system).
+
+# But how do we send lines of text for processing to the bgexec'd process?  There's no mention of "input" or "stdin" in the bgexec man page...
+# Ah, maybe use a FIFO?!
+
+# Also: [tkwait] or [vwait]?!
+
+exec mkfifo /tmp/piaf_wordcount
+#exec/bgexec ... wordcount < /tmp/piaf_wordcount	;# Do this first, otherwise the [open] below will block!
+# Oh, but the bgexec will also block until there's input available from the FIFO! Gah.
+::blt::bgexec ::bgexecStatus -linebuffer 1 -onerror {puts} -onoutput {handler} wordcount < /tmp/piaf_wordcount &
+
+set piaf_to_scanner [open /tmp/piaf_wordcount w]
+after idle {puts $piaf_to_scanner whatever}
+...
+close $piaf_to_scanner
+
+# And of course there are buffering issues because it's a noninteractive pipe...bah...
+
+--
+
+flex --interactive --read ?
+
+
+

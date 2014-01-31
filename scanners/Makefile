@@ -4,3 +4,4 @@ all: null test Tcl wordcount
 % : %.l
 	flex --outfile=$@.c --interactive --read $<
 	gcc -o $@ $@.c -lfl
+

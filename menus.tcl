@@ -1,7 +1,8 @@
 # Main menu bar:
 menu .menubar -type menubar
 .menubar configure -borderwidth 0 -activeborderwidth 0
-pack .menubar -side top -fill x
+#pack .menubar -side top -fill x
+# Now to be gridded by the main layout.
 
 # File menu:
 menu .menubar.file
@@ -155,6 +156,9 @@ menu .menubar.console
 
 
 
+# TODO: Help/About type menu.
+
+
 
 
 # Contextual menu for text also (with cut, copy, paste, delete/clear, mark for swap, etc.
@@ -177,13 +181,4 @@ menu .popup_menu
 
 
 # TODO: Transform submenu for uppercase, lowercase, init caps, reverse, sort
-
-
-
-
-
-
-
-
-
 

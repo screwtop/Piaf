@@ -5,7 +5,7 @@
 # TODO: suitable padding for these
 
 
-pack [frame .statusbar] -fill x -expand 0
+frame .statusbar
 
 
 # Some of the displays will have to be refreshed periodically rather than event-driven, so this will come in handy:
@@ -41,6 +41,26 @@ pack .statusbar.wrapping -side left
 pack [label .statusbar.filename -textvariable ::filename -font $::fixed_gui_font] -side left
 setTooltip .statusbar.filename "Current filename"
 
+# ...with a context menu (e.g. for copying the filename to the clipboard):
+
+# We're most likely to want to use the copied filename in pasting into a terminal via the selection mechanism.  This is a bit more involved than just using the clipboard, unfortunately.  First, a handler for when something requests the selection:
+proc provide_selection_data {offset max_chars} {return $::filename}
+
+proc selection_lost_handler {} {puts stderr "Selection lost"}
+
+# TODO: make this actually work with the (PRIMARY) selection:
+proc copy_filename {} {
+	clipboard clear; clipboard append $::filename
+	selection clear
+	selection handle . provide_selection_data
+	selection own -command selection_lost_handler
+}
+
+menu .filename_popup_menu -title "Filename Menu"
+.filename_popup_menu add command -label Copy -command copy_filename
+
+bind .statusbar.filename <Button-3> "tk_popup .filename_popup_menu %X %Y"
+
 
 
 # Live line-column display ("insert" mark) (including number of lines and characters in selection!)
@@ -73,8 +93,12 @@ proc update_size_status {} {
 }
 
 # TODO: replace with smarter approach using an external process for calculating the stats
-#every 2000 update_size_status
-
+# or at least have a setting for how frequently it updates
+# Might be able to use ::blt::bgexec for this
+# Should send a line of text at a time to ensure GUI responsiveness
+#every 1000 update_size_status
+# Now uses an external scanner
+#every 1000 wordcount
 
 
 # Selection details:
@@ -102,10 +126,6 @@ bind .editor.text <<Selection>> {
 
 # Interestingly, the <<Selection>> event is triggered even if the actual selection range doesn't change - a pixel's mouse movement is enough.
 # Also, a strange thing happens when using shift+cursor keys to select no range: it reports a selection of 1 char, not 0!  I think it's a weirdness in how the Tk text widget built-in selection stuff works.
-
-
-# TODO: live counts of characters, lines and maybe words
-
 
 
 
