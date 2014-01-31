@@ -96,8 +96,9 @@ proc update_size_status {} {
 # or at least have a setting for how frequently it updates
 # Might be able to use ::blt::bgexec for this
 # Should send a line of text at a time to ensure GUI responsiveness
-every 1000 update_size_status
-
+#every 1000 update_size_status
+# Now uses an external scanner
+#every 1000 wordcount
 
 
 # Selection details:

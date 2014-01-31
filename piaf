@@ -1,4 +1,4 @@
-#!/usr/bin/wish8.5
+#!/usr/bin/env wish8.6
 
 # My (increasingly less) simple Tcl/Tk text editor/idioter.
 
@@ -84,6 +84,7 @@ source "$::binary_path/commands.tcl"	;# Editor command set
 source "$::binary_path/find_panel.tcl"	;# Toggleable simple Find panel
 source "$::binary_path/unsaved_panel.tcl"	;# Toggleable panel for dealing with unsaved changes
 source "$::binary_path/statusbar.tcl"
+source "$::binary_path/wordcount.tcl"
 source "$::binary_path/console.tcl"
 source "$::binary_path/current_line_highlighting.tcl"	;# Must go before text_modification_tracking!
 source "$::binary_path/text_modification_tracking.tcl"	;# Important for detecting unsaved changes, and also includes colouring the "void" beyond EOF differently from the editor text extent.
