@@ -24,7 +24,7 @@ set ::literal_foreground_colour #98fb98
 # and specific colour for numeric literals?
 set ::identifier_foreground_colour #ff9966
 
-set ::highlight_interval_ms 5000	;# Long interval while testing
+set ::highlight_interval_ms 100
 
 
 
@@ -37,9 +37,4 @@ set ::misspelled_foreground_colour #ff8080
 # set "-foreground white -background red -underline true"
 # and then you can set whatever additional properties there
 set ::spellcheck_interval_ms 5000	;# Not yet honoured
-
-
-
-
-
 

@@ -177,6 +177,10 @@ proc save {} {
 
 # Save to specific filename and remember it:
 proc save_as {filename} {
+	if {$filename == ""} {
+		set ::status "Cancelled/No file specified"
+		return
+	}
 	set ::filename $filename
 	save
 }
@@ -407,4 +411,5 @@ proc quit {} {
 	puts "Exiting…"
 	exit
 }
+
 

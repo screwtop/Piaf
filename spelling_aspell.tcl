@@ -11,6 +11,7 @@ proc process_aspell_results {chan} {
 	if {[eof $chan]} {
 		catch {close $chan}
 		set ::aspell_closed true
+		return
 	}	;# Might want to use a vwait somewhere to detect and restart aspell automatically.
 	gets $chan line
 #	puts stderr "\n\nAspell output = <<$line>>"
@@ -71,6 +72,7 @@ proc spellcheck_aspell {} {
 	# Remove existing tag ranges:
 	.editor.text tag remove misspelled 1.0 end
 
+	# Send text to aspell, line by line:
 	for {set ::spellcheck_line_number 1} {$::spellcheck_line_number < [lindex [split [.editor.text index end] .] 0]} {incr ::spellcheck_line_number} {
 		set line [.editor.text get $::spellcheck_line_number.0 "$::spellcheck_line_number.0 lineend"]
 #		puts "Sending line $::spellcheck_line_number: <<$line>>"
@@ -93,9 +95,4 @@ interp alias {} spellcheck {} spellcheck_aspell
 interp alias {} check_spelling {} spellcheck_aspell
 
 start_aspell
-
-
-
-
-
 

@@ -20,7 +20,8 @@
 #.editor.text tag raise identifier string
 .editor.text tag raise comment string
 .editor.text tag raise comment literal
-.editor.text tag raise TEST comment
+.editor.text tag raise sel comment	;# To keep things simple when highlighting coloured text, we just have the selection style dominate.
+.editor.text tag raise TEST sel	;# For internal testing.
 
 
 # Remove all ranges for the specified tag:
@@ -62,6 +63,11 @@ proc tag_all {} {
 }
 
 # Refresh the highlighting periodically.
-every $::highlight_interval_ms tag_all
+# For using the external scanner processes:
+set ::language "";# TODO: maybe have this in settings - could default to English.
+every $::highlight_interval_ms {highlight_syntax $::language}
+#every $::highlight_interval_ms tag_all
 # TODO: How do we cancel that, if we ever want/need to turn the live highlighting off?
+
+
 

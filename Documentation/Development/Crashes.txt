@@ -1,0 +1,17 @@
+While the new Flex-based lexical scanner was running, unsaved dialog popped up, chose discard, and then the unsaved panel didn't quite disappear, followed by this:
+
+<<
+process_scanner_results: OK to close channel.
+process_scanner_results: unknown condition; will try to continue...
+process_scanner_results: OK to close channel.
+User chose: discard
+TkBTreeLinesTo couldn't find line
+
+
+
+rlwrap: warning: tclsh8.5 killed by SIGABRT (core dumped).
+rlwrap has not crashed, but for transparency,
+it will now kill itself with the same signal
+
+Aborted (core dumped)
+>>

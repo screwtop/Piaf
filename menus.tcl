@@ -117,8 +117,11 @@ menu .menubar.language
 	.menubar.language add command -label "Clear Misspellings" -command clear_spelling_errors
 	# TODO: periodic spellchecking on/off
 	.menubar.language add separator
-	.menubar.language add command -label "Tcl" -command {source "$::binary_path/scanners/Tcl.tcl"}
-	.menubar.language add command -label "XML" -command {source "$::binary_path/scanners/XML.tcl"}
+	# For the original Tcl/regexp-based in-process lexical scanning:
+	.menubar.language add command -label "Tcl" -command {set ::language Tcl}
+	.menubar.language add command -label "XML" -command {set ::language XML}
+#	.menubar.language add command -label "Tcl" -command {source "$::binary_path/scanners/Tcl.tcl"}
+#	.menubar.language add command -label "XML" -command {source "$::binary_path/scanners/XML.tcl"}
 .menubar add cascade -label "Language" -menu .menubar.language -underline 0
 
 
@@ -174,6 +177,7 @@ menu .popup_menu
 
 
 # TODO: Transform submenu for uppercase, lowercase, init caps, reverse, sort
+
 
 
 

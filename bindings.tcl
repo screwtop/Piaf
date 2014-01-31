@@ -22,8 +22,9 @@ bind . <Control-z> undo
 #bind . <Control-f> find
 
 bind .editor.text <Control-o> break	;# Remove default text widget binding
-bind . <Control-o> {prompt_open_file}
+bind . <Control-o> prompt_open_file
 bind . <Control-s> save
+bind . <Control-S> prompt_save_as
 
 bind . <Control-w> close_file
 bind . <Control-q> quit
@@ -36,6 +37,7 @@ bind . <Control-q> quit
 #}
 # TODO: Could possibly want to log the file modification event to the file log as well (the event is only triggered by the first modification).
 # Interestingly (and kind of annoyingly), the act of setting the "modified" flag to false also triggers the <<Modified>> event!
+
 
 
 
