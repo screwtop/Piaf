@@ -107,20 +107,37 @@ proc ::piaf::transform::replace_all_case_insensitive {text original replacement}
 
 # Trickiness here because we have to pad to a minimum number of digits for "W" (64-bit) format.
 # Is 64 bits excessive?  To be really useful we'd have a dialog with length and signedness and endianness and such.  But one does often encounter binary strings longer than 32 bits (e.g. Ethernet MACs, HDD LBAs, IPv6 addresses).
-proc ::piaf::transform::bin_to_dec {binary_string} {binary scan [binary format B* [format %064s $binary_string]] Wu* binary; return $binary}
-proc ::piaf::transform::dec_to_bin {num} {binary scan [binary format Wu* $num] B* res; string trimleft $res 0}
+# "In programming languages, octal literals are typically identified with a variety of prefixes, including the digit 0, the letters o or q, or the digit–letter combination 0o. In Motorola convention, octal numbers are prefixed with @, whereas a small letter o is added as a postfix following the Intel convention. DR-DOS DEBUG uses \ to prefix octal numbers.
+# For example, the literal 73 (base 8) might be represented as 073, o73, q73, 0o73, \73, @73 or 73o in various languages.
+# Newer languages have been abandoning the prefix 0, as decimal numbers are often represented with leading zeroes. The prefix q was introduced to avoid the prefix o being mistaken for a zero, while the prefix 0o was introduced to avoid starting a numerical literal with an alphabetic character (like o or q), since these might cause the literal to be confused with a variable name. The prefix 0o also follows the model set by the prefix 0x used for hexadecimal literals in the C language; it is supported by Haskell,[10] OCaml,[11] Perl 6,[12] Python as of version 3.0,[13] Ruby,[14] Tcl as of version 9,[15] and it is intended to be supported by ECMAScript 6[16] (the prefix 0 has been discouraged in ECMAScript 3 and dropped in ECMAScript 5[17])."
+# Do we want to use "0b" as the prefix for output of binary numbers?
+
+# Converting from binary:
+#proc ::piaf::transform::bin_to_dec {binary_string} {binary scan [binary format B* [format %064s $binary_string]] Wu* binary; return $binary}
+#proc ::piaf::transform::dec_to_bin {num} {binary scan [binary format Wu* $num] B* binary; string trimleft $binary 0}
+# Um, or just:
+proc ::piaf::transform::bin_to_dec {bin} {scan $bin %b}
+proc ::piaf::transform::bin_to_oct {bin} {format 0o%o [scan $bin %b]}
+proc ::piaf::transform::bin_to_hex {bin} {format 0x%x [scan $bin %b]}
+
+# Converting from decimal:
+proc ::piaf::transform::dec_to_bin {num} {format 0b%b $num}
+proc ::piaf::transform::dec_to_hex {num} {format 0x%x $num}
+proc ::piaf::transform::dec_to_oct {num} {format %o $num}
 
 # Hexadecimal:
 proc ::piaf::transform::hex_to_dec {hex} {scan $hex %x}
-proc ::piaf::transform::dec_to_hex {num} {return "0x[format %x $num]"}
+proc ::piaf::transform::hex_to_bin {hex} {format 0b%b [scan $hex %x]}
+proc ::piaf::transform::hex_to_oct {hex} {format 0o%o [scan $hex %x]}
 
 # Octal:
 proc ::piaf::transform::oct_to_dec {oct} {scan $oct %o}
-proc ::piaf::transform::dec_to_oct {num} {format %o $num}
+proc ::piaf::transform::oct_to_bin {oct} {format 0b%b [scan $oct %o]}
+proc ::piaf::transform::oct_to_hex {oct} {format 0x%x [scan $oct %o]}
 
 # Find Unicode code point for character (decimal):
 proc ::piaf::transform::unicode_to_dec {char} {scan $char %c}
-proc ::piaf::transform::unicode_to_hex {char} {return "0x[format %x [scan $char %c]]"}
+proc ::piaf::transform::unicode_to_hex {char} {format 0x%x [scan $char %c]}
 # TODO: decimal and hexadecimal to Unicode character
 proc ::piaf::transform::dec_to_unicode {num} {format %c $num}
 #proc ::piaf::transform::hex_to_unicode {hex} {return "\u$hex"}
@@ -172,4 +189,5 @@ proc ::piaf::latex::figure {} {insert {
 \end{figure}
 }
 }
+
 
