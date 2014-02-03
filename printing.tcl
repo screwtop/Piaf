@@ -9,6 +9,7 @@
 # TODO: handle a whole bunch of args, such as portrait/landscape, n-up, page size, printer, print to file (PS/PDF), etc., etc..
 proc print {} {
 	set ::status Printing...
+	after 50
 
 	# Write out temporary file:
 
@@ -25,8 +26,15 @@ proc print {} {
 	# Find Type1 font files.  Run "mkafmmap *.afm" there.
 	# Create/edit ~/.enscriptrc and add "AFMPath: /usr/share/fonts/type1:/usr/share/enscript/afm" or whatever.
 	# TODO: factor out font settings into settings.tcl.  Note that these fonts are PostScript font names, and may not match the system font names or filenames.
-	# TODO: detect and report "lpr: Error - no default destination available." errors (and suggest setting PRINTER and/or LPDEST).  But ignore "WARNING: gnome-keyring" errors.
-	exec enscript --media=A4 --font=LetterGothic12PitchBT-Roman@9 --header-font=LetterGothic-Slanted@6 --download-font=LetterGothic12PitchBT-Roman --baselineskip=3 --mark-wrapped-lines=arrow --word-wrap -DDuplex:true $temp_file_basename.txt
+	# NOTE: be careful with the [catch]es here - remember than ANY output from stderr is considered by [exec] as an error condition!
+	if {[catch {exec enscript --media=A4 --font=LetterGothic12PitchBT-Roman@9 --header-font=LetterGothic-Slanted@6 --download-font=LetterGothic12PitchBT-Roman --baselineskip=3 --mark-wrapped-lines=arrow --word-wrap -DDuplex:true $temp_file_basename.txt} error]} {
+		puts stderr "<<$error>>"
+		# Detect "lpr: Error - no default destination available." error and suggest setting PRINTER.
+		if {[regexp ".*lpr.*no default dest.*" $error]} {
+			error "No default printer:\nThe \"lpr\" program reported no default printer. Try setting the PRINTER or LPDEST environment variable (you can do this in the Piaf console like so: \"set env(PRINTER) laserjet\")"
+		}
+		# TODO: perhaps handle other errors that enscript might report (e.g. font not available)
+	}
 
 	# For print to PS and PDF files:
 	catch {exec enscript --media=A4 --font=LetterGothic12PitchBT-Roman@9 --header-font=LetterGothic-Slanted@6 --download-font=LetterGothic12PitchBT-Roman --baselineskip=3 --mark-wrapped-lines=arrow --word-wrap --output=$temp_file_basename.ps $temp_file_basename.txt}
@@ -40,4 +48,5 @@ proc print {} {
 
 	set ::status Ready
 }
+
 
