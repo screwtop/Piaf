@@ -48,6 +48,7 @@ if {[catch {package require sqlite3} message]} {
 }
 
 
+source "$::binary_path/asyncexec.tcl"
 source "$::binary_path/tooltips.tcl"
 source "$::binary_path/menus.tcl"
 # TODO: toolbar?  Separate file.
