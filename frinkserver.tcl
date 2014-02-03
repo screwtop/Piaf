@@ -2,6 +2,8 @@
 
 # A background process for running Frink
 
+# TODO: on startup, check that there isn't already a frinkserver process running that we could attach to.  A JVM for every Piaf instance would get stupidly memory-hungry!
+
 wm withdraw .
 tk appname frinkserver
 
@@ -56,4 +58,5 @@ proc quit {} {
 	exp_wait
 	exit
 }
+
 

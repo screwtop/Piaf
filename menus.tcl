@@ -15,6 +15,8 @@ menu .menubar.file
 	.menubar.file add command -label "Reload" -command reload	;# TODO: confirm? or just support undo? ;)
 	.menubar.file add command -label "Close" -command close_file
 	.menubar.file add separator
+	.menubar.file add command -label "Print" -command print
+	.menubar.file add separator
 	.menubar.file add command -label "Exit" -command quit	;# TODO: nicer anti-lose-work exit routine
 .menubar add cascade -label File -menu .menubar.file -underline 0
 
