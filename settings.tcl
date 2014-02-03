@@ -21,8 +21,9 @@ set ::string_foreground_colour #ffa0a0
 set ::keyword_foreground_colour #f0e68c
 set ::keyword_font "$::font bold"
 set ::literal_foreground_colour #98fb98
+set ::variable_foreground_colour #40fb40
 # and specific colour for numeric literals?
-set ::identifier_foreground_colour #ff9966
+set ::identifier_foreground_colour #40fb40
 
 set ::highlight_interval_ms 1000
 

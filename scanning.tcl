@@ -11,6 +11,7 @@
 .editor.text tag configure symbol -foreground $::keyword_foreground_colour -font $::keyword_font
 .editor.text tag configure literal -foreground $::literal_foreground_colour
 .editor.text tag configure identifier -foreground $::identifier_foreground_colour
+.editor.text tag configure variable -foreground $::identifier_foreground_colour
 # and, for testing:
 .editor.text tag configure TEST -background red -foreground white -font $::keyword_font
 
@@ -172,7 +173,9 @@ proc highlight_syntax {language} {
 	# Remove existing highlighting:
 	# TODO: foreach-ify this (just lift from scanning.tcl)
 	# Will just test with comments for now...
-	.editor.text tag remove comment 1.0 end
+	foreach lexical_element {TEST comment identifier literal string number keyword operator symbol variable} {
+		clear_tag $lexical_element
+	}
 
 	# Let's try also using event-driven processing for sending the lines to the scanner:
 	# Is this the place to add appropriate [after] calls to avoid excessive busyness?
