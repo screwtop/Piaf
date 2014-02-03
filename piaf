@@ -151,7 +151,7 @@ proc deferred_startup_actions {} {
 			puts stderr "Running deferred startup actions.  Window geometry = [wm geometry .]."
 			# TODO: maybe a "foreach script $deferred_scripts ..."?
 			after 500 {
-				source "$::binary_path/scanning_external.tcl"	;# Additional stuff for using external Flex-based scanners. Has to be loaded first.
+			#	source "$::binary_path/scanning_external.tcl"	;# Additional stuff for using external Flex-based scanners. Has to be loaded first.
 				source "$::binary_path/scanning.tcl"
 				source "$::binary_path/spelling.tcl"	;# General spelling routines/setup
 				source "$::binary_path/spelling_builtin.tcl"	;# My own quick-n-dirty spellchecker. Loading the dictionary can take some time, so better to do this after everything else has been set up.  The user probably isn't going to start spell checking in the first second anyway.		Even with the [after]s, this is still obtrusive, so maybe try to load it in the background (or don't bother with any of this)
@@ -170,4 +170,5 @@ bind . <Map> deferred_startup_actions
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
 # [fork]? (Expect/TclX)
+
 
