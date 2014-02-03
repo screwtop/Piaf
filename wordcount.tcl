@@ -51,7 +51,7 @@ proc send_next_line {chan} {
 proc wordcount {} {
 	if {$::line_number > 0} {return "Word count already in progress"}
 #	puts stderr "[clock microseconds]: starting word count"
-	asyncexec "./scanners/wordcount" send_next_line handle_wordcount_output {}
+	asyncexec "$::binary_path/scanners/wordcount" send_next_line handle_wordcount_output {}
 }
 
 every 400 wordcount
