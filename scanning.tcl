@@ -126,7 +126,7 @@ proc send_line_to_scanner {chan} {
 #	puts stderr "send_line_to_scanner called!"
 	set line [.editor.text get $::line_number.0 "$::line_number.0 lineend"]
 #	puts stderr "Sending line $::line_number: <<$line>>"
-	puts $chan $line
+	puts $chan [regsub -all {[^\u0000-\u007F]} $line "?"]	;# Simply substitute "?" for any non-ASCII chars for the benefit of Flex scanners that are not Unicode-aware.
 	chan flush $chan
 	# Check if there are more lines remaining:
 	if {$::line_number < [lindex [split [.editor.text index end] .] 0]} {
@@ -158,6 +158,7 @@ proc highlight_syntax {language} {
 	set ::scanning_in_progress true
 
 	# TODO: try using [asyncexec] instead of this:
+	# TODO: investigate further if iconv can be made to work here.  "iconv -f utf-8 -t iso-8859-1//TRANSLIT" is close but sometimes expands a single Unicode character to multiple ASCII chars, which is no good.
 
 	if {[catch {set ::scanner_pipe [open "|$::binary_path/scanners/$language" r+]} error]} {
 		set ::scanning_in_progress false
@@ -221,4 +222,5 @@ set ::language "";# TODO: maybe have this in settings - could default to English
 every $::highlight_interval_ms {highlight_syntax $::language}
 #every $::highlight_interval_ms tag_all
 # TODO: How do we cancel that, if we ever want/need to turn the live highlighting off?
+
 

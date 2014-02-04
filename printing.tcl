@@ -17,7 +17,9 @@ proc print {} {
 	# That's obviously rather unix-centric!  In 8.6, you can call [file tempfile] to get a writeable temporary file.
 
 	set file [open $temp_file_basename.txt w]
-	puts -nonewline $file [get_all]
+	# Enscript doesn't handle UTF-8, but it does support a few ASCII and ISO-8859 variants.  For now, we'll just replace non-ASCII chars with a placeholder.  However, it might make sense to use iconv to replace non-ASCII characters with their closest counterpart (in the enscript pipeline below).
+#	puts -nonewline $file [get_all]
+	puts -nonewline $file [regsub -all {[^\u0000-\u007F]} [get_all] {_}]	;# Replace non-ASCII chars with something harmless..."?", "X", "_"?
 	close $file; unset file
 
 	# Pass it to enscript for printing:
@@ -27,6 +29,7 @@ proc print {} {
 	# Create/edit ~/.enscriptrc and add "AFMPath: /usr/share/fonts/type1:/usr/share/enscript/afm" or whatever.
 	# TODO: factor out font settings into settings.tcl.  Note that these fonts are PostScript font names, and may not match the system font names or filenames.
 	# NOTE: be careful with the [catch]es here - remember than ANY output from stderr is considered by [exec] as an error condition!
+	# TODO: add --highlight=LANG
 	if {[catch {exec enscript --media=A4 --font=LetterGothic12PitchBT-Roman@9 --header-font=LetterGothic-Slanted@6 --download-font=LetterGothic12PitchBT-Roman --baselineskip=3 --mark-wrapped-lines=arrow --word-wrap -DDuplex:true $temp_file_basename.txt} error]} {
 		puts stderr "<<$error>>"
 		# Detect "lpr: Error - no default destination available." error and suggest setting PRINTER.
