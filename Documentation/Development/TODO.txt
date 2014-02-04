@@ -1,6 +1,8 @@
 
 TODO:
 
+ - select_line and select_paragraph commands.
+ - Don't bother with the lock files if opening a file on read-only media or in a read-only folder (perhaps more generally offer the option to open a locked file in read-only mode).
  - Create lock files and honour them.  Could offer to switch to the Piaf instance that holds the lock (perhaps store the result of [tk appname] in the lock file). 
  - Have undo reset on new file?  Or would it be quite handy to be able to undo beyond save boundaries?
  - Fix text extent/EOL highlighting not working on opened files until edited
@@ -13,16 +15,17 @@ TODO:
  - Have paste replace current selection
  - Toggleable line up/down insert mark movement behaviour; see http://wiki.tcl.tk/3082
  - Add alert label to "unsaved" panel?
- - Strip code prior to sending to Frink.  And only send it one line!
- - Fix erratically funky Frink results
- - Have stop_frinkserver run in the background somehow (currently it hangs the GUI)
- - Status display of frinkserver status?  At least "starting"/"shutting down"
+ - frinkserver: only run one instance and share it among all Piaf instances.  How to detect?
+ - frinkserver: Strip code prior to sending to Frink.  And only send it one line!
+ - frinkserver: Fix erratically funky Frink results
+ - frinkserver: Have stop_frinkserver run in the background somehow (currently it hangs the GUI)
+ - frinkserver: Status display of frinkserver status?  At least "starting"/"shutting down"
  - Fix "X server insecure (must use xauth-style authorization); command ignored"
  - get list of recent files (and show in menu/sidebar)
  - Detect Linux distro and install dependencies (only if necessary...and detecting what's installed might be harder than just installing needlessly)
  - Project menu and functionality
  - Navigate/Navigation/Move menu
- - Horizontal scrolling (with scrollbar only when needed?)
+ - Horizontal scrolling (with scrollbar only when needed? perhaps link it to wrap mode - always visible when no wrapping)
  - Set more appropriate (smaller) width and height of text widget (and also set initial geometry for non-tiling window systems)
  - A Tcl console/shell window.  See http://wiki.tcl.tk/786, http://wiki.tcl.tk/1026
  - jump to insert point when inserting via commands
@@ -109,8 +112,4 @@ DONE:
  - Made SQL DDL script at least syntactically valid
  - Added beginnings of an install script
  - Rearranged main menu order slightly
-
-
-
-
 
