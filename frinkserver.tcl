@@ -1,4 +1,4 @@
-#!/usr/bin/wish
+#!/usr/bin/env wish
 
 # A background process for running Frink
 

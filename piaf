@@ -157,6 +157,7 @@ proc deferred_startup_actions {} {
 				source "$::binary_path/spelling.tcl"	;# General spelling routines/setup
 			#	source "$::binary_path/spelling_builtin.tcl"	;# My own quick-n-dirty spellchecker. Loading the dictionary can take some time, so better to do this after everything else has been set up.  The user probably isn't going to start spell checking in the first second anyway.		Even with the [after]s, this is still obtrusive, so maybe try to load it in the background (or don't bother with any of this)
 				source "$::binary_path/spelling_aspell.tcl"	;# Aspell does a better job, really.  And it's in a separate process so it won't bog down the GUI.  Also, is this responsible for the command prompt not returning when testing a la "package require Tk; source piaf"?
+				source "$::binary_path/executor.tcl"	;# For interactive execution of code for interpreted languages
 			}
 			set ::setup_done true
 		}
@@ -171,6 +172,8 @@ bind . <Map> deferred_startup_actions
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
 # [fork]? (Expect/TclX)
+
+
 
 
 
