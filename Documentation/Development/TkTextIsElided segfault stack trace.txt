@@ -1,0 +1,61 @@
+Program received signal SIGSEGV, Segmentation fault.
+TkTextIsElided (textPtr=0x7d8ab8, indexPtr=0x7fffffffc1b0, elideInfo=0x7fffffff9230) at /usr/local/src/tk8.6.1/unix/../generic/tkTextBTree.c:3533
+3533	    while ((index + segPtr->size) <= indexPtr->byteIndex) {
+(gdb) bt
+#0  TkTextIsElided (textPtr=0x7d8ab8, indexPtr=0x7fffffffc1b0, elideInfo=0x7fffffff9230)
+    at /usr/local/src/tk8.6.1/unix/../generic/tkTextBTree.c:3533
+#1  0x00007ffff7b21ff6 in LayoutDLine (textPtr=0x7d8ab8, indexPtr=0x7fffffffc1b0) at /usr/local/src/tk8.6.1/unix/../generic/tkTextDisp.c:1133
+#2  0x00007ffff7b234ba in UpdateDisplayInfo (textPtr=0x7d8ab8) at /usr/local/src/tk8.6.1/unix/../generic/tkTextDisp.c:1827
+#3  0x00007ffff7b2add6 in TkTextIndexBbox (textPtr=0x7d8ab8, indexPtr=0x7fffffffc300, xPtr=0x7fffffffc2ec, yPtr=0x7fffffffc2f0, 
+    widthPtr=0x7fffffffc2f4, heightPtr=0x7fffffffc2f8, charWidthPtr=0x7fffffffc2fc) at /usr/local/src/tk8.6.1/unix/../generic/tkTextDisp.c:6823
+#4  0x00007ffff7b16283 in TextBlinkProc (clientData=0x7d8ab8) at /usr/local/src/tk8.6.1/unix/../generic/tkText.c:3550
+#5  0x00007ffff7b13eac in ConfigureText (interp=0x606e68, textPtr=0x7d8ab8, objc=2, objv=0x60b098)
+    at /usr/local/src/tk8.6.1/unix/../generic/tkText.c:2262
+#6  0x00007ffff7b1093f in TextWidgetObjCmd (clientData=0x7d8ab8, interp=0x606e68, objc=4, objv=0x60b088)
+    at /usr/local/src/tk8.6.1/unix/../generic/tkText.c:834
+#7  0x00007ffff76370c7 in Dispatch (data=0xbb6a60, interp=0x606e68, result=0) at /usr/local/src/tcl8.6.1/generic/tclBasic.c:4335
+#8  0x00007ffff7637154 in TclNRRunCallbacks (interp=0x606e68, result=0, rootPtr=0xc97d28) at /usr/local/src/tcl8.6.1/generic/tclBasic.c:4368
+#9  0x00007ffff7636997 in Tcl_EvalObjv (interp=0x606e68, objc=1, objv=0x60acf0, flags=2097168) at /usr/local/src/tcl8.6.1/generic/tclBasic.c:4099
+#10 0x00007ffff7638ebe in TclEvalEx (interp=0x606e68, script=0x7fffffffca80 "text_modification_handler", numBytes=25, flags=131072, line=1, 
+    clNextOuter=0x0, outerScript=0x7fffffffca80 "text_modification_handler") at /usr/local/src/tcl8.6.1/generic/tclBasic.c:5237
+#11 0x00007ffff763822b in Tcl_EvalEx (interp=0x606e68, script=0x7fffffffca80 "text_modification_handler", numBytes=25, flags=131072)
+    at /usr/local/src/tcl8.6.1/generic/tclBasic.c:4902
+#12 0x00007ffff7a553d9 in Tk_BindEvent (bindPtr=0x7035d8, eventPtr=0x7fffffffccf0, tkwin=0x7d88b8, numObjects=0, objectPtr=0x7fffffffcbc0)
+    at /usr/local/src/tk8.6.1/unix/../generic/tkBind.c:1492
+#13 0x00007ffff7a5f674 in TkBindEventProc (winPtr=0x7d88b8, eventPtr=0x7fffffffccf0) at /usr/local/src/tk8.6.1/unix/../generic/tkCmds.c:316
+#14 0x00007ffff7a6c3b1 in Tk_HandleEvent (eventPtr=0x7fffffffccf0) at /usr/local/src/tk8.6.1/unix/../generic/tkEvent.c:1363
+#15 0x00007ffff7b1967d in GenerateModifiedEvent (textPtr=0x7d8ab8) at /usr/local/src/tk8.6.1/unix/../generic/tkText.c:5295
+#16 0x00007ffff7b1975e in UpdateDirtyFlag (sharedTextPtr=0x7d8e78) at /usr/local/src/tk8.6.1/unix/../generic/tkText.c:5352
+#17 0x00007ffff7b159c1 in DeleteIndexRange (sharedTextPtr=0x7d8e78, textPtr=0x7d8ab8, indexPtr1=0xb9c4b8, indexPtr2=0xba25f8, viewUpdate=1)
+    at /usr/local/src/tk8.6.1/unix/../generic/tkText.c:3184
+#18 0x00007ffff7b115df in TextWidgetObjCmd (clientData=0x7d8ab8, interp=0x606e68, objc=4, objv=0x60aa18)
+    at /usr/local/src/tk8.6.1/unix/../generic/tkText.c:1098
+#19 0x00007ffff76370c7 in Dispatch (data=0xc95340, interp=0x606e68, result=0) at /usr/local/src/tcl8.6.1/generic/tclBasic.c:4335
+#20 0x00007ffff7637154 in TclNRRunCallbacks (interp=0x606e68, result=0, rootPtr=0xc7cb38) at /usr/local/src/tcl8.6.1/generic/tclBasic.c:4368
+#21 0x00007ffff7639afc in TclEvalObjEx (interp=0x606e68, objPtr=0xbac738, flags=131072, invoker=0x0, word=0)
+---Type <return> to continue, or q <return> to quit---
+    at /usr/local/src/tcl8.6.1/generic/tclBasic.c:5934
+#22 0x00007ffff7639a95 in Tcl_EvalObjEx (interp=0x606e68, objPtr=0xbac738, flags=131072) at /usr/local/src/tcl8.6.1/generic/tclBasic.c:5915
+#23 0x00007ffff7ab00c7 in TkInvokeMenu (interp=0x606e68, menuPtr=0xada468, index=1) at /usr/local/src/tk8.6.1/unix/../generic/tkMenu.c:1110
+#24 0x00007ffff7aaf87a in MenuWidgetObjCmd (clientData=0xada468, interp=0x606e68, objc=3, objv=0xc8d5b8)
+    at /usr/local/src/tk8.6.1/unix/../generic/tkMenu.c:921
+#25 0x00007ffff76370c7 in Dispatch (data=0xc8fc00, interp=0x606e68, result=0) at /usr/local/src/tcl8.6.1/generic/tclBasic.c:4335
+#26 0x00007ffff7637154 in TclNRRunCallbacks (interp=0x606e68, result=0, rootPtr=0x0) at /usr/local/src/tcl8.6.1/generic/tclBasic.c:4368
+#27 0x00007ffff7636997 in Tcl_EvalObjv (interp=0x606e68, objc=3, objv=0x60a3e0, flags=2097168) at /usr/local/src/tcl8.6.1/generic/tclBasic.c:4099
+#28 0x00007ffff7638ebe in TclEvalEx (interp=0x606e68, script=0x7fffffffd7d0 "\n   tk::MenuInvoke .menubar.file 1\n", numBytes=35, flags=131072, 
+    line=2, clNextOuter=0x0, outerScript=0x7fffffffd7d0 "\n   tk::MenuInvoke .menubar.file 1\n")
+    at /usr/local/src/tcl8.6.1/generic/tclBasic.c:5237
+#29 0x00007ffff763822b in Tcl_EvalEx (interp=0x606e68, script=0x7fffffffd7d0 "\n   tk::MenuInvoke .menubar.file 1\n", numBytes=35, flags=131072)
+    at /usr/local/src/tcl8.6.1/generic/tclBasic.c:4902
+#30 0x00007ffff7a553d9 in Tk_BindEvent (bindPtr=0x7035d8, eventPtr=0xc84dd8, tkwin=0xad9de8, numObjects=0, objectPtr=0x7fffffffd908)
+    at /usr/local/src/tk8.6.1/unix/../generic/tkBind.c:1492
+#31 0x00007ffff7a5f674 in TkBindEventProc (winPtr=0xad9de8, eventPtr=0xc84dd8) at /usr/local/src/tk8.6.1/unix/../generic/tkCmds.c:316
+#32 0x00007ffff7a6c3b1 in Tk_HandleEvent (eventPtr=0xc84dd8) at /usr/local/src/tk8.6.1/unix/../generic/tkEvent.c:1363
+#33 0x00007ffff7a6ca11 in WindowEventProc (evPtr=0xc84dc8, flags=-3) at /usr/local/src/tk8.6.1/unix/../generic/tkEvent.c:1753
+#34 0x00007ffff775b926 in Tcl_ServiceEvent (flags=-3) at /usr/local/src/tcl8.6.1/generic/tclNotify.c:670
+#35 0x00007ffff775bd8b in Tcl_DoOneEvent (flags=-3) at /usr/local/src/tcl8.6.1/generic/tclNotify.c:971
+#36 0x00007ffff7a6d09f in Tk_MainLoop () at /usr/local/src/tk8.6.1/unix/../generic/tkEvent.c:2131
+#37 0x00007ffff7a8283d in Tk_MainEx (argc=-1, argv=0x7fffffffde80, appInitProc=0x400a81 <Tcl_AppInit>, interp=0x606e68)
+    at /usr/local/src/tk8.6.1/unix/../generic/tkMain.c:381
+#38 0x0000000000400a7a in main (argc=3, argv=0x7fffffffde68) at /usr/local/src/tk8.6.1/unix/../unix/tkAppInit.c:78
+
