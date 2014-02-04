@@ -2,9 +2,14 @@
 
 # A background process for running Frink
 
-# TODO: on startup, check that there isn't already a frinkserver process running that we could attach to.  A JVM for every Piaf instance would get stupidly memory-hungry!
-
+# We need Tk for IPC, but we have no GUI.  But maybe it would be nice to have a systray icon/menu thing.  TODO.
 wm withdraw .
+
+# On startup, check that there isn't already a frinkserver process running that we could attach to.  A JVM for every Piaf instance would get stupidly memory-hungry!
+if {[lsearch [winfo interps] "frinkserver"] >= 0} {
+	puts stderr "Frink server already running (process ID [send frinkserver pid]).  This one will now exit."
+	exit
+}
 tk appname frinkserver
 
 
@@ -15,8 +20,12 @@ package require Expect
 set timeout 3
 spawn java -cp /usr/share/java/frink.jar frink.parser.Frink
 match_max 100000
-expect -re "Frink - Copyright .* Alan Eliasen, eliasen@mindspring.com.\r\n"
-# TODO: communicate with Piaf to indicate when ready?  Ah, but there might be multiple instances, and we wouldn't know what they were called.
+expect {
+	-re "Frink - Copyright .* Alan Eliasen, eliasen@mindspring.com.\r\n" {}
+	eof {puts stderr "Java exited abnormally.  Perhaps check your virtual memory limit (try 'ulimit -v 4194304')."; exit}
+}
+
+# TODO: communicate with Piaf to indicate when ready?  Ah, but there might be multiple instances, and we wouldn't know what they were called.  But we could use [winfo interps] to find all (likely) Piaf instances and tell them that the frinkserver has started up.
 
 
 # Frink echoes back the command, which we can just discard.
@@ -58,5 +67,6 @@ proc quit {} {
 	exp_wait
 	exit
 }
+
 
 
