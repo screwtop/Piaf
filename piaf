@@ -60,13 +60,22 @@ frame .editor
 text .editor.text -wrap word -undo true -height 10 -width 80
 set ::wrap_mode "Word Wrap"
 
-# Scrollbar for the main text (on the left, dammit!):
+# Scrollbar for the main text (on the left, dammit!), plus horizontal scrollbar:
 scrollbar .editor.scrollbar -command [list .editor.text yview] -troughcolor #606060
-.editor.text configure -yscrollcommand [list .editor.scrollbar set]
+scrollbar .editor.scrollbar_horiz -orient h -command [list .editor.text xview] -troughcolor #606060
+.editor.text configure -yscrollcommand [list .editor.scrollbar set] -xscrollcommand [list .editor.scrollbar_horiz set]
 
-pack .editor.text -side right -expand true -fill both
 pack .editor.scrollbar -side left -fill y
+pack .editor.text -side top -expand true -fill both
 
+# Horizontal scrollbar management commands (so we can have it shown only when in "no wrap" mode):
+proc hide_horiz_scrollbar {} {
+	pack forget .editor.scrollbar_horiz
+}
+
+proc show_horiz_scrollbar {} {
+	pack .editor.scrollbar_horiz -side bottom -fill x
+}
 
 # Apply font preference:
 .editor.text configure -font $::font
@@ -172,6 +181,9 @@ bind . <Map> deferred_startup_actions
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
 # [fork]? (Expect/TclX)
+
+
+
 
 
 

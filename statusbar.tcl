@@ -26,11 +26,12 @@ proc set_wrap_mode {name1 name2 op} {
 #	puts "$name1 $name2 $op"
 	set mode none
 	switch $::wrap_mode {
-		"No Wrap" {set mode none}
-		"Char Wrap" {set mode char}
-		"Word Wrap" {set mode word}
+		"No Wrap" {set mode none; show_horiz_scrollbar}
+		"Char Wrap" {set mode char; hide_horiz_scrollbar}
+		"Word Wrap" {set mode word; hide_horiz_scrollbar}
 	}
 	.editor.text configure -wrap $mode
+	unset mode
 }
 trace variable ::wrap_mode w set_wrap_mode
 pack .statusbar.wrapping -side left
@@ -126,6 +127,7 @@ bind .editor.text <<Selection>> {
 
 # Interestingly, the <<Selection>> event is triggered even if the actual selection range doesn't change - a pixel's mouse movement is enough.
 # Also, a strange thing happens when using shift+cursor keys to select no range: it reports a selection of 1 char, not 0!  I think it's a weirdness in how the Tk text widget built-in selection stuff works.
+
 
 
 
