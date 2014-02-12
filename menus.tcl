@@ -37,20 +37,36 @@ menu .menubar.insert
 .menubar add cascade -label "Insert" -menu .menubar.insert -underline 0
 	# Unicode submenu;
 	menu .menubar.insert.unicode
+	.menubar.insert.unicode add command -label "Quotation Marks (\u201c\u201d)" -command {insert "\u201c\u201d"}
+
 	.menubar.insert.unicode add command -label "Left Single Quotation Mark (\u2018)" -command {insert "\u2018"}
 	.menubar.insert.unicode add command -label "Right Single Quotation Mark (\u2019)" -command {insert "\u2019"}
 	.menubar.insert.unicode add command -label "Left Double Quotation Mark (\u201c)" -command {insert "\u201c"}
 	.menubar.insert.unicode add command -label "Right Double Quotation Mark (\u201d)" -command {insert "\u201d"}
 	.menubar.insert.unicode add command -label "Horizontal Ellipsis (\u2026)" -command {insert "\u2026"}
+
+	.menubar.insert.unicode add separator
+
+	.menubar.insert.unicode add command -label "Hyphen (\u2010)" -command {insert "\u2010"}
+	.menubar.insert.unicode add command -label "Non-Breaking Hyphen (\u2011)" -command {insert "\u2011"}
+	.menubar.insert.unicode add command -label "Figure Dash (\u2012)" -command {insert "\u2012"}
+	.menubar.insert.unicode add command -label "En Dash (\u2013)" -command {insert "\u2013"}
+	.menubar.insert.unicode add command -label "Em Dash (\u2014)" -command {insert "\u2014"}
+	.menubar.insert.unicode add command -label "Horizontal Bar (\u2015)" -command {insert "\u2015"}
+
+	.menubar.insert.unicode add separator
+
 	.menubar.insert.unicode add command -label "Paragraph symbol (\u204b)" -command {insert "\u204b"}
 	.menubar.insert.unicode add command -label "Section symbol (\u00a7)" -command {insert "\u00a7"}
 	.menubar.insert.unicode add command -label "Return symbol (\u23ce)" -command {insert "\u23ce"}
 	.menubar.insert.unicode add command -label "Smiling Face (\u263a)" -command {insert "\u263a"}
+
+	.menubar.insert.unicode add separator
+
 	.menubar.insert.unicode add command -label "CR symbol (\u240d)" -command {insert "\u240d"}
 	.menubar.insert.unicode add command -label "LF symbol (\u240a)" -command {insert "\u240a"}
 	.menubar.insert.unicode add command -label "Delete symbol (\u2421)" -command {insert "\u2421"}
 	.menubar.insert add cascade -label "Character" -menu .menubar.insert.unicode
-
 
 # Search menu? Or perhaps a more general Navigate menu?
 menu .menubar.search
