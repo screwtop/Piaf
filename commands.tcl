@@ -62,7 +62,7 @@ proc slurp {filename} {
 
 # We don't want to allow the user to lose work accidentally, so we track whether the current buffer is unsaved in the variable ::unsaved.
 # Any time we want to reset that, we also need to change the "modified" flag in the text widget itself.
-# We could possibly also ensure consistency by putting a variable trace on ::unsaved, yes?  Ah, but "load" needs to be able to restore the old value of ::unsaved without triggering <<Modified>>, so no!
+# We could possibly also ensure consistency by putting a variable trace on ::unsaved, yes?  Ah, but "load_file" needs to be able to restore the old value of ::unsaved without triggering <<Modified>>, so no!
 
 proc set_unsaved {args} {
 	# No arg -> true
@@ -97,7 +97,7 @@ proc new {args} {
 # Open a file, replacing all current text:
 # This is named open_file so as not to override Tcl's built-in [open]!
 proc open_file {filename} {
-#	log_file_operation $filename OPEN	;# Don't bother - just log centrally in "load" proc.
+#	log_file_operation $filename OPEN	;# Don't bother - just log centrally in "load_file" proc.
 	if {$filename != ""} {
 		check_for_unsaved_changes
 		unlock $::filename
@@ -108,7 +108,7 @@ proc open_file {filename} {
 		# Now handled by a variable trace on ::filename.
 	#	wm title . "Piaf: [file tail $::filename]"
 		clear
-		load $filename
+		load_file $filename
 		set_unsaved false
 		.editor.text mark set insert 0.0
 		focus .editor.text
@@ -118,7 +118,8 @@ proc open_file {filename} {
 }
 
 # Carry out the lower-level function of actually loading the text from file; essentially "load text from filename into buffer".  This doesn't clear the existing text, so that it can serve as the basis for plain old "Open" as well as an "Insert file into current buffer".  It therefore doesn't need to trigger <<Modified>>.  Nor does it need to adjust any locks.
-proc load {filename} {
+# Oops, don't call this "load" - that's a rather important existing built-in command for loading C libraries/extensions!
+proc load_file {filename} {
 	set ::status "Loading…"
 	# The editor insert command below will reset the modification flag on the text, which we don't necessarily want, so store the current value so we can restore it afterwards:
 	set current_unsaved_value $::unsaved
@@ -128,7 +129,7 @@ proc load {filename} {
 		return
 	}
 	set ::unsaved $current_unsaved_value
-	# Um, if "load" is being called from "insert_file", we want ::unsaved to be true!  However, if it's being called from open_file, it should be false.  So, don't set it here!  Likewise for the <<Modified>> virtual event.
+	# Um, if "load_file" is being called from "insert_file", we want ::unsaved to be true!  However, if it's being called from open_file, it should be false.  So, don't set it here!  Likewise for the <<Modified>> virtual event.
 	log_file_operation [file normalize $filename] LOAD
 	update_text_extent_display
 	refresh_recent_file_list
@@ -140,7 +141,7 @@ proc load {filename} {
 proc insert_file {filename} {
 	# Take a note of the current insert mark position (this will be the start of the inserted text range):
 	set ::inserted_text_start_index [.editor.text index insert]
-	load $filename
+	load_file $filename
 	set ::inserted_text_end_index [.editor.text index insert]	;# Where are we now?
 	.editor.text tag add sel $::inserted_text_start_index $::inserted_text_end_index	;# Mark the new text as the selection range (TODO: only if the load was invoked by the "insert" command.
 	set_unsaved true
@@ -158,7 +159,7 @@ proc reload {} {
 	check_for_unsaved_changes
 	if {$::filename != ""} {
 		clear
-		load $::filename
+		load_file $::filename
 		set_unsaved false
 		set ::status "Reloaded"
 	}
@@ -174,7 +175,7 @@ proc prompt_open_file {} {
 
 # Likewise, but for inserting/append the text into the current buffer:
 proc prompt_insert_file {} {
-	# We don't just use [load] here, because we want slighly different behaviour (namely to highlight the new text).
+	# We don't just use [load_file] here, because we want slighly different behaviour (namely to highlight the new text).
 	insert_file [tk_getOpenFile -title "Open text file for editing"]
 }
 
@@ -362,6 +363,8 @@ proc frink {expression} {send frinkserver [list frink $expression]}	;# Internal 
 # Higher-level command for evaluating editor text in Frink and inserting the result in the document
 # TODO: cater for multiple selection ranges?!  Perhaps iterate through them all, evaluating each one.
 proc frink_eval {} {
+	# Ensure it's running (start_frinkserver only starts a new instance if required; however, it does take a long time to start up - TODO: figure out a way to deal with this)
+	start_frinkserver
 	set expression ""
 	# Figure out what text to send to Frink for evaluation:
 	if {[.editor.text tag ranges sel] != ""} {
@@ -432,6 +435,10 @@ proc quit {} {
 	puts "Exiting…"
 	exit
 }
+
+
+
+
 
 
 

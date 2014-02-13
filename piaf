@@ -148,7 +148,8 @@ if {[llength $argv] > 0} {open_file [lindex $argv 0]}
 focus .editor.text
 
 # (Optionally?) start the Frink server:
-start_frinkserver
+# Perhaps better to have the user request it...
+#start_frinkserver
 
 wm protocol . WM_DELETE_WINDOW quit
 
@@ -182,11 +183,4 @@ bind . <Map> deferred_startup_actions
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
 # [fork]? (Expect/TclX)
-
-
-
-
-
-
-
 
