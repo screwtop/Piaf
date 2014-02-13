@@ -132,7 +132,7 @@ proc load_file {filename} {
 	# Um, if "load_file" is being called from "insert_file", we want ::unsaved to be true!  However, if it's being called from open_file, it should be false.  So, don't set it here!  Likewise for the <<Modified>> virtual event.
 	log_file_operation [file normalize $filename] LOAD
 	update_text_extent_display
-	refresh_recent_file_list
+	if $::use_database refresh_recent_file_list
 	set ::status "File loaded"
 	unset current_unsaved_value
 }

@@ -15,6 +15,7 @@ set ::piaf::about_string "Piaf is a text editor.\n©2014 Chris Edwards\nhttps://
 #cd /usr/local/piaf/bin	;# Hmm, better not to [cd], in case a relative filename was given on the command line.
 set ::binary_path /usr/local/piaf/bin	;# Or is it better to do something with auto_path, [info script], or something?
 # lappend auto_path $::binary_path
+set ::use_database false	;# TODO: move to settings.tcl
 
 # TODO: handle command-line arguments (open files, perhaps additional options for e.g. batch running of scripts)
 
@@ -27,24 +28,26 @@ catch {source ~/.piaf/settings.tcl}		;# ...then any user-defined settings.
 
 # We use an SQLite database to keep track of recently modified files, collections of files making up projects, etc.
 # Maybe don't defer loading the database, so we can log loading the initial file specified on the command line (if any).
-if {[catch {package require sqlite3} message]} {
-	# No sqlite3
-	puts stderr $message
-	puts stderr "sqlite3 library for Tcl not found; please install it for greater functionality"
-	puts stderr "	e.g. sudo apt-get install libsqlite3-tcl"
-	set ::use_database false
-} else {
-	# We do have the sqlite3 library at least...
-	# Now see if we have a user database:
-	# TODO: fix: this doesn't work at present (sqlite3 will create the database implicitly if it doesn't exist!)
-	if {[catch {sqlite3 ::piaf::database ~/.piaf/data.db} message]} {
-		# Could not open.  Perhaps it doesn't exist.  If so, create it.  If something else, give up?  How do we tell?  We just get "unable to open database file" if it fails.  And SQLite's [errorcode] is only available for an open database.
-		# The install script should have created the database anyway.
+if {$::use_database} {
+	if {[catch {package require sqlite3} message]} {
+		# No sqlite3
 		puts stderr $message
-		puts stderr "Try running the install script to create the user database (~/.piaf/data.db)."
+		puts stderr "sqlite3 library for Tcl not found; please install it for greater functionality"
+		puts stderr "	e.g. sudo apt-get install libsqlite3-tcl"
+		set ::use_database false
 	} else {
-		puts stderr "SQLite database opened, version [::piaf::database version]"
-		set ::use_database true
+		# We do have the sqlite3 library at least...
+		# Now see if we have a user database:
+		# TODO: fix: this doesn't work at present (sqlite3 will create the database implicitly if it doesn't exist!)
+		if {[catch {sqlite3 ::piaf::database ~/.piaf/data.db} message]} {
+			# Could not open.  Perhaps it doesn't exist.  If so, create it.  If something else, give up?  How do we tell?  We just get "unable to open database file" if it fails.  And SQLite's [errorcode] is only available for an open database.
+			# The install script should have created the database anyway.
+			puts stderr $message
+			puts stderr "Try running the install script to create the user database (~/.piaf/data.db)."
+		} else {
+			puts stderr "SQLite database opened, version [::piaf::database version]"
+			set ::use_database true
+		}
 	}
 }
 
@@ -103,7 +106,7 @@ source "$::binary_path/insert_mark_tracking.tcl"	;# Generating virtual events fo
 source "$::binary_path/printing.tcl"
 source "$::binary_path/bindings.tcl"	;# Key event bindings
 catch {source ~/.piaf/bindings.tcl}	;# User can override and add their own too
-source "$::binary_path/recent_files.tcl"	;# This has to be run early because of the possibility of loading a file specified on the command line.  open_file calls refresh_recent_files.
+if $::use_database {source "$::binary_path/recent_files.tcl"}	;# This has to be run early because of the possibility of loading a file specified on the command line.  open_file calls refresh_recent_files.
 
 # Apply new grid layout:
 # (TODO: remove existing pack calls that are made redundant by this)
@@ -183,4 +186,5 @@ bind . <Map> deferred_startup_actions
 # It'd be nice to attach a Tcl shell REPL to stdin/stdout for controlling the editor from a command shell.
 # ...and perhaps also a remote-control FIFO.
 # [fork]? (Expect/TclX)
+
 
