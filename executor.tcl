@@ -7,8 +7,28 @@
 
 # Start the executor server:
 # How to indicate what appname it should use?  We'll need to know it!  Ah, pass it as a command-line arg:
-set ::executor_appname "Executor ([tk appname])"
-exec $::binary_path/executor_server_expect.tcl $::executor_appname >& /dev/null &
+
+# Maybe we could provider for having multiple ones open, somehow identified.
+proc start_executor {args} {
+	# TODO: only start if there's not one already running?
+	if {[info exists ::executor_appname]} {error "Executor instance already running"}
+	set ::executor_appname "Executor ([tk appname])"
+	exec $::binary_path/executor_server_expect.tcl $::executor_appname >& /dev/null &
+	# Tell Executor what interpreter to use:
+	after 500 [list send $::executor_appname {start_interpreter tclsh}]
+	# TODO: support other languages (perhaps based on the choice in the Language menu)
+	# if {[lindex $args 0] == Tcl} {...}
+}
+
+# TODO: parameterise for executor instance identifier?
+proc stop_executor {} {
+	send $::executor_appname quit
+	unset ::executor_appname
+}
+
+proc hide_executor {} {send $::executor_appname {wm withdraw .}}
+
+proc show_executor {} {send $::executor_appname {wm deiconify .}}
 
 #bind .editor.text <Control-Return> {send Executor {execute [get_current_line]}}
 # Nope, that tries to call get_current_line on the Executor!
@@ -19,15 +39,18 @@ exec $::binary_path/executor_server_expect.tcl $::executor_appname >& /dev/null 
 # Maybe a new proc?
 proc executor_send {code} {send $::executor_appname [list execute $code]}
 
-# Tell Executor what interpreter to use:
-after 500 [list send $::executor_appname {start_interpreter tclsh}]
-# TODO: support other languages (perhaps based on the choice in the Language menu)
+# Should this receive a language name (e.g. "Tcl") or an interpreter command name (e.g. "tclsh")?
+proc executor_change_interpreter {language} {
+	send $::executor_appname [list change_interpreter $language]
+}
 
 #bind .editor.text <Control-Return> {executor_send [get_current_line]; break}
 # OK, that's looking good.
 # Might be nice to advance one line too:
 # If there's a selection active, send that instead of just the current line:
+# TODO: maybe check if an executor is running and only bother doing this if so.
 bind .editor.text <Control-Return> {
+	if {![info exists ::executor_appname]} {return}
 	if {[.editor.text tag ranges sel] != ""} {
 		executor_send [get_selection]
 	} else {

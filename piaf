@@ -5,19 +5,20 @@
 
 tk appname Piaf
 wm title . [tk appname]
+namespace eval ::piaf {}
+set ::piaf::about_string "Piaf is a text editor.\n©2014 Chris Edwards\nhttps://github.com/screwtop/Piaf"
 
 #puts stderr $argv
 
 #puts stderr $env(PWD)
 #puts stderr [info script]
 #cd /usr/local/piaf/bin	;# Hmm, better not to [cd], in case a relative filename was given on the command line.
-set ::binary_path /usr/local/piaf/bin	;# Or is it better to do something with auto_path?
+set ::binary_path /usr/local/piaf/bin	;# Or is it better to do something with auto_path, [info script], or something?
 # lappend auto_path $::binary_path
 
 # TODO: handle command-line arguments (open files, perhaps additional options for e.g. batch running of scripts)
 
 
-namespace eval ::piaf {}
 
 set ::status "Starting up…"
 

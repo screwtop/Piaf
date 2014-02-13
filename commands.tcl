@@ -4,6 +4,10 @@
 
 # TODO: maybe clear/reset the undo history on commands like "new" and "open_file".
 
+proc about {} {
+	puts stderr $::piaf::about_string
+	tk_messageBox -title About -message $::piaf::about_string -icon info
+}
 
 proc select_all {} {.editor.text tag add sel 0.0 end}
 proc select_current_line {} {.editor.text tag add sel "insert linestart" "insert lineend"}
@@ -25,7 +29,7 @@ proc paste {} {.editor.text insert insert [clipboard get]}	;# TODO: if a selecti
 proc delete {} {.editor.text delete sel.first sel.last}
 
 # Erase all text in document:
-proc clear {} {.editor.text delete 0.0 end}
+proc clear {} {.editor.text delete 1.0 end; puts stderr "** clear done"; flush stderr}
 
 proc cut {} {copy; delete}
 
@@ -70,16 +74,22 @@ proc set_unsaved {args} {
 # Discard old editor buffer and create a new one (optionally under the specified filename).
 # TODO: call this if the file requested on the command line does not exist.
 proc new {args} {
+	puts stderr "** check unsaved"; flush stderr
 	check_for_unsaved_changes
+	puts stderr "** unlock"; flush stderr
 	unlock $::filename
 	if {[llength $args] > 0} {
 		set ::filename [lindex $args 0]
 	} else {
 		set ::filename ""	;# OR unset ::filename?
 	}
+	puts stderr "** clear"; flush stderr
 	clear
+	puts stderr "** update_text_extent_display"; flush stderr
 	update_text_extent_display
+	puts stderr "** set_unsaved false"; flush stderr
 	set_unsaved false
+	puts stderr "** set ::status"; flush stderr
 	set ::status "New"
 }
 
@@ -230,7 +240,8 @@ proc prompt_save_to {} {save_to [prompt_save_generic]}	;# Save a copy here, but 
 
 
 # Isn't this basically the same as "new"?
-proc close_file {} {new}
+#proc close_file {} {new}
+proc close_file {} {puts stderr "** clear..."; flush stderr; clear}
 
 
 
@@ -421,4 +432,6 @@ proc quit {} {
 	puts "Exiting…"
 	exit
 }
+
+
 

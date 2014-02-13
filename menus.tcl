@@ -172,6 +172,23 @@ menu .menubar.window
 #.menubar add cascade -label "Window" -menu .menubar.window -underline 0
 
 
+# Executor control menu:
+menu .menubar.executor
+	.menubar.executor add command -label "Start Executor" -command {start_executor}
+	.menubar.executor add command -label "Stop Executor" -command {stop_executor}
+	.menubar.executor add separator
+	.menubar.executor add command -label "Show Executor Window" -command {show_executor}
+	.menubar.executor add command -label "Hide Executor Window" -command {hide_executor}
+	.menubar.executor add separator
+	# TODO: Set Executor Language/Interpreter
+#	menu .menubar.executor.interpreter
+#		.menubar.executor.interpreter add command -label "Python" -command {executor_change_interpreter tclsh}
+#		.menubar.executor.interpreter add command -label "Tcl" -command {executor_change_interpreter tclsh}
+#		.menubar.executor.interpreter add command -label "Tcl/Tk" -command {executor_change_interpreter wish}
+#	.menubar.executor add cascade -label "Interpreter" -menu .menubar.executor.interpreter
+.menubar add cascade -label "Executor" -menu .menubar.executor -underline 1
+
+
 # Console (or more general System) menu:
 menu .menubar.console
 	.menubar.console add command -label "Show Console window" -command {wm deiconify .console}
@@ -180,9 +197,12 @@ menu .menubar.console
 
 
 
-# TODO: Help/About type menu.
-
-
+# TODO: Help/About type menu.  Maybe move the console menu over there, cos it's sort of a debugging tool.
+menu .menubar.help
+	.menubar.help add cascade -label "Console" -menu .menubar.console
+	.menubar.help add separator
+	.menubar.help add command -label "About" -command about
+.menubar add cascade -label "Help" -menu .menubar.help -underline 0
 
 
 # Contextual menu for text also (with cut, copy, paste, delete/clear, mark for swap, etc.
